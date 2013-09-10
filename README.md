@@ -15,11 +15,11 @@ For information regarding specifications or purchase of completed units, please 
 
 ## Directory Description ##
 
-- **common** – common C library shared between embedded firmware and host software. These provide standard communication routines for communicating with the ASR-23 device. Also included are common data types and utilities. This library is most commonly compiled as a static library and linked with the application or shared object needing access to the functionality. It is been tested in compiled on a variety of compilers including Windows, Linux, and armed compilers.
+- **common** – common C library shared between embedded firmware and host software. These provide standard communication routines for communicating with the ASR-2300 device. Also included are common data types and utilities. This library is most commonly compiled as a static library and linked with the application or shared object needing access to the functionality. It has been tested using a variety of compilers and platforms including Windows, Linux, and ARM.
 
-- **design** – directory contains high-level design documents and specifications permission for the ASR-2300 module and post APIs. Also put in this directory are development and testing information relating to the module.
+- **design** – directory contains high-level design documents and specifications for the ASR-2300 module and host APIs. This directory also includes development and testing information.
 
-- **firmware** – contains embedded firmware for the Renesas RL78 and Cypress FX3 processors. The RL78 microcontroller provides command control functions for the module and manages data flow for sensor and other low data rate information. The FX3 provides the superspeed USB 3.0 interface and can also be customized for conditional on board processing within the limits of available RAM.
+- **firmware** – contains embedded firmware for the Renesas RL78 and Cypress FX3 processors. The RL78 microcontroller provides command control functions for the module and manages data flow for sensor and other low data rate information. The FX3 provides the SuperSpeed USB 3.0 interface and can also be customized for conditional on board processing within the limits of available RAM.
 
 - **hardware** – contains the hardware designs and other information needed to build and construct the various versions of the ASR-2300 module.
 
