@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>uhd_A2300_probe</name>
+	<name>uhd_A2300_probe_hard_linked</name>
 	<comment></comment>
 	<projects>
-		<project>Common</project>
+		<project>A2300Usb</project>
 		<project>UhdAdaptor</project>
 	</projects>
 	<buildSpec>

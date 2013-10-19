@@ -23,38 +23,28 @@
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.803083112" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug">
 								<option id="gnu.cpp.compiler.exe.debug.option.optimization.level.239108661" name="Optimization Level" superClass="gnu.cpp.compiler.exe.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.exe.debug.option.debugging.level.10230662" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
-								<option id="gnu.cpp.compiler.option.include.paths.2097811519" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/A2300Usb}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UhdAdaptor}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Common}&quot;"/>
-								</option>
+								<option id="gnu.cpp.compiler.option.include.paths.2097811519" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths"/>
+								<option id="gnu.cpp.compiler.option.other.other.1334429572" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.629593385" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.1846413808" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug">
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.exe.debug.option.optimization.level.706716578" name="Optimization Level" superClass="gnu.c.compiler.exe.debug.option.optimization.level" valueType="enumerated"/>
 								<option id="gnu.c.compiler.exe.debug.option.debugging.level.1093527300" name="Debug Level" superClass="gnu.c.compiler.exe.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
-								<option id="gnu.c.compiler.option.include.paths.517986308" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/A2300Usb}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UhdAdaptor}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Common}&quot;"/>
-								</option>
+								<option id="gnu.c.compiler.option.include.paths.517986308" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths"/>
+								<option id="gnu.c.compiler.option.misc.other.447336497" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.646575947" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.1105737229" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug.181489458" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug">
 								<option id="gnu.cpp.link.option.libs.2110145561" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="Common"/>
-									<listOptionValue builtIn="false" value="uhd"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="UhdAdaptor"/>
-									<listOptionValue builtIn="false" value="boost_system"/>
-									<listOptionValue builtIn="false" value="boost_program_options"/>
-									<listOptionValue builtIn="false" value="boost_filesystem"/>
-									<listOptionValue builtIn="false" value="dl"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="uhd"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="boost_system"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="boost_program_options"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="boost_thread"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="dl"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="usb-1.0"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.877536470" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UhdAdaptor/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="/../UhdAdaptor/Debug"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Common/Debug}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/../Common/Debug}&quot;"/>
 									<listOptionValue builtIn="false" value="/home/chris/Projects/gnuradio/src/uhd/host/build/lib"/>
 								</option>
@@ -64,39 +54,20 @@
 								</inputType>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.exe.debug.1327269686" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.exe.debug">
-								<option id="gnu.both.asm.option.include.paths.557534092" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UhdAdaptor}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Common}&quot;"/>
-								</option>
+								<option id="gnu.both.asm.option.include.paths.557534092" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths"/>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1359174065" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.1950438565.1745934820" name="rx_samples_to_file.cpp" rcbsApplicability="disable" resourcePath="rx_samples_to_file.cpp" toolsToInvoke="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.803083112.292746203">
+						<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.803083112.292746203" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.803083112"/>
+					</fileInfo>
 					<sourceEntries>
-						<entry excluding="Debug" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Debug"/>
+						<entry excluding="rx_samples_to_file.cpp|tx_waveforms.cpp|uhd_usrp_probe.cpp|uhd_A2300_probe_shared.cpp|uhd_A2300_probe.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
-			<storageModule moduleId="org.eclipse.cdt.core.externalSettings">
-				<externalSettings containerId="Common;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
-					<externalSetting>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/Common"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/Common/Debug"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="Common" srcPrefixMapping="" srcRootPath=""/>
-					</externalSetting>
-				</externalSettings>
-				<externalSettings containerId="UhdAdaptor;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
-					<externalSetting>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/A2300Usb"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/UhdAdaptor"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/A2300Usb/Debug"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/UhdAdaptor/Debug"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="A2300Usb" srcPrefixMapping="" srcRootPath=""/>
-						<entry flags="RESOLVED" kind="libraryFile" name="UhdAdaptor" srcPrefixMapping="" srcRootPath=""/>
-					</externalSetting>
-				</externalSettings>
-			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="cdt.managedbuild.config.gnu.exe.release.1491394936">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.exe.release.1491394936" moduleId="org.eclipse.cdt.core.settings" name="Release">
@@ -153,30 +124,30 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="uhd_A2300_probe.cdt.managedbuild.target.gnu.exe.1183664439" name="Executable" projectType="cdt.managedbuild.target.gnu.exe"/>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/uhd_A2300_probe_local"/>
+		</configuration>
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/uhd_A2300_probe_local"/>
+		</configuration>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.1491394936;cdt.managedbuild.config.gnu.exe.release.1491394936.;cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.670902799;cdt.managedbuild.tool.gnu.cpp.compiler.input.508635945">
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.1950438565;cdt.managedbuild.config.gnu.exe.debug.1950438565.;cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.803083112;cdt.managedbuild.tool.gnu.cpp.compiler.input.629593385">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.1491394936;cdt.managedbuild.config.gnu.exe.release.1491394936.;cdt.managedbuild.tool.gnu.c.compiler.exe.release.1557159102;cdt.managedbuild.tool.gnu.c.compiler.input.988450172">
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.1491394936;cdt.managedbuild.config.gnu.exe.release.1491394936.;cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.670902799;cdt.managedbuild.tool.gnu.cpp.compiler.input.508635945">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.1950438565;cdt.managedbuild.config.gnu.exe.debug.1950438565.;cdt.managedbuild.tool.gnu.c.compiler.exe.debug.1846413808;cdt.managedbuild.tool.gnu.c.compiler.input.646575947">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.1950438565;cdt.managedbuild.config.gnu.exe.debug.1950438565.;cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.803083112;cdt.managedbuild.tool.gnu.cpp.compiler.input.629593385">
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.1491394936;cdt.managedbuild.config.gnu.exe.release.1491394936.;cdt.managedbuild.tool.gnu.c.compiler.exe.release.1557159102;cdt.managedbuild.tool.gnu.c.compiler.input.988450172">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 	</storageModule>
-	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
-	<storageModule moduleId="refreshScope" versionNumber="2">
-		<configuration configurationName="Release">
-			<resource resourceType="PROJECT" workspacePath="/uhd_A2300_probe"/>
-		</configuration>
-		<configuration configurationName="Debug">
-			<resource resourceType="PROJECT" workspacePath="/uhd_A2300_probe"/>
-		</configuration>
-	</storageModule>
-	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
-	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>

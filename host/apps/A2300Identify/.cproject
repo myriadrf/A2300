@@ -25,6 +25,7 @@
 								<option id="gnu.cpp.compiler.exe.debug.option.debugging.level.521985650" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.1505916601" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Common}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/A2300Usb}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/include&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1330279585" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
@@ -48,8 +49,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/A2300Usb/Debug}&quot;"/>
 								</option>
 								<option id="gnu.cpp.link.option.libs.809567217" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="A2300Usb"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="Common"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="A2300Usb"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="usb-1.0"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.2121799560" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">

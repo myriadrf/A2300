@@ -101,7 +101,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\common;..\..\extern\CypressFx3UsbDriver\include;&quot;$(SolutionDir)/host/include&quot;"
+				AdditionalIncludeDirectories="..\..\..\common;..\..\extern\CypressFx3UsbDriver\include;..\..\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"

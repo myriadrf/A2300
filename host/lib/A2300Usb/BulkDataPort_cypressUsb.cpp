@@ -123,8 +123,10 @@ int A2300::BulkDataPort::Write(byte * pdata, int ctBytes, int msecTimeout )
 		return -1;
 
 	m_pEndPointOut->TimeOut = msecTimeout;
-	if (!m_pEndPointOut->XferData(pdata, ctBytesWrote)) // bytesRead is the actual bytes read after return
+	CCyIsoPktInfo info;
+	if (!m_pEndPointOut->XferData(pdata, ctBytesWrote, &info)) // bytesRead is the actual bytes read after return
 	{
+
 		return(0);
 	}
 	//printf(" bytesWritten= %d\n", ctBytesWrote);

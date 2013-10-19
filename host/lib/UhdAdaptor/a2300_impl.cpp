@@ -16,15 +16,17 @@
 // limitations under the License.
 
 #include "a2300_impl.hpp"
-#include <A2300/A2300InterfaceDefs.h>
+#include <A2300/A2300_Defs.h>
 
 #include <uhd/utils/log.hpp>
-#include <uhd/utils/safe_call.hpp>
 #include <uhd/transport/usb_control.hpp>
 #include <uhd/utils/msg.hpp>
 #include <uhd/exception.hpp>
 #include <uhd/utils/static.hpp>
 #include <uhd/utils/images.hpp>
+#include <uhd/utils/safe_call.hpp>
+#include <uhd/usrp/dboard_eeprom.hpp>
+#include <uhd/types/ranges.hpp>
 
 #include <libusb-1.0/libusb.h>
 
@@ -37,10 +39,11 @@
 #include <boost/format.hpp>
 #include <boost/assign/list_of.hpp>
 #include <boost/filesystem.hpp>
-#include <boost/thread/thread.hpp>
+//#include <boost/thread/thread.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/math/special_functions/round.hpp>
 #include <cstdio>
+#include <ctime>
 
 // DCI Messages.
 #define PROPERTY_ID_GAIN  (0x1)
@@ -49,7 +52,7 @@ using namespace uhd;
 using namespace uhd::usrp;
 using namespace uhd::transport;
 
-// A2300 USB informaiton.
+// A2300 USB information.
 const boost::uint16_t A2300_VENDOR_ID  = 0xffff;
 const boost::uint16_t A2300_PRODUCT_ID = 0x00ff;
 const boost::uint16_t A2300_ADDR_UNDEF = 0xffff;
@@ -68,6 +71,17 @@ static double WAIT_TIME = 0.1;
 const double a2300_impl::m_bandwidthTableMHz[a2300_impl::BW_TSIZE] =
 	{ 14.0, 10.0, 7.0, 6.0, 5.0, 4.375, 3.5, 3.0, 2.75, 2.5, 1.92, 1.5, 1.375, 1.25, 0.875, 0.75 };
 
+//! mapping of frontend to radio perif index
+static const size_t FE1 = 0x0;  // TODO: Make sure 0's based is ok.
+static const size_t FE2 = 0x1;
+
+// DSP Systems {DUC / DDC }
+
+static const int WCACOMP_DSP_DUC0  = 0x10; 	// Digital Up Converter
+static const int WCACOMP_DSP_DDC0  = 0x20; 	// Digital Down Converter
+static const int WCACOMP_DSP_DUC1  = 0x30; 	// Digital Up Converter
+static const int WCACOMP_DSP_DDC1  = 0x40; 	// Digital Down Converter.
+
 /***********************************************************************
  * Discovery
  **********************************************************************/
@@ -75,24 +89,28 @@ static device_addrs_t a2300_find(const device_addr_t &hint)
 {
     device_addrs_t a2300_addrs;
 
-    //return an empty list of addresses when type is set to non-usrp1
-    if (hint.has_key("type") and hint["type"] != "usrp1") return a2300_addrs;
-
+    //return an empty list of addresses when type is set to non-a2300
+    if( hint.has_key("type") and hint["type"] != "a2300") return a2300_addrs;
+	
     //Return an empty list of addresses when an address is specified,
     //since an address is intended for a different, non-USB, device.
-    if (hint.has_key("addr")) return a2300_addrs;
-
+    if (hint.has_key("addr")) {
+		printf("You can't use \"addr\" on a USB device - bye!\n");
+		return a2300_addrs;    // Return empty list.
+	}
+    
+	// Set defaults here.
     unsigned int vid = A2300_VENDOR_ID;
     unsigned int pid = A2300_PRODUCT_ID;
 
-    if(hint.has_key("vid") && hint.has_key("pid") && hint.has_key("type") && hint["type"] == "usrp1") {
+    if(hint.has_key("vid") && hint.has_key("pid")) {
         sscanf(hint.get("vid").c_str(), "%x", &vid);
         sscanf(hint.get("pid").c_str(), "%x", &pid);
     }
 
     // Important note:
     // The get device list calls are nested inside the for loop.
-    // This allows the usb guts to decontruct when not in use,
+    // This allows the usb guts to deconstruct when not in use,
     // so that re-enumeration after fw load can occur successfully.
     // This requirement is a courtesy of libusb1.0 on windows.
 
@@ -101,6 +119,8 @@ static device_addrs_t a2300_find(const device_addr_t &hint)
     char buff[buffSize];
     vid = A2300_VENDOR_ID;
     pid = A2300_PRODUCT_ID;
+
+	//search for the device until found or timeout
 	int usbAddress;
 
 	libusb_context *ctx = NULL;
@@ -123,7 +143,8 @@ static device_addrs_t a2300_find(const device_addr_t &hint)
 			{
 				device_addr_t new_addr;
 				new_addr["type"] = "a2300";
-				new_addr["name"] = "a2300";
+				new_addr["name"] = "ASR-2300";
+				new_addr["mcr"]  = "32000000.0";  // CJC: Master Clock Rate used by some functions.
 
 				// Add a serial string of information (you need the open to do this).
 				libusb_device_handle *handle;
@@ -135,14 +156,16 @@ static device_addrs_t a2300_find(const device_addr_t &hint)
 					if( rc >= 0)
 						new_addr["serial"] = std::string((char*)buff);
 					else
-						new_addr["serial"] = "??";
+						new_addr["serial"] = "1234";
 					libusb_close(handle);
 				}
 
 				// Get the address of the device on the bus.
+				// Note: "address" should only be used to support TCP/IP interfaces
 				usbAddress = libusb_get_device_address(pDevice);
 				sprintf((char *)buff, "%d", usbAddress);
 				new_addr["addr"] = std::string(buff);
+				printf("new_addr = usbAddr:%d [buff:%s]\n", usbAddress, buff);
 
 				// Save
 				a2300_addrs.push_back( new_addr );
@@ -169,10 +192,14 @@ UHD_STATIC_BLOCK(register_a2300_device){
 /***********************************************************************
  * Structors
  **********************************************************************/
-a2300_impl::a2300_impl(const device_addr_t &device_addr)
+a2300_impl::a2300_impl(const device_addr_t &device_addr) :
+		_is_setup(false),
+		_continuous_streaming(false)
 {
     UHD_MSG(status) << "Opening the A2300 device..." << std::endl;
-
+	m_tree = property_tree::make();
+    const fs_path mb_path = "/mboards/0";
+	
     //try to match the given device address with something on the USB bus
     std::vector<usb_device_handle::sptr> device_list =
         usb_device_handle::get_device_list(A2300_VENDOR_ID, A2300_PRODUCT_ID);
@@ -185,53 +212,246 @@ a2300_impl::a2300_impl(const device_addr_t &device_addr)
             break;
         }
     }
+	// Temporary: Default to the first handle found.
     handle = device_list[0];
     UHD_ASSERT_THROW(handle.get() != NULL); //better be found
 
+    //create control objects
+    // usb_control::sptr control = usb_control::make(handle, 0);
+    // _iface = b200_iface::make(control);
+    // this->check_fw_compat(); //check after making
+
+	 ////////////////////////////////////////////////////////////////////
+	 // setup the mboard eeprom
+	 ////////////////////////////////////////////////////////////////////
+	 const mboard_eeprom_t mb_eeprom; // (*_iface, "B200");
+	 m_tree->create<mboard_eeprom_t>(mb_path / "eeprom")
+			.set(mb_eeprom)
+			.subscribe(boost::bind(&a2300_impl::set_mb_eeprom, this, _1));
+			//.publish(boost::bind(&a2300_impl::get_mb_eeprom, this));
 
     ////////////////////////////////////////////////////////////////////
-    // Create standard UHD controller objects
+    // Create control transport
     ////////////////////////////////////////////////////////////////////
-
-    //Bind Bulk Data Interfaces to WcaPorts 0 Read and Write.
-    //This is NOT dci.
-    _data_transport = usb_zero_copy::make(
-    		handle,     // identifier
-			0, 0x86,    // IN interface, endpoint
-			0, 0x05,    // OUT interface, endpoint
-			device_addr);  // param hints
-
-
-    _soft_time_ctrl = soft_time_ctrl::make(
-    		boost::bind(&a2300_impl::rx_stream_on_off, this, _1));
+    // boost::uint8_t usb_speed = _iface->get_usb_speed();
+    // UHD_MSG(status) << "Operating over USB " << (int) usb_speed << "." << std::endl;
+    // const std::string min_frame_size = (usb_speed == 3) ? "1024" : "512";
 
     ////////////////////////////////////////////////////////////////////
     // Create DCI Interface Objects to access ASR-2300 Command and Control Interface
     ////////////////////////////////////////////////////////////////////
     device_addr_t dci0_hints( device_addr);
-    dci0_hints["num_recv_frames"] = "3";
+    dci0_hints["num_recv_frames"] = "3";   // CJC 16 ?
     dci0_hints["recv_frame_size"] = "512";
-    dci0_hints["num_send_frames"] = "2";
+    dci0_hints["num_send_frames"] = "2";   // CJC 16 ?
     dci0_hints["send_frame_size"] = "512";
     _idc0_transport = usb_zero_copy::make(
     		handle,     // identifier
 			0, A2300_DciIdc0_EpIn,    // IN interface, endpoint
 			0, A2300_DciIdc0_EpOut,    // OUT interface, endpoint
 			dci0_hints);  // param hints
+    while (_idc0_transport->get_recv_buff(0.0)){} //flush ctrl xport
 
+    ////////////////////////////////////////////////////////////////////
+    // Async task structure
+    ////////////////////////////////////////////////////////////////////
+    //_async_task_data.reset(new AsyncTaskData());
+    //_async_task_data->async_md.reset(new async_md_type(1000/*messages deep*/));
+    //_async_task = uhd::task::make(boost::bind(&b200_impl::handle_async_task, this, _ctrl_transport, _async_task_data));
     //Bind the DCI command and control interface to the transport.
     _dci0_ctrl = A2300_iface::make(	_idc0_transport,  0);
 
     ////////////////////////////////////////////////////////////////////
     // Initialize the properties tree
     ////////////////////////////////////////////////////////////////////
-	InitializePropertyTree();
+    ////////////////////////////////////////////////////////////////////
+    // create user-defined control objects
+    ////////////////////////////////////////////////////////////////////
+
+	std::string product_name = "ASR-2300";
+
+	m_tree->create<std::string>("/name").set("A2300 USB Device");
+	m_tree->create<std::string>(mb_path / "name").set(product_name);
+	m_tree->create<std::string>(mb_path / "codename").set("Woodinville");
+
+	m_tree->create<std::string>("/fpga_revision").publish(boost::bind(&a2300_impl::get_fpga_version, this));
+
+	//Create Branch for Sensors.
+	m_tree->create<int>("/sensors"); //phony property so this dir exists
+
+	////////////////////////////////////////////////////////////////////
+	// Create data transport
+	// This happens after FPGA ctrl instantiated so any junk that might
+	// be in the FPGAs buffers doesn't get pulled into the transport
+	// before being cleared.
+	////////////////////////////////////////////////////////////////////
+	device_addr_t data_xport_args;
+	data_xport_args["recv_frame_size"] = device_addr.get("recv_frame_size", "512");  // 8192
+	data_xport_args["num_recv_frames"] = device_addr.get("num_recv_frames", "3");    // 16
+	data_xport_args["send_frame_size"] = device_addr.get("send_frame_size", "512");
+	data_xport_args["num_send_frames"] = device_addr.get("num_send_frames", "3");
+
+	//Bind Bulk Data Interfaces to WcaPorts 0 Read and Write.
+	//This is NOT dci.
+	//Note: A failure here will output a message of the form: "usb Rx8 submit failed"
+	_data_transport = usb_zero_copy::make(
+			handle,        // identifier
+			0, 0x88,       // IN interface,  endpoint
+			0, 0x08,       // OUT interface, endpoint
+			data_xport_args);  // param hints
+
+	while (_data_transport->get_recv_buff(0.0)){} //flush ctrl xport
+
+	_soft_time_ctrl = soft_time_ctrl::make(
+			boost::bind(&a2300_impl::rx_stream_on_off, this, _1));
+
+	////////////////////////////////////////////////////////////////////
+	// create codec control objects
+	////////////////////////////////////////////////////////////////////
+	{
+		const fs_path codec_path = mb_path / ("rx_codecs") / "A";
+		m_tree->create<std::string>(codec_path / "name").set(product_name+" RX dual ADC");
+		m_tree->create<int>(codec_path / "gains"); //empty cuz gains are in frontend
+	}
+	{
+		const fs_path codec_path = mb_path / ("tx_codecs") / "A";
+		m_tree->create<std::string>(codec_path / "name").set(product_name+" TX dual DAC");
+		m_tree->create<int>(codec_path / "gains"); //empty cuz gains are in frontend
+	}
+
+	////////////////////////////////////////////////////////////////////
+	// create clock control objects
+	////////////////////////////////////////////////////////////////////
+	m_tree->create<double>(mb_path / "tick_rate")
+	   //.coerce(boost::bind(&a2300_impl::set_tick_rate, this, _1))
+	   .subscribe(boost::bind(&a2300_impl::set_tick_rate, this, _1))
+	   .publish(boost::bind(&a2300_impl::get_tick_rate, this));
+	   //.subscribe(boost::bind(&a2300_impl::update_tick_rate, this, _1));
+	m_tree->create<time_spec_t>(mb_path / "time" / "cmd");
+
+	////////////////////////////////////////////////////////////////////
+	// and do the misc mboard sensors
+	////////////////////////////////////////////////////////////////////
+	m_tree->create<sensor_value_t>(mb_path / "sensors" / "ref_locked")
+	   .publish(boost::bind(&a2300_impl::get_ref_locked, this));
+
+	////////////////////////////////////////////////////////////////////
+	// create frontend mapping
+	////////////////////////////////////////////////////////////////////
+	m_tree->create<subdev_spec_t>(mb_path / "rx_subdev_spec")
+		   .set(subdev_spec_t())
+		   .subscribe(boost::bind(&a2300_impl::update_rx_subdev_spec, this, _1));
+	m_tree->create<subdev_spec_t>(mb_path / "tx_subdev_spec")
+			.set(subdev_spec_t())
+		   .subscribe(boost::bind(&a2300_impl::update_tx_subdev_spec, this, _1));
+
+	////////////////////////////////////////////////////////////////////
+	// setup radio control
+	////////////////////////////////////////////////////////////////////
+	UHD_MSG(status) << "Initialize Radio control..." << std::endl;
+	const size_t num_radio_chains = 2; // CJC ((_local_ctrl->peek32(RB32_CORE_STATUS) >> 8) & 0xff);
+	UHD_ASSERT_THROW(num_radio_chains > 0);
+	UHD_ASSERT_THROW(num_radio_chains <= 2);
+	_radio_perifs.resize(num_radio_chains);
+	for (size_t i = 0; i < _radio_perifs.size(); i++) this->setup_radio(m_tree, i);
+
+	#if defined(FUTURE)
+		//now test each radio module's connection to the codec interface
+		_codec_ctrl->data_port_loopback(true);
+		BOOST_FOREACH(radio_perifs_t &perif, _radio_perifs)
+		{
+		  this->codec_loopback_self_test(perif.ctrl);
+		}
+		_codec_ctrl->data_port_loopback(false);
+	#endif
+	////////////////////////////////////////////////////////////////////
+	// create time and clock control objects
+	////////////////////////////////////////////////////////////////////
+	//register time now and pps onto available radio cores
+	m_tree->create<time_spec_t>(mb_path / "time" / "now");
+		//.publish(boost::bind(&time_core_3000::get_time_now, _radio_perifs[0].time64));
+	m_tree->create<time_spec_t>(mb_path / "time" / "pps");
+		//.publish(boost::bind(&time_core_3000::get_time_last_pps, _radio_perifs[0].time64));
+	for (size_t i = 0; i < _radio_perifs.size(); i++)
+	{
+		m_tree->access<time_spec_t>(mb_path / "time" / "now");
+		//    .subscribe(boost::bind(&time_core_3000::set_time_now, _radio_perifs[i].time64, _1));
+		m_tree->access<time_spec_t>(mb_path / "time" / "pps");
+		//    .subscribe(boost::bind(&time_core_3000::set_time_next_pps, _radio_perifs[i].time64, _1));
+	}
+
+	//setup time source props
+	m_tree->create<std::string>(mb_path / "time_source" / "value")
+		.subscribe(boost::bind(&a2300_impl::update_time_source, this, _1));
+
+	static const std::vector<std::string> time_sources = boost::assign::list_of("none")("external")("gpsdo");
+	m_tree->create<std::vector<std::string> >(mb_path / "time_source" / "options").set(time_sources);
+
+	//setup reference source props
+	m_tree->create<std::string>(mb_path / "clock_source" / "value")
+		.subscribe(boost::bind(&a2300_impl::update_clock_source, this, _1));
+
+	static const std::vector<std::string> clock_sources = boost::assign::list_of("internal")("external")("gpsdo");
+	m_tree->create<std::vector<std::string> >(mb_path / "clock_source" / "options").set(clock_sources);
+
+	////////////////////////////////////////////////////////////////////
+	// dboard eeproms but not really
+	////////////////////////////////////////////////////////////////////
+	dboard_eeprom_t db_eeprom;
+	m_tree->create<dboard_eeprom_t>(mb_path / "dboards" / "A" / "rx_eeprom").set(db_eeprom);
+	m_tree->create<dboard_eeprom_t>(mb_path / "dboards" / "A" / "tx_eeprom").set(db_eeprom);
+	m_tree->create<dboard_eeprom_t>(mb_path / "dboards" / "A" / "gdb_eeprom").set(db_eeprom);
+
+	////////////////////////////////////////////////////////////////////
+	// do some post-init tasks
+	////////////////////////////////////////////////////////////////////
+
+	//init the clock rate to something reasonable
+	m_tree->access<double>(mb_path / "tick_rate").set(A2300_DEFAULT_TICK_RATE);
+	//      device_addr.cast<double>("master_clock_rate", A2300_DEFAULT_TICK_RATE));
+
+	//subdev spec contains full width of selections
+	//subdev_spec_t rx_spec, tx_spec;
+	//BOOST_FOREACH(const std::string &fe, _tree->list(mb_path / "dboards" / "A" / "rx_frontends"))
+	//{
+	//    rx_spec.push_back(subdev_spec_pair_t("A", fe));
+	//}
+	//BOOST_FOREACH(const std::string &fe, _tree->list(mb_path / "dboards" / "A" / "tx_frontends"))
+	//{
+	//   tx_spec.push_back(subdev_spec_pair_t("A", fe));
+	//}
+	//_tree->access<subdev_spec_t>(mb_path / "rx_subdev_spec"); //.set(rx_spec);
+	//_tree->access<subdev_spec_t>(mb_path / "tx_subdev_spec"); //.set(tx_spec);
+
+	//init to internal clock and time source
+	m_tree->access<std::string>(mb_path / "clock_source/value").set("internal");
+	m_tree->access<std::string>(mb_path / "time_source/value").set("none");
+
+	//Create Branch for RF components.
+	const fs_path rf_path = mb_path / "rf/0";
+	m_tree->create<std::string>(rf_path); //phony property so this dir exists
+	m_tree->create<std::string>(rf_path / "name").set("ASR-2300");
+	m_tree->create<std::string>(rf_path / "codename").set("Beta");
+
+	const fs_path rx0_path = rf_path / "rx0";
+	InitializePropertyTreeExt(m_tree, rx0_path, WCACOMP_RF0, RFCH_RX);
+
+	const fs_path tx0_path = rf_path / "tx0";
+	InitializePropertyTreeExt(m_tree, tx0_path, WCACOMP_RF0, RFCH_TX);
+
+	const fs_path rx1_path = rf_path / "rx1";
+	InitializePropertyTreeExt(m_tree, rx1_path, WCACOMP_RF1, RFCH_RX);
+
+	const fs_path tx1_path = rf_path / "tx1";
+	InitializePropertyTreeExt(m_tree, tx1_path, WCACOMP_RF1, RFCH_TX);
+
+	//TODO: Create FPGA Waveform Components Properties.
+	// includes IO Ports, sampling rates, etc.
 
     ////////////////////////////////////////////////////////////////////
     // create clock control objects
     ////////////////////////////////////////////////////////////////////
-#if defined(FUTURE_RELEASE)
-    _master_clock_rate = 64e6;
+    _master_clock_rate = A2300_CLOCK_HZ;
     if (device_addr.has_key("mcr")){
         try{
             _master_clock_rate = boost::lexical_cast<double>(device_addr["mcr"]);
@@ -240,10 +460,11 @@ a2300_impl::a2300_impl(const device_addr_t &device_addr)
             UHD_MSG(error) << "Error parsing FPGA clock rate from device address: " << e.what() << std::endl;
         }
     }
-#endif
 
     //initialize io handling
     this->io_init();
+
+    _is_setup = true;
 }
 
 a2300_impl::~a2300_impl(void)
@@ -287,47 +508,12 @@ void * a2300_impl::FindDevice(uint16 vid, uint16 pid, int usbAddress)
 	return( pDevice );
 }
 
-////////////////////////////////////////////////////////////////////
-// create user-defined control objects
-////////////////////////////////////////////////////////////////////
-void a2300_impl::InitializePropertyTree()
-{
-    ////////////////////////////////////////////////////////////////////
-    // Initialize the properties tree
-    ////////////////////////////////////////////////////////////////////
-	m_tree = property_tree::make();
-	m_tree->create<std::string>("/name").set("a2300");
-	m_tree->create<std::string>("/fpga_revision").publish(boost::bind(&a2300_impl::get_fpga_version, this));
-
-	//Create Branch for Sensors.
-	m_tree->create<int>("/sensors"); //phony property so this dir exists
-
-	//Create Branch for RF components.
-	const fs_path rf_path = "/rf/0";
-	m_tree->create<std::string>(rf_path); //phony property so this dir exists
-	m_tree->create<std::string>(rf_path / "name").set("ASR-2300");
-	m_tree->create<std::string>(rf_path / "codename").set("Beta");
-
-	const fs_path rx0_path = rf_path / "rx0";
-	InitializePropertyTreeExt(rx0_path, WCACOMP_RF0, RFCH_RX);
-
-	const fs_path tx0_path = rf_path / "tx0";
-	InitializePropertyTreeExt(tx0_path, WCACOMP_RF0, RFCH_TX);
-
-	const fs_path rx1_path = rf_path / "rx1";
-	InitializePropertyTreeExt(rx1_path, WCACOMP_RF1, RFCH_RX);
-
-	const fs_path tx1_path = rf_path / "tx1";
-	InitializePropertyTreeExt(tx1_path, WCACOMP_RF1, RFCH_TX);
-
-    //TODO: Create FPGA Waveform Components Properties.
-    // includes IO Ports, sampling rates, etc.
-}
 
 /*
  * Create RX / TX Channel Controls (gain, BW, Frequency, Path)
+ * This was part of the original interface to show a demonstration access to read/write parameters.
  */
-void a2300_impl::InitializePropertyTreeExt(const fs_path path, int idComponent, int rxTxFlag)
+void a2300_impl::InitializePropertyTreeExt(uhd::property_tree::sptr _tree, const fs_path path, int idComponent, int rxTxFlag)
 {
 	m_tree->create<byte>(path).set(idComponent); // Set the component Id.
 	m_tree->create<byte>(path / "pathid");
@@ -338,14 +524,216 @@ void a2300_impl::InitializePropertyTreeExt(const fs_path path, int idComponent, 
 			.publish(boost::bind(&a2300_impl::get_bandwidth, this, idComponent, rxTxFlag));
 
 	m_tree->create<int>(path / "frequency");
-	m_tree->create<int>(path / "frequency/value")
-			.subscribe(boost::bind(&a2300_impl::set_frequency, this, idComponent, rxTxFlag, _1))
-			.publish(boost::bind(&a2300_impl::get_frequency, this, idComponent, rxTxFlag));
+	m_tree->create<double>(path / "frequency/value")
+			.subscribe(boost::bind(&a2300_impl::set_freq, this, idComponent, rxTxFlag, _1))
+			.publish(boost::bind(&a2300_impl::get_freq, this, idComponent, rxTxFlag));
 
 	m_tree->create<byte>(path / "gain");
 	m_tree->create<int>(path / "gain/value")
 			.subscribe(boost::bind(&a2300_impl::set_gain, this, idComponent, rxTxFlag, _1))
-			.publish(boost::bind(&a2300_impl::get_gain, this, idComponent, rxTxFlag));
+			.publish(boost::bind(&a2300_impl::get_gain, this, idComponent, rxTxFlag))
+			.set(A2300_DEFAULT_GAIN);
+}
+
+/***********************************************************************
+ * setup radio control objects
+ **********************************************************************/
+void a2300_impl::setup_radio(uhd::property_tree::sptr _tree, const size_t dspno)
+{
+	printf("a2300 setup_radio(%lu)\n", dspno);
+
+    radio_perifs_t &perif = _radio_perifs[dspno];
+
+    const fs_path mb_path = "/mboards/0";
+
+    // Testing only - remove.
+    int idComponent = 0x81;  // 0x81, 0x82.
+    int isRx = 0;		 // 1=Rx, 0=Tx
+    ////////////////////////////////////////////////////////////////////
+    // radio control
+    ////////////////////////////////////////////////////////////////////
+    //CJC const boost::uint32_t sid = (dspno == 0)? B200_CTRL0_MSG_SID : B200_CTRL1_MSG_SID;
+    //CJC perif.ctrl = radio_ctrl_core_3000::make(false/*lilE*/, _ctrl_transport, zero_copy_if::sptr()/*null*/, sid);
+    //CJC perif.ctrl->hold_task(_async_task);
+    //CJC _async_task_data->radio_ctrl[dspno] = perif.ctrl; //weak
+    _tree->access<time_spec_t>(mb_path / "time" / "cmd");
+    //CJC    	.subscribe(boost::bind(&a2300_impl::set_time, _1));
+    //CJC this->register_loopback_self_test(perif.ctrl);
+    //CJC perif.atr = gpio_core_200_32wo::make(perif.ctrl, TOREG(SR_ATR));
+
+    ////////////////////////////////////////////////////////////////////
+    // create rx dsp control objects
+    ////////////////////////////////////////////////////////////////////
+    isRx = 1;
+    idComponent = 0x81;
+    perif.framer = 0x81; // rx_vita_core_3000::make(perif.ctrl, TOREG(SR_RX_CTRL));
+    perif.ddc = dsp_core_a2300::make(); // perif.ctrl, TOREG(SR_RX_DSP));
+    perif.ddc->set_link_rate(10e9/8); //whatever
+    _tree->access<double>(mb_path / "tick_rate")
+        // .subscribe(boost::bind(&a2300_impl::set_tick_rate, _1))
+        .subscribe(boost::bind(&dsp_core_a2300::set_tick_rate, perif.ddc, _1));
+    const fs_path rx_dsp_path = mb_path / "rx_dsps" / str(boost::format("%u") % dspno);
+    _tree->create<meta_range_t>(rx_dsp_path / "rate" / "range");
+    //CJC    .publish(boost::bind(&a2300_impl::get_host_rates));
+    _tree->create<double>(rx_dsp_path / "rate" / "value")
+    //		.coerce(boost::bind(&dsp_core_a2300::set_host_rate, _1))
+    		.subscribe(boost::bind(&a2300_impl::update_rx_samp_rate, this, dspno, _1))
+        	 .set(1e6);
+    _tree->create<double>(rx_dsp_path / "freq" / "value")
+					.subscribe(boost::bind(&a2300_impl::set_freq, this, idComponent, isRx, _1))
+					.publish(boost::bind(&a2300_impl::get_freq, this, idComponent, isRx))
+					.set(A2300_DEFAULT_FREQ);
+        //.coerce(boost::bind(&dsp_core_a2300::set_freq, perif.ddc, _1))
+        //.subscribe(boost::bind(&a2300_impl::set_freq, this, idComponent, isRx, _1))
+        //.set(A2300_DEFAULT_FREQ);  // 1.946MHz
+    printf("here 3\n");
+	_tree->create<meta_range_t>(rx_dsp_path / "freq" / "range")
+        .publish(boost::bind(&dsp_core_a2300::get_freq_range, perif.ddc));
+    printf("here 4\n");
+
+	_tree->create<stream_cmd_t>(rx_dsp_path / "stream_cmd")
+        .subscribe(boost::bind(&a2300_impl::issue_stream_command, this, idComponent, isRx, _1));
+      //.subscribe(boost::bind(&rx_vita_core_3000::issue_stream_command, perif.framer, _1));
+    printf("here 5\n");
+
+    ////////////////////////////////////////////////////////////////////
+    // create tx dsp control objects
+    ////////////////////////////////////////////////////////////////////
+	isRx = 0;
+	idComponent = 0x81;
+    perif.deframer = 0x81; // tx_vita_core_3000::make(perif.ctrl, TOREG(SR_TX_CTRL));
+    perif.duc = dsp_core_a2300::make(); // tx_dsp_core_3000::make(perif.ctrl, TOREG(SR_TX_DSP));
+    perif.duc->set_link_rate(10e9/8); //whatever
+    _tree->access<double>(mb_path / "tick_rate");
+    //CJC .subscribe(boost::bind(&tx_vita_core_3000::set_tick_rate, _1))
+    //CJC     .subscribe(boost::bind(&tx_dsp_core_3000::set_tick_rate, _1));
+    const fs_path tx_dsp_path = mb_path / "tx_dsps" / str(boost::format("%u") % dspno);
+    _tree->create<meta_range_t>(tx_dsp_path / "rate" / "range")
+        .publish(boost::bind(&dsp_core_a2300::get_host_rates, perif.duc));
+    _tree->create<double>(tx_dsp_path / "rate" / "value")
+        .coerce(boost::bind(&dsp_core_a2300::set_host_rate, perif.duc, _1))
+    //CJC     .subscribe(boost::bind(&b200_impl::update_tx_samp_rate, this, dspno, _1))
+        .set(1e6);
+
+    _tree->create<double>(tx_dsp_path / "freq" / "value")
+							.subscribe(boost::bind(&a2300_impl::set_freq, this, idComponent, isRx, _1))
+							.publish(boost::bind(&a2300_impl::get_freq, this, idComponent, isRx))
+							.set(A2300_DEFAULT_FREQ);
+
+	_tree->create<meta_range_t>(tx_dsp_path / "freq" / "range")
+        .publish(boost::bind(&dsp_core_a2300::get_freq_range, perif.duc));
+
+    ////////////////////////////////////////////////////////////////////
+    // create time control objects
+    ////////////////////////////////////////////////////////////////////
+    //CJC time_core_3000::readback_bases_type time64_rb_bases;
+    //CJC time64_rb_bases.rb_now = RB64_TIME_NOW;
+    //CJC time64_rb_bases.rb_pps = RB64_TIME_PPS;
+    //CJC perif.time64 = time_core_3000::make(perif.ctrl, TOREG(SR_TIME), time64_rb_bases);
+
+    ////////////////////////////////////////////////////////////////////
+    // create RF frontend interfacing
+    ////////////////////////////////////////////////////////////////////
+    for(size_t direction = 0; direction < 2; direction++)
+    {
+    	// RX1, RX2, TX1, TX2
+        const std::string x = direction? "rx" : "tx";
+        const std::string key = std::string((direction? "RX" : "TX")) + std::string(((dspno == FE1)? "1" : "2"));
+        const fs_path rf_fe_path = mb_path / "dboards" / "A" / (x+"_frontends") / (dspno? "B" : "A");
+        isRx = (direction == 0);
+        int idComponent = (dspno == FE1) ? (0x81):(0x82);
+        _tree->create<std::string>(rf_fe_path / "name").set("FE-"+key);
+        _tree->create<int>(rf_fe_path / "sensors"); //empty TODO
+
+        BOOST_FOREACH(const std::string &name, get_gain_names(key))
+        {
+            _tree->create<meta_range_t>(rf_fe_path / "gains" / name / "range")
+                .set(a2300_impl::get_gain_range());
+
+            _tree->create<double>(rf_fe_path / "gains" / name / "value")
+                //.coerce(boost::bind(&a2300_impl::set_gain, codec_ctrl, key, _1))
+                .subscribe(boost::bind(&a2300_impl::set_gain, this, idComponent, isRx, _1))
+                .set(0.0);
+        }
+
+        _tree->create<std::string>(rf_fe_path / "connection").set("IQ");
+        _tree->create<bool>(rf_fe_path / "enabled").set(true);
+        _tree->create<bool>(rf_fe_path / "use_lo_offset").set(false);
+
+        _tree->create<double>(rf_fe_path / "bandwidth" / "value")
+            //.coerce(boost::bind(&set_bw_filter, _codec_ctrl, key, _1))
+            .set(40e6);
+
+        _tree->create<meta_range_t>(rf_fe_path / "bandwidth" / "range")
+            .publish(boost::bind(&get_bw_filter_range)); // , key));
+
+        _tree->create<double>(rf_fe_path / "freq" / "value")
+            .set(0.0);
+            //.coerce(boost::bind(&a2300_impl::tune, _codec_ctrl, key, _1))
+            //.subscribe(boost::bind(&a2300_impl::update_bandsel, this, key, _1));
+
+        _tree->create<meta_range_t>(rf_fe_path / "freq" / "range")
+            .publish(boost::bind(&a2300_impl::get_rf_freq_range));
+
+        //setup antenna stuff
+        if (key[0] == 'R')
+        {
+            static const std::vector<std::string> ants = boost::assign::list_of("TX/RX")("RX2");
+            _tree->create<std::vector<std::string> >(rf_fe_path / "antenna" / "options").set(ants);
+            _tree->create<std::string>(rf_fe_path / "antenna" / "value")
+                .subscribe(boost::bind(&a2300_impl::update_antenna_sel, this, dspno, _1))
+                .set("RX2");
+        }
+
+        if (key[0] == 'T')
+        {
+            static const std::vector<std::string> ants(1, "TX/RX");
+            _tree->create<std::vector<std::string> >(rf_fe_path / "antenna" / "options").set(ants);
+            _tree->create<std::string>(rf_fe_path / "antenna" / "value").set("TX/RX");
+        }
+
+    }
+}
+
+/***********************************************************************
+ * loopback tests
+ **********************************************************************/
+// Not Used.
+
+/***********************************************************************
+ * Sample and tick rate comprehension below
+ **********************************************************************/
+double a2300_impl::set_tick_rate(const double rate)
+{
+    UHD_MSG(status) << "Asking for clock rate " << rate/1e6 << " MHz\n";
+    _tick_rate = rate; // _codec_ctrl->set_clock_rate(rate);
+    UHD_MSG(status) << "Actually got clock rate " << _tick_rate/1e6 << " MHz\n";
+    return(rate);
+}
+
+/***********************************************************************
+ * Reference time and clock
+ **********************************************************************/
+
+void a2300_impl::update_clock_source(const std::string &source)
+{
+	printf("update_clock_source()\n");
+}
+
+void a2300_impl::update_time_source(const std::string &source)
+{
+	printf("update_time_source(%s)\n", source.c_str());
+
+    if (source == "none"){}
+    else if (source == "external"){}
+    else if (source == "gpsdo"){}
+    else
+    {
+    	printf("Unknown time source <%s>\n", source.c_str());
+    	throw uhd::key_error("update_time_source: unknown source: " + source);
+    }
+//    _local_ctrl->poke32(TOREG(SR_CORE_PPS_SEL), (source == "external")? 1 : 0);
+    printf("update_time_source() - done\n");
 }
 
 /***********************************************************************
@@ -354,7 +742,8 @@ void a2300_impl::InitializePropertyTreeExt(const fs_path path, int idComponent, 
 int a2300_impl::get_gain(int idComponent, int idCh)
 {
 	// Get work buffer.
-	managed_send_buffer::sptr txbuff = _dci0_ctrl->GetSendDciMessageBuffer(WAIT_TIME);
+	managed_send_buffer::sptr txbuff =
+			_dci0_ctrl->GetSendDciMessageBuffer(WAIT_TIME);
 
 	//Query Identify Device.
 	byte idProperty = (idCh == RFCH_RX) ? 0x02 : 0x06;	// RxGain, TxGain
@@ -410,7 +799,7 @@ void a2300_impl::set_gain(int idComponent, int idCh, int gainDb)
 /*
  * Read Bandwidth (Hz)
  */
-int a2300_impl::get_bandwidth(int idComponent, int isRx)
+double a2300_impl::get_bandwidth(int idComponent, int isRx)
 {
 	// Get work buffer.
 	managed_send_buffer::sptr txbuff = _dci0_ctrl->GetSendDciMessageBuffer(WAIT_TIME);
@@ -439,7 +828,7 @@ int a2300_impl::get_bandwidth(int idComponent, int isRx)
 			int index = (int)pProp->value.vByte;
 			if( index >= 0 && index < BW_TSIZE)
 			{
-				return (int)(m_bandwidthTableMHz[index] * 1000.0 * 1000.0);
+				return (double)(m_bandwidthTableMHz[index] * 1000.0 * 1000.0);
 			}
 		}
 		else
@@ -447,20 +836,20 @@ int a2300_impl::get_bandwidth(int idComponent, int isRx)
 			printf( "Bandwidth: received invalid DCI Message.\n");
 		}
 	}
-	return(-1);  // Error.
+	return(-1.0);  // Error.
 }
 
 /*
  * Read Bandwidth (Hz)
  */
-void a2300_impl::set_bandwidth(int idComponent, int isRx, int bwHz)
+void a2300_impl::set_bandwidth(int idComponent, int isRx, double bwHz)
 {
 	//Convert "from" db for instrument
-	double bwMHz = (double)bwHz / (1000 * 1000);
+	double bwMHz = bwHz / (1000.0 * 1000.0);
 	int iValue = GetBandwidthIndex( bwMHz );
 	if( iValue < 0 )
 	{
-		printf("BW Error: Value %d not in range [%.2lf,%.2lf]\n", bwHz, m_bandwidthTableMHz[0], m_bandwidthTableMHz[BW_TSIZE-1]);
+		printf("BW Error: Value %.2lf not in range [%.2lf,%.2lf]\n", bwHz, m_bandwidthTableMHz[0], m_bandwidthTableMHz[BW_TSIZE-1]);
 		return;
 	}
 
@@ -481,10 +870,7 @@ void a2300_impl::set_bandwidth(int idComponent, int isRx, int bwHz)
 	}
 }
 
-/*
- * Read Frequency (Hz)
- */
-int a2300_impl::get_frequency(int idComponent, int isRx)
+double a2300_impl::get_freq(int idComponent, int isRx)
 {
 	// Get work buffer.
 	managed_send_buffer::sptr txbuff = _dci0_ctrl->GetSendDciMessageBuffer(WAIT_TIME);
@@ -511,7 +897,7 @@ int a2300_impl::get_frequency(int idComponent, int isRx)
 				&& ptp->idComponent == idComponent)
 			{
 				Dci_Property *pProp = Dci_TypedProperties_GetProperties(ptp);
-				return( (int)pProp->value.vUint32 * 1000 );   // Return Hz.
+				return( (double)pProp->value.vUint32 * 1000.0 );   // Return Hz.
 			}
 			else
 			{
@@ -519,32 +905,38 @@ int a2300_impl::get_frequency(int idComponent, int isRx)
 			}
 		}
 	}
-	return(-1);  // Error.
+	return(-1.0);  // Error.
 }
 
 
 /*
  * Frequency in KHz.
  */
-void a2300_impl::set_frequency(int idComponent, int isRx, int freqHz)
+double a2300_impl::set_freq(int idComponent, int isRx, double freqHz)
 {
-	// Round to KHz.
-	unsigned freqKHz = (unsigned)( (freqHz + 500) / 1000 );
-
-	managed_send_buffer::sptr mbuff = _dci0_ctrl->GetSendDciMessageBuffer(WAIT_TIME);
-	if( mbuff != NULL )
+	unsigned iFreqKHz = 0;
+	printf("a2300 set_freq(%x,%d,%.2lf)\n", idComponent, isRx, freqHz);
+	if( freqHz > 0.0 )
 	{
-		//Create a DCI formatted message.
-		Dci_Property property;
-		property.idprop = (isRx) ? 0x03 : 0x07;  // RxFreq, TxFreq
-		property.idtype = PT_UINT32;
-		property.value.vUint32 = freqKHz;
-		int len = Dci_TypedProperties_Init(mbuff->cast<void*>(), DCI_MAX_MSGSIZE, idComponent, 1, &property );
+		// Round to KHz.
+		iFreqKHz = (unsigned)( ((unsigned long)freqHz) / 1000L );
 
-		//Send the DCI command.
-		_dci0_ctrl->CommitDciMessageBuffer(mbuff, len, false);
-		mbuff = NULL;  // Release Buffer.
+		managed_send_buffer::sptr mbuff = _dci0_ctrl->GetSendDciMessageBuffer(WAIT_TIME);
+		if( mbuff != NULL )
+		{
+			//Create a DCI formatted message.
+			Dci_Property property;
+			property.idprop = (isRx) ? 0x03 : 0x07;  // RxFreq, TxFreq
+			property.idtype = PT_UINT32;
+			property.value.vUint32 = iFreqKHz;
+			int len = Dci_TypedProperties_Init(mbuff->cast<void*>(), DCI_MAX_MSGSIZE, idComponent, 1, &property );
+
+			//Send the DCI command.
+			_dci0_ctrl->CommitDciMessageBuffer(mbuff, len, false);
+			mbuff = NULL;  // Release Buffer.
+		}
 	}
+	return(iFreqKHz * 1000.0);
 }
 
 /*
@@ -605,100 +997,6 @@ std::string a2300_impl::get_fpga_version()
 	return(std::string("??"));
 }
 
-/*
- * This function is for debugging DCI message response.
- * It demonstrates a method of passing multiple properties in one packet.
- */
-bool a2300_impl::ProcessDciMessage(byte *buff, int msgLen)
-{
-	bool bHandled = false;
-
-	int msgId = Dci_Hdr_MessageId( (Dci_Hdr *)buff);
-	switch(msgId)
-	{
-		case 0x0200: //Handle device identification Messages.
- 		{
- 			Dci_IdentifyDevice* pid = (Dci_IdentifyDevice*) buff;
- 			printf("  ID:\t\t\t%s\n  S/N:\t\t\t%s\n  Model:\t\t%s\n", pid->DeviceId, pid->SerialNumber, pid->Model);
- 			bHandled = true;
- 		}
- 		break;
-
-		case 0x2093:			// Type Data Query Response.
- 		{
- 			Dci_TypedProperties* ptp = (Dci_TypedProperties*) buff;
- 			Dci_Property *pProp = Dci_TypedProperties_GetProperties(ptp);
- 			int iValue;
-
- 			for(int i=0; i< ptp->ctProperties; i++, pProp++)
- 			{
- 				switch(pProp->idprop)
- 				{
- 				case 0x02:			// RxGain.
- 					iValue = (int)pProp[i].value.vByte;
- 					printf("2093 Prop:%d %d\n", pProp->idprop, iValue);
- 					break;
- 				case 0x06:			// TxGain.
- 					iValue = (int)pProp[i].value.vByte;
- 					printf("2093 Prop:%d %d\n", pProp->idprop, iValue);
- 					break;
- 				default:			// Not Implemented or error.
- 					iValue = (int) pProp[i].value.vUint32;
- 					printf("2093 Prop:%d %d\n", pProp->idprop, iValue);
- 					break;
- 				}
- 			}
- 			bHandled = true;
- 		}
- 		break;
-
-		case 0x2101:			// Typed Properties (21,01) for string query.
-		{
-			int iValue = 0x0;
-
-			Dci_TypedProperties* ptp = (Dci_TypedProperties*) buff;
-			Dci_Property *pProp = Dci_TypedProperties_GetProperties(ptp);
-
-			for(int i=0; i< ptp->ctProperties; i++, pProp++)
-			{
-				switch(pProp->idprop)
-				{
-				case(0x1):			// ID
-					iValue = (int) pProp->value.vUint16;
-					printf("  2101 FPGA ID:\t\t%04X\n", iValue);
-					break;
-				case(0x2):			// Version
-					iValue = (int) pProp->value.vUint16;
-					printf("  2101 FPGA Version:\t\t%04X\n", iValue);
-					break;
-				default:
-					printf(" Unknown property ID: %d value:%u\n", pProp->idprop, (unsigned) pProp->value.vUint32);
-					break;
-				}
-			}
-			bHandled = true;
-		}
-		break;
-
-		case Dci_MessageError_Id:
-		{
-			Dci_MessageError* perr = (Dci_MessageError*) buff;
-			printf( "Unrecognized message: category=%02X, id=%02X\n", perr->UnrecognizedCategoryId, perr->UnrecognizedTypeId);
-			bHandled = true;
-		}
-		break;
-
-	 	default: //Handle All other messages.
-		{
-			printf("Unknown message ID: 0x%04X\n", msgId);
-			Dci_Hdr* phdr = (Dci_Hdr *)buff;
-			printf( "Received unhandled message: category=%02X, id=%02X\n", phdr->idCategory, phdr->idType);
-		}
-		break;
-
-	}
-	return(bHandled);
-}
 
 /*
  * Method to Map Frequency (MHz) to A2300 Lookup-Table Entry.
@@ -724,8 +1022,59 @@ int a2300_impl::GetBandwidthIndex( double bwMHz)
 	return(iFound);
 }
 
+void a2300_impl::update_antenna_sel(const size_t which, const std::string &ant)
+{
+	printf("update_antenna_sel(%s)\n", ant.c_str());
+    if (ant != "TX/RX" and ant != "RX2") throw uhd::value_error("a2300: unknown RX antenna option: " + ant);
+    _radio_perifs[which].ant_rx2 = (ant == "RX2");
+    //this->update_atrs();
+}
 
+void a2300_impl::update_enables(void)
+{
+    //extract settings from state variables
+    const bool enb_tx1 = (_radio_perifs.size() > FE1) and bool(_radio_perifs[FE1].tx_streamer.lock());
+    const bool enb_rx1 = (_radio_perifs.size() > FE1) and bool(_radio_perifs[FE1].rx_streamer.lock());
+    const bool enb_tx2 = (_radio_perifs.size() > FE2) and bool(_radio_perifs[FE2].tx_streamer.lock());
+    const bool enb_rx2 = (_radio_perifs.size() > FE2) and bool(_radio_perifs[FE2].rx_streamer.lock());
+    const size_t num_rx = (enb_rx1?1:0) + (enb_rx2?1:0);
+    const size_t num_tx = (enb_tx1?1:0) + (enb_tx2?1:0);
+    const bool mimo = num_rx == 2 or num_tx == 2;
 
+    //setup the active chains in the codec
+    // _codec_ctrl->set_active_chains(enb_tx1, enb_tx2, enb_rx1, enb_rx2);
+    // if ((num_rx + num_tx) == 0) _codec_ctrl->set_active_chains(true, false, true, false); //enable something
+    // this->reset_codec_dcm(); //set_active_chains could cause a clock rate change - reset dcm
 
+    //figure out if mimo is enabled based on new state
+    // CJC Not Used _gpio_state.mimo = (mimo)? 1 : 0;
+    // CJC Not Used update_gpio_state();
+
+    //atrs change based on enables
+    // CJC ?? this->update_atrs();
+}
+
+const uhd::usrp::mboard_eeprom_t & a2300_impl::get_mb_eeprom(void)
+{
+	static const mboard_eeprom_t mb_eeprom;
+    printf("get_mb_eeprom()\n");
+    return mb_eeprom;
+}
+
+void a2300_impl::set_mb_eeprom(const uhd::usrp::mboard_eeprom_t &mb_eeprom)
+{
+    printf("set_mb_eeprom()\n");
+//    mb_eeprom.commit(*_iface, "B200");
+}
+
+/***********************************************************************
+ * Reference time and clock
+ **********************************************************************/
+
+sensor_value_t a2300_impl::get_ref_locked(void)
+{
+    const bool lock = false; // CJC (_local_ctrl->peek32(RB32_CORE_MISC) & 0x1) == 0x1;
+    return sensor_value_t("Ref", lock, "locked", "unlocked");
+}
 
 

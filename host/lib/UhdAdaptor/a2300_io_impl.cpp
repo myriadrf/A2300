@@ -60,11 +60,98 @@ using namespace uhd::transport;
 static const size_t alignment_padding = 512;
 
 /***********************************************************************
+ * update streamer rates
+ **********************************************************************/
+void a2300_impl::update_tick_rate(const double rate)
+{
+    BOOST_FOREACH(radio_perifs_t &perif, _radio_perifs)
+    {
+        boost::shared_ptr<sph::recv_packet_streamer> my_streamer =
+            boost::dynamic_pointer_cast<sph::recv_packet_streamer>(perif.rx_streamer.lock());
+        if (my_streamer) my_streamer->set_tick_rate(rate);
+        //perif.framer->set_tick_rate(_tick_rate);
+    }
+    BOOST_FOREACH(radio_perifs_t &perif, _radio_perifs)
+    {
+        boost::shared_ptr<sph::send_packet_streamer> my_streamer =
+            boost::dynamic_pointer_cast<sph::send_packet_streamer>(perif.tx_streamer.lock());
+        if (my_streamer) my_streamer->set_tick_rate(rate);
+        // CJC perif.deframer->set_tick_rate(_tick_rate);
+    }
+}
+
+void a2300_impl::update_rx_samp_rate(const size_t dspno, const double rate)
+{
+    boost::shared_ptr<sph::recv_packet_streamer> my_streamer =
+        boost::dynamic_pointer_cast<sph::recv_packet_streamer>(_radio_perifs[dspno].rx_streamer.lock());
+    if (not my_streamer) return;
+    my_streamer->set_samp_rate(rate);
+    //CJC const double adj = _radio_perifs[dspno].ddc->get_scaling_adjustment();
+    //CJC my_streamer->set_scale_factor(adj);
+}
+
+void a2300_impl::update_tx_samp_rate(const size_t dspno, const double rate)
+{
+    boost::shared_ptr<sph::send_packet_streamer> my_streamer =
+        boost::dynamic_pointer_cast<sph::send_packet_streamer>(_radio_perifs[dspno].tx_streamer.lock());
+    if (not my_streamer) return;
+    my_streamer->set_samp_rate(rate);
+    //CJC const double adj = _radio_perifs[dspno].duc->get_scaling_adjustment();
+    //CJC my_streamer->set_scale_factor(adj);
+}
+
+
+/***********************************************************************
+ * frontend selection
+ **********************************************************************/
+void a2300_impl::update_rx_subdev_spec(const uhd::usrp::subdev_spec_t &spec)
+{
+    //sanity checking
+    // if (spec.size()) validate_subdev_spec(m_tree, spec, "rx");
+    // UHD_ASSERT_THROW(spec.size() <= _radio_perifs.size());
+
+    if (spec.size() > 0)
+    {
+        UHD_ASSERT_THROW(spec[0].db_name == "A");
+        UHD_ASSERT_THROW(spec[0].sd_name == "A");
+    }
+    if (spec.size() > 1)
+    {
+        //TODO we can support swapping at a later date, only this combo is supported
+        UHD_ASSERT_THROW(spec[1].db_name == "A");
+        UHD_ASSERT_THROW(spec[1].sd_name == "B");
+    }
+
+    this->update_enables();
+}
+
+void a2300_impl::update_tx_subdev_spec(const uhd::usrp::subdev_spec_t &spec)
+{
+    //sanity checking
+    // if (spec.size()) validate_subdev_spec(m_tree, spec, "tx");
+    // UHD_ASSERT_THROW(spec.size() <= _radio_perifs.size());
+
+    if (spec.size() > 0)
+    {
+        UHD_ASSERT_THROW(spec[0].db_name == "A");
+        UHD_ASSERT_THROW(spec[0].sd_name == "A");
+    }
+    if (spec.size() > 1)
+    {
+        //TODO we can support swapping at a later date, only this combo is supported
+        UHD_ASSERT_THROW(spec[1].db_name == "A");
+        UHD_ASSERT_THROW(spec[1].sd_name == "B");
+    }
+
+    this->update_enables();
+}
+
+/***********************************************************************
  * Helper struct to associate an offset with a buffer
  **********************************************************************/
 struct offset_send_buffer{
     offset_send_buffer(void){
-        /* NOP */
+        /* NOP *///CJC
     }
 
     offset_send_buffer(managed_send_buffer::sptr buff, size_t offset = 0):
@@ -442,11 +529,13 @@ rx_streamer::sptr a2300_impl::get_rx_stream(const uhd::stream_args_t &args_){
     stream_args_t args = args_;
 
     //setup defaults for unspecified values
-//    args.otw_format = args.otw_format.empty()? "sc16" : args.otw_format;
-//    args.channels.clear(); //NOTE: we have no choice about the channel mapping
-//    for (size_t ch = 0; ch < _rx_subdev_spec.size(); ch++){
-//        args.channels.push_back(ch);
-//    }
+    args.otw_format = args.otw_format.empty()? "sc16" : args.otw_format;
+	args.channels = args.channels.empty()? std::vector<size_t>(1, 0) : args.channels;
+    // args.channels.clear(); //NOTE: we have no choice about the channel mapping
+    size_t chan = 1; // _rx_subdev_spec.size();
+    for (size_t ch = 0; ch < chan; ch++){
+        args.channels.push_back(ch);
+    }
 
     if (args.otw_format == "sc16")
     {
@@ -469,7 +558,7 @@ rx_streamer::sptr a2300_impl::get_rx_stream(const uhd::stream_args_t &args_){
     }
 
     //calculate packet size
-    const size_t bpp = _data_transport->get_recv_frame_size()/args.channels.size();
+    const size_t bpp = _data_transport->get_recv_frame_size()/1; // CJC /args.channels.size();
     const size_t spp = bpp/convert::get_bytes_per_item(args.otw_format);
 
     //make the new streamer given the samples per packet
@@ -488,7 +577,7 @@ rx_streamer::sptr a2300_impl::get_rx_stream(const uhd::stream_args_t &args_){
     id.input_format = args.otw_format + "_item16_usrp1";
     id.num_inputs = 1;
     id.output_format = args.cpu_format;
-    id.num_outputs = args.channels.size();
+    id.num_outputs = 1; // CJCargs.channels.size();
     my_streamer->set_converter(id);
 
     //special scale factor change for sc8
@@ -499,6 +588,8 @@ rx_streamer::sptr a2300_impl::get_rx_stream(const uhd::stream_args_t &args_){
     _rx_streamer = my_streamer;
 
     //sets all tick and samp rates on this streamer
+    this->update_tick_rate(this->get_tick_rate());
+    m_tree->access<double>(str(boost::format("/mboards/0/rx_dsps/%u/rate/value") % chan)).update();
     //this->update_rates();
 
     return my_streamer;
@@ -513,9 +604,10 @@ tx_streamer::sptr a2300_impl::get_tx_stream(const uhd::stream_args_t &args_){
     //setup defaults for unspecified values
     args.otw_format = args.otw_format.empty()? "sc16" : args.otw_format;
     args.channels.clear(); //NOTE: we have no choice about the channel mapping
-//    for (size_t ch = 0; ch < _tx_subdev_spec.size(); ch++){
-//        args.channels.push_back(ch);
-//    }
+    size_t nChan = 2; // _tx_subdev_spec.size();
+    for (size_t ch = 0; ch < nChan; ch++){
+        args.channels.push_back(ch);
+    }
 
     if (args.otw_format != "sc16"){
         throw uhd::value_error("A2300 TX cannot handle requested wire format: " + args.otw_format);
@@ -524,7 +616,10 @@ tx_streamer::sptr a2300_impl::get_tx_stream(const uhd::stream_args_t &args_){
    // _iface->poke32(FR_TX_FORMAT, bmFR_TX_FORMAT_16_IQ);
 
     //calculate packet size
-    size_t bpp = _data_transport->get_send_frame_size()/args.channels.size();
+    size_t n = args.channels.size();
+    printf("got here 33\n");
+    size_t bpp = _data_transport->get_send_frame_size()/n;
+    printf("got here 35\n");
     bpp -= alignment_padding - 1; //minus the max remainder after LUT commit
     const size_t spp = bpp/convert::get_bytes_per_item(args.otw_format);
 
@@ -549,7 +644,8 @@ tx_streamer::sptr a2300_impl::get_tx_stream(const uhd::stream_args_t &args_){
     my_streamer->set_converter(id);
 
     //save as weak ptr for update access
-    _tx_streamer = my_streamer;
+    my_streamer->set_enable_trailer(false); //TODO not implemented trailer support yet
+    _tx_streamer = my_streamer; //store weak pointer
 
     //sets all tick and samp rates on this streamer
     //this->update_rates();
