@@ -30,11 +30,11 @@
 #include <algorithm>
 #include <cmath>
 
-#include "Dci/DciMsg.h"
-#include "Dci/DciConversation.h"
-#include "Dci/InfrastructureMsgs.h"
-#include "Dci/WcaMsgs.h"
-#include "Dci/StandardMsgs.h"
+#include <Dci/DciMsg.h>
+#include <Dci/DciConversation.h>
+#include <Dci/InfrastructureMsgs.h>
+#include <Dci/WcaMsgs.h>
+#include <Dci/StandardMsgs.h>
 
 #define REG_DSP_RX_FREQ       _dsp_base + 0
 #define REG_DSP_RX_SCALE_IQ   _dsp_base + 4

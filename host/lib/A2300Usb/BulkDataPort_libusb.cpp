@@ -80,6 +80,7 @@ int A2300::BulkDataPort::Read( byte * pdata, int ctBytes, int msecTimeout )
 	int ctRead;
 	int retval = libusb_bulk_transfer(DeviceHandle(), (epidIn() | LIBUSB_ENDPOINT_IN), pdata, ctBytes, &ctRead, msecTimeout);
 
+
 	return (retval == 0) ? ctRead: retval;
 }
 

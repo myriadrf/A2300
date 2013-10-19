@@ -3,7 +3,7 @@
 	<name>UhdAdaptor</name>
 	<comment></comment>
 	<projects>
-		<project>Common</project>
+		<project>common</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

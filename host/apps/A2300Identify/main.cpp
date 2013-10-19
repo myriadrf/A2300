@@ -124,20 +124,32 @@ void WriteHeader( )
 bool WaitForReceivedMsg( A2300::BulkDataPort& port, int msecWait)
 {
 	byte buff[DCI_MAX_MSGSIZE];
-	int ctRead = port.Read( buff, DCI_MAX_MSGSIZE, msecWait);
-	if( ctRead == 0) return false;
 
+	//Read the next DCI message from the port.
+	int ctRead = port.Read( buff, DCI_MAX_MSGSIZE, msecWait);
+	if( ctRead == LIBUSB_ERROR_TIMEOUT)
+	{
+		printf("ERR - Timeout, no response from device.\n");
+		return false;
+	}
+	else
+	{
+		printf("ERR - Port read operation returned error code: %d\n", ctRead);
+		return false;
+	}
+
+	//Process the received DCI message.
 	bool bHandled = false;
 	switch( Dci_Hdr_MessageId( (Dci_Hdr *)buff) )
 	{
-		case 0x0200:		// Handle device identification Messages.
+	case 0x0200:		// Handle device identification Messages.
 		{
 			Dci_IdentifyDevice* pid = (Dci_IdentifyDevice*) buff;
 			printf("  ID:\t\t\t%s\n  S/N:\t\t\t%s\n  Model:\t\t%s\n", pid->DeviceId, pid->SerialNumber, pid->Model);
 			bHandled = true;
 		}
 		break;
-		case 0x2002:		// Handle version Messages.
+	case 0x2002:		// Handle version Messages.
 		{
 			Dci_VersionInfo* pinfo = (Dci_VersionInfo*) buff;
 			printf("  CPU Ver:\t\t%04d.%04d.%04d Rev:%04d\n", pinfo->VerMajor, pinfo->VerMinor, pinfo->VerMaintenance, pinfo->Revision);
@@ -145,7 +157,7 @@ bool WaitForReceivedMsg( A2300::BulkDataPort& port, int msecWait)
 			bHandled = true;
 		}
 		break;
-		case 0x2101:		// Property Response
+	case 0x2101:		// Property Response
 		{
 			Dci_TypedProperties* ptp = (Dci_TypedProperties*) buff;
 			int ctProps = ptp->ctProperties;
@@ -169,13 +181,20 @@ bool WaitForReceivedMsg( A2300::BulkDataPort& port, int msecWait)
 			bHandled = true;
 		}
 		break;
-		case Dci_MessageError_Id:	// Unknown.
+	case Dci_MessageError_Id:	// Unknown.
 		{
 			Dci_MessageError* perr = (Dci_MessageError*) buff;
 			printf( "  Unrecognized message: category=%02X, id=%02X\n", perr->UnrecognizedCategoryId, perr->UnrecognizedTypeId);
 			bHandled = true;
 		}
 		break;
+	case Dci_DebugMsg_Id:
+		{
+			Dci_DebugMsg* pdbg= (Dci_DebugMsg*) buff;
+			const pcstr szLogType[] = { "ERR ", "WARN", "INFO", "DEBUG"};
+			printf( "  %s ( src=%02X): %s\n", szLogType[ pdbg->status], pdbg->src, Dci_DebugMsg_Message(pdbg));
+			break;
+		}
 	default: //Handle All other messages.
 		{
 			Dci_Hdr* phdr = (Dci_Hdr *)buff;

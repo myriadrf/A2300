@@ -40,13 +40,12 @@
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="uhd"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="boost_system"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="boost_program_options"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="boost_thread"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="dl"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="usb-1.0"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="boost_thread-mt"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.877536470" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/../Common/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="/home/chris/Projects/gnuradio/src/uhd/host/build/lib"/>
+									<listOptionValue builtIn="false" value="/home/mike/Projects/uhd/host/build/lib"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1543616113" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -54,16 +53,15 @@
 								</inputType>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.exe.debug.1327269686" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.exe.debug">
-								<option id="gnu.both.asm.option.include.paths.557534092" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths"/>
+								<option id="gnu.both.asm.option.include.paths.557534092" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="/home/mike/Projects/uhd/host/include"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1359174065" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.1950438565.1745934820" name="rx_samples_to_file.cpp" rcbsApplicability="disable" resourcePath="rx_samples_to_file.cpp" toolsToInvoke="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.803083112.292746203">
-						<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.803083112.292746203" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.803083112"/>
-					</fileInfo>
 					<sourceEntries>
-						<entry excluding="rx_samples_to_file.cpp|tx_waveforms.cpp|uhd_usrp_probe.cpp|uhd_A2300_probe_shared.cpp|uhd_A2300_probe.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="rx_samples_to_udp.cpp|rx_samples_to_file.cpp|tx_waveforms.cpp|uhd_A2300_probe_shared.cpp|uhd_A2300_probe.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
