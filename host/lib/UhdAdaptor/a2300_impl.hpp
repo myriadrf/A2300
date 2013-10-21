@@ -62,10 +62,12 @@ public:
 	a2300_impl(const uhd::device_addr_t &);
     virtual ~a2300_impl(void);
 
+    virtual uhd::property_tree::sptr  get_tree(void) const;
+
     //the io interface
-    uhd::rx_streamer::sptr get_rx_stream(const uhd::stream_args_t &args);
-    uhd::tx_streamer::sptr get_tx_stream(const uhd::stream_args_t &args);
-    bool recv_async_msg(uhd::async_metadata_t &, double);
+    virtual  uhd::rx_streamer::sptr get_rx_stream(const uhd::stream_args_t &args);
+    virtual uhd::tx_streamer::sptr get_tx_stream(const uhd::stream_args_t &args);
+    virtual bool recv_async_msg(uhd::async_metadata_t &, double);
 
 private:
     const static int BW_TSIZE = 16;
@@ -83,11 +85,7 @@ private:
     uhd::transport::usb_zero_copy::sptr _idc0_transport;
     uhd::transport::usb_zero_copy::sptr _idc1_transport;
 
-    //device properties interface
-    uhd::property_tree::sptr get_tree(void) const
-    {
-        return m_tree;
-    }
+
 
     void InitializePropertyTree(uhd::property_tree::sptr _tree);
     void InitializePropertyTreeExt(uhd::property_tree::sptr _tree, const uhd::fs_path path, int idComponent, int rxTxFlag);

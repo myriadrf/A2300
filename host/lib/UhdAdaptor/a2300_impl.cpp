@@ -402,6 +402,7 @@ a2300_impl::a2300_impl(const device_addr_t &device_addr) :
 	m_tree->create<dboard_eeprom_t>(mb_path / "dboards" / "A" / "tx_eeprom").set(db_eeprom);
 	m_tree->create<dboard_eeprom_t>(mb_path / "dboards" / "A" / "gdb_eeprom").set(db_eeprom);
 
+
 	////////////////////////////////////////////////////////////////////
 	// do some post-init tasks
 	////////////////////////////////////////////////////////////////////
@@ -471,6 +472,12 @@ a2300_impl::~a2300_impl(void)
 {
     _soft_time_ctrl->stop(); //stops cmd task before proceeding
     _io_impl.reset(); //stops vandal before other stuff gets deconstructed
+}
+
+//device properties interface
+uhd::property_tree::sptr a2300_impl::get_tree(void) const
+{
+    return m_tree;
 }
 
 /*
@@ -747,7 +754,7 @@ int a2300_impl::get_gain(int idComponent, int idCh)
 
 	//Query Identify Device.
 	byte idProperty = (idCh == RFCH_RX) ? 0x02 : 0x06;	// RxGain, TxGain
-	int len = Dci_TypedPropertiesQuery_Init(txbuff->cast<void*>(), DCI_MAX_MSGSIZE, idComponent, 1, &idProperty );
+	int len = Dci_TypedPropertiesQuery_Init(txbuff->cast<void*>(), DCI_MAX_MSGSIZE, idComponent, 1, &idProperty, NULL );
 
 	//Send the DCI command.
 	_dci0_ctrl->CommitDciMessageBuffer(txbuff, len, false);
@@ -806,7 +813,7 @@ double a2300_impl::get_bandwidth(int idComponent, int isRx)
 
 	//Query Identify Device.
 	byte idProperty = isRx ? 0x05 : 0x09;
-	int len = Dci_TypedPropertiesQuery_Init(txbuff->cast<void*>(), DCI_MAX_MSGSIZE, idComponent, 1, &idProperty );
+	int len = Dci_TypedPropertiesQuery_Init(txbuff->cast<void*>(), DCI_MAX_MSGSIZE, idComponent, 1, &idProperty, NULL );
 
 	//Send the DCI command.
 	_dci0_ctrl->CommitDciMessageBuffer(txbuff, len, false);
@@ -878,7 +885,7 @@ double a2300_impl::get_freq(int idComponent, int isRx)
 	{
 		//Query Identify Device.
 		byte idProperty = isRx ? 0x03 : 0x07;	// RxGain, TxGain
-		int len = Dci_TypedPropertiesQuery_Init(txbuff->cast<void*>(), DCI_MAX_MSGSIZE, idComponent, 1, &idProperty );
+		int len = Dci_TypedPropertiesQuery_Init(txbuff->cast<void*>(), DCI_MAX_MSGSIZE, idComponent, 1, &idProperty, NULL );
 
 		//Send the DCI command.
 		_dci0_ctrl->CommitDciMessageBuffer(txbuff, len, false);
@@ -965,7 +972,7 @@ std::string a2300_impl::get_fpga_version()
 
 	// Request FPGA firmware ID & version information.
 	byte ids[] = {0x2};
-	int len = Dci_TypedPropertiesQuery_Init(txbuff->cast<void*>(), DCI_MAX_MSGSIZE, 0x00, 1, ids );
+	int len = Dci_TypedPropertiesQuery_Init(txbuff->cast<void*>(), DCI_MAX_MSGSIZE, 0x00, 1, ids, NULL );
 
 	//Send the DCI command.
 	_dci0_ctrl->CommitDciMessageBuffer(txbuff, len, false);

@@ -78,28 +78,44 @@ Dci_Property* Dci_TypedProperties_GetProperties( Dci_TypedProperties* pmsg)
 
 /**
 * Initializes the TypedPropertiesQuery (21,81) message.  Be sure to provide a buffer large enough to accomodate
-* the length of the data.  Returns the total size of the message.
+* the length of the data.  Ok to pass aPropIds or aTypeIds as NULL, they are not initialized in that case.
+* Length of message is increased by the number of prop ids and type Ids if they are defined.
+* otherwise, message is specified as the size of the TypedPropertiesFixed properties
+* by default. The caller must specify the length of data and type ids.
+* Returns the total size of the message.
 */
 int Dci_TypedPropertiesQuery_Init( void* buff, uint16 sizeBuff, 
-		byte idComponent, byte ctProperties, byte* aPropIds)
+		byte idComponent, byte ctProperties, const byte* aPropIds, const byte* aTypeIds)
 {
 	Dci_TypedPropertiesQuery* pmsg;	
-	int lenData;
 	int lenHdr = sizeof(Dci_TypedPropertiesQuery);
 	int lenMsg;
 
-	lenData = ctProperties ;
+	//Initialize the TypedPrototypQuery message structure.
+	Dci_Hdr_Init( buff, 0x21, 0x81);
 	pmsg	= (Dci_TypedPropertiesQuery*) buff;
-	lenMsg  = lenHdr + lenData;
-	if( lenMsg <= sizeBuff )
+	pmsg->idComponent  = idComponent;
+	pmsg->flags = (aTypeIds != NULL) ? 1 : 0;
+	pmsg->ctProperties = ctProperties;
+
+	lenMsg  = lenHdr;
+
+	//Copy property ids if defined.
+	if( aPropIds != NULL)
+	{
+		lenMsg += ctProperties;
+		if( lenMsg <= sizeBuff )
+			memcpy( (byte*)buff+lenHdr, aPropIds, ctProperties);
+	}
+
+	//Copy typeids if defined.
+	if( aTypeIds != NULL)
 	{	
-		Dci_Hdr_Init( buff, 0x21, 0x81);
-		pmsg->idComponent  = idComponent;
-		pmsg->ctProperties = ctProperties;
-		memcpy( (byte*)buff+lenHdr, aPropIds, lenData);
+		if( lenMsg <= sizeBuff )
+			memcpy( (byte*)(buff + lenHdr + ctProperties), aTypeIds, ctProperties);
 		return(lenMsg);
 	}
-	return(0);
+	return (lenMsg < sizeBuff) ? lenMsg : -1;
 }
 
 
@@ -112,6 +128,20 @@ byte* Dci_TypedPropertiesQuery_GetPropIds( Dci_TypedPropertiesQuery* pmsg)
 	return( (byte*)pmsg + sizeof(Dci_TypedPropertiesQuery) );
 }
 
+/**
+* Returns the propery type ids if specified in the flags.  Otherwise this
+* returns NULL.
+*/
+byte* Dci_TypedPropertiesQuery_GetTypeIds( Dci_TypedPropertiesQuery* pmsg)
+{	
+	if( (pmsg->flags & PQF_TYPEIDS_VALID) == PQF_TYPEIDS_VALID)
+	{
+		byte* ptr = (((byte*) &(pmsg->ctProperties)) + sizeof(uint8) + pmsg->ctProperties);
+		return  ptr;
+	}
+	else
+		return NULL;
+}
 //*****************************************************************************
 //*****************************************************************************
 

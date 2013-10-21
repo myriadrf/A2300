@@ -132,7 +132,7 @@ bool WaitForReceivedMsg( A2300::BulkDataPort& port, int msecWait)
 		printf("ERR - Timeout, no response from device.\n");
 		return false;
 	}
-	else
+	else if( ctRead <= 0)
 	{
 		printf("ERR - Port read operation returned error code: %d\n", ctRead);
 		return false;
@@ -291,8 +291,9 @@ void QueryProperties(A2300::BulkDataPort& port, int usbAddress)
 		}
 
 		// Request FPGA firmware ID & version information.
-		byte ids[] = {0x1,0x2};
-		len = Dci_TypedPropertiesQuery_Init(buff, DCI_MAX_MSGSIZE, 0x00, 2, ids );
+		const byte ids[] = {0x1,0x2};
+		const byte idTypes[] = {0x1,0x1};
+		len = Dci_TypedPropertiesQuery_Init(buff, DCI_MAX_MSGSIZE, 0x00, 2, ids, idTypes );
 		Dci_Conversation_PrepareMessageHdr( &conv, (Dci_Hdr*) buff, false);
 		port.Write( buff, len, 0);
 		if( !WaitForReceivedMsg( port, timeOutMs ) )

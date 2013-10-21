@@ -56,7 +56,7 @@ int Dci_StringProperties_Init( void* buff, uint16 sizeBuff, uint16 flags, pcstr 
 {
 	const int lenHdr = sizeof(Dci_StringProperties);
 	Dci_StringProperties* pmsg = (Dci_StringProperties*) buff;	
-	int lenMsg = lenHdr + strlen(pszMessage);
+	int lenMsg = lenHdr + (int) strlen(pszMessage);
 	// Check for way too small even for header.
 	if( lenMsg <= sizeBuff)
 	{

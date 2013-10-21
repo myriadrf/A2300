@@ -105,7 +105,7 @@ short Dci_Bsf_DecodePayloadType1( byte* pOut, int* pLenOutput,
 	}
 
 	//Save the length.
-	*pLenOutput = ptr - pOut;
+	*pLenOutput = (int) (ptr - pOut);
 
 	return (short) (chksum & 0x7FFF);
 }
@@ -198,7 +198,7 @@ int Dci_Bsf_GetReceivedMessage(
 	if( pfmttr->mode == FME_MsgReady )
 	{
 		encoding = (pfmttr->pBuff[0] >> 2) &0x3;
-		len		 = pfmttr->pNext - pfmttr->pBuff - 2;
+		len		 = (int)(pfmttr->pNext - pfmttr->pBuff) - 2;
 		
 		if( bUnencode && encoding == 1)
 		{
@@ -370,5 +370,5 @@ int Dci_Bsf_ProcessReceivedData( Dci_Bsf *pfmttr,
 	}
 
 	// Return the number of bytes processed.
-	return ptr - pbuff;
+	return (int)(ptr - pbuff);
 }

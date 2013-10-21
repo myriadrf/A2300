@@ -78,6 +78,14 @@ enum Dci_PropertyTypeEnum
 };
 
 /**
+* Defines property query (21,81)flags
+*/
+enum Dci_PropertyQueryFlags
+{
+	PQF_TYPEIDS_VALID =  0x1
+};
+
+/**
 * Structure for typed properties (21,01) messages.
 */
 typedef struct Dci_TypedProperties 
@@ -116,20 +124,31 @@ typedef struct Dci_TypedPropertiesQuery
 {
 	Dci_Hdr	hdr;
 	byte		idComponent;
+	byte		flags;
 	byte		ctProperties;
 } Dci_TypedPropertiesQuery;
 
 /**
 * Initializes the TypedPropertiesQuery (21,81) message.  Be sure to provide a buffer large enough to accomodate
-* the length of the data.  Returns the total size of the message.
+* the length of the data.  Ok to pass aPropIds or aTypeIds as NULL, they are not initialized in that case.
+* Length of message is increased by the number of prop ids and type Ids if they are defined.
+* otherwise, message is specified as the size of the TypedPropertiesFixed properties
+* by default. The caller must specify the length of data and type ids.
+* Returns the total size of the message.
 */
 int Dci_TypedPropertiesQuery_Init( void* buff, uint16 sizeBuff, 
-		byte idComponent, byte ctProperties, byte* aPropIds);
+		byte idComponent, byte ctProperties, const byte* aPropIds, const byte* aTypeIds);
 
 /**
 * Returns the property ids specified in the TypedPropertiesQuery.
 */
 byte* Dci_TypedPropertiesQuery_GetPropIds( Dci_TypedPropertiesQuery* pmsg);
+
+/**
+* Returns the propery type ids if specified in the flags.  Otherwise this
+* returns NULL.
+*/
+byte* Dci_TypedPropertiesQuery_GetTypeIds( Dci_TypedPropertiesQuery* pmsg);
 
 //*****************************************************************************
 //*****************************************************************************
