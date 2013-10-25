@@ -145,6 +145,7 @@ private:
 
     //Property control
     void   send_idle_msg();
+    std::string get_fw_version();
     std::string get_fpga_version();
 
     void   set_bandwidth(int idComponent, int idRxTx, double value);

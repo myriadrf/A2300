@@ -88,6 +88,7 @@
 							<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.34351645" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 						</tool>
 					</fileInfo>
+					<fileInfo id="cdt.managedbuild.config.gnu.so.debug.1203608567.74318933" name="DciProperty.h" rcbsApplicability="disable" resourcePath="DciProperty.h" toolsToInvoke=""/>
 					<fileInfo id="cdt.managedbuild.config.gnu.so.debug.1203608567.1861644569" name="CMakeLists.txt" rcbsApplicability="disable" resourcePath="CMakeLists.txt" toolsToInvoke=""/>
 					<fileInfo id="cdt.managedbuild.config.gnu.so.debug.1203608567.694928303" name="A2300UsbLib.sln" rcbsApplicability="disable" resourcePath="A2300UsbLib.sln" toolsToInvoke=""/>
 					<fileInfo id="cdt.managedbuild.config.gnu.so.debug.1203608567.535804913" name="dsp_core_a2300.hpp" rcbsApplicability="disable" resourcePath="Uhd/usrp/usrp1/dsp_core_a2300.hpp" toolsToInvoke=""/>

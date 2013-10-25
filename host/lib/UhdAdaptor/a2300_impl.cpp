@@ -30,12 +30,7 @@
 
 #include <libusb-1.0/libusb.h>
 
-#include "Dci/DciMsg.h"
-#include "Dci/DciConversation.h"
-#include "Dci/InfrastructureMsgs.h"
-#include "Dci/WcaMsgs.h"
-#include "Dci/StandardMsgs.h"
-
+#include "DciProperty.h"
 #include <boost/format.hpp>
 #include <boost/assign/list_of.hpp>
 #include <boost/filesystem.hpp>
@@ -274,7 +269,8 @@ a2300_impl::a2300_impl(const device_addr_t &device_addr) :
 	m_tree->create<std::string>(mb_path / "name").set(product_name);
 	m_tree->create<std::string>(mb_path / "codename").set("Woodinville");
 
-	m_tree->create<std::string>("/fpga_revision").publish(boost::bind(&a2300_impl::get_fpga_version, this));
+	m_tree->create<std::string>("/fw_version").publish(boost::bind(&a2300_impl::get_fw_version, this));
+	m_tree->create<std::string>("/fpga_version").publish(boost::bind(&a2300_impl::get_fpga_version, this));
 
 	//Create Branch for Sensors.
 	m_tree->create<int>("/sensors"); //phony property so this dir exists
@@ -285,11 +281,12 @@ a2300_impl::a2300_impl(const device_addr_t &device_addr) :
 	// be in the FPGAs buffers doesn't get pulled into the transport
 	// before being cleared.
 	////////////////////////////////////////////////////////////////////
+
 	device_addr_t data_xport_args;
-	data_xport_args["recv_frame_size"] = device_addr.get("recv_frame_size", "512");  // 8192
-	data_xport_args["num_recv_frames"] = device_addr.get("num_recv_frames", "3");    // 16
-	data_xport_args["send_frame_size"] = device_addr.get("send_frame_size", "512");
-	data_xport_args["num_send_frames"] = device_addr.get("num_send_frames", "3");
+	data_xport_args["recv_frame_size"] = device_addr.get("recv_frame_size", "8192");
+	data_xport_args["num_recv_frames"] = device_addr.get("num_recv_frames", "16");
+	data_xport_args["send_frame_size"] = device_addr.get("send_frame_size", "8192");
+	data_xport_args["num_send_frames"] = device_addr.get("num_send_frames", "16");
 
 	//Bind Bulk Data Interfaces to WcaPorts 0 Read and Write.
 	//This is NOT dci.
@@ -748,59 +745,18 @@ void a2300_impl::update_time_source(const std::string &source)
  **********************************************************************/
 int a2300_impl::get_gain(int idComponent, int idCh)
 {
-	// Get work buffer.
-	managed_send_buffer::sptr txbuff =
-			_dci0_ctrl->GetSendDciMessageBuffer(WAIT_TIME);
-
-	//Query Identify Device.
+	DciProperty prop(idComponent, _dci0_ctrl, WAIT_TIME);
 	byte idProperty = (idCh == RFCH_RX) ? 0x02 : 0x06;	// RxGain, TxGain
-	int len = Dci_TypedPropertiesQuery_Init(txbuff->cast<void*>(), DCI_MAX_MSGSIZE, idComponent, 1, &idProperty, NULL );
-
-	//Send the DCI command.
-	_dci0_ctrl->CommitDciMessageBuffer(txbuff, len, false);
-	txbuff = NULL;
-
-	//Process DCI Response.
-	managed_recv_buffer::sptr rxbuff = _dci0_ctrl->ReceiveDciMessage(WAIT_TIME);
-	if( rxbuff != NULL)
-	{
-		//_dci0_ctrl->Test();
-		byte* buff = rxbuff->cast<byte*>();
-		Dci_TypedProperties* ptp = (Dci_TypedProperties*) buff;
-
-		//If we got back what we expected.
-		if( Dci_Hdr_MatchesId( (Dci_Hdr *)buff, Dci_WcaCategoryId, Dci_TypedProperties_Id)
-			&& ptp->idComponent == idComponent)
-		{
-			Dci_Property *pProp = Dci_TypedProperties_GetProperties(ptp);
-			return(pProp->value.vByte * 3);
-		}
-		else
-		{
-			printf( "Gain: received invalid DCI Message.\n");
-		}
-	}
-	return(-1);  // Error.
+	byte val;
+	return (prop.GetProperty<byte, PT_BYTE>(idProperty, val) == 0 ) ? val*3 : -1;
 }
 
 void a2300_impl::set_gain(int idComponent, int idCh, int gainDb)
 {
-	managed_send_buffer::sptr mbuff = _dci0_ctrl->GetSendDciMessageBuffer(WAIT_TIME);
-
-	//Convert "from" db for instrument.
-	int gain = (gainDb + 2) / 3;  // Round to closest step.
-
-	//Create a DCI formatted message.
-	Dci_Property property;
-	property.idprop = (idCh == RFCH_RX) ? 0x02 : 0x06;  // RxGain, TxGain
-	property.idtype = PT_BYTE;
-	property.value.vByte = (byte) gain;
-	int len = Dci_TypedProperties_Init(mbuff->cast<void*>(), DCI_MAX_MSGSIZE, idComponent, 1, &property );
-
-	//Send the DCI command.
-	_dci0_ctrl->CommitDciMessageBuffer(mbuff, len, false);
-	mbuff = NULL;
-
+	DciProperty prop(idComponent, _dci0_ctrl, WAIT_TIME);
+	byte idProperty = (idCh == RFCH_RX) ? 0x02 : 0x06;	// RxGain, TxGain
+	byte val = (gainDb + 2) / 3;  // Round to closest step.
+	prop.SetProperty<byte, PT_BYTE>(idProperty, val);
 }
 
 /*
@@ -809,41 +765,20 @@ void a2300_impl::set_gain(int idComponent, int idCh, int gainDb)
 double a2300_impl::get_bandwidth(int idComponent, int isRx)
 {
 	// Get work buffer.
-	managed_send_buffer::sptr txbuff = _dci0_ctrl->GetSendDciMessageBuffer(WAIT_TIME);
-
-	//Query Identify Device.
+	DciProperty prop(idComponent, _dci0_ctrl, WAIT_TIME);
 	byte idProperty = isRx ? 0x05 : 0x09;
-	int len = Dci_TypedPropertiesQuery_Init(txbuff->cast<void*>(), DCI_MAX_MSGSIZE, idComponent, 1, &idProperty, NULL );
+	byte val;
 
-	//Send the DCI command.
-	_dci0_ctrl->CommitDciMessageBuffer(txbuff, len, false);
-	txbuff = NULL;
 
-	//Process DCI Response.
-	managed_recv_buffer::sptr rxbuff = _dci0_ctrl->ReceiveDciMessage(WAIT_TIME);
-	if( rxbuff != NULL)
+	if(prop.GetProperty<byte, PT_BYTE>(idProperty, val) == 0 )
 	{
-		//_dci0_ctrl->Test();
-		byte* buff = rxbuff->cast<byte*>();
-		Dci_TypedProperties* ptp = (Dci_TypedProperties*) buff;
-
-		//If we got back what we expected.
-		if( Dci_Hdr_MatchesId( (Dci_Hdr *)buff, Dci_WcaCategoryId, Dci_TypedProperties_Id)
-			&& ptp->idComponent == idComponent)
+		int index = (int)val;
+		if( index >= 0 && index < BW_TSIZE)
 		{
-			Dci_Property *pProp = Dci_TypedProperties_GetProperties(ptp);
-			int index = (int)pProp->value.vByte;
-			if( index >= 0 && index < BW_TSIZE)
-			{
-				return (double)(m_bandwidthTableMHz[index] * 1000.0 * 1000.0);
-			}
-		}
-		else
-		{
-			printf( "Bandwidth: received invalid DCI Message.\n");
+			return (double)(m_bandwidthTableMHz[index] * 1000.0 * 1000.0);
 		}
 	}
-	return(-1.0);  // Error.
+	return -1;
 }
 
 /*
@@ -860,89 +795,31 @@ void a2300_impl::set_bandwidth(int idComponent, int isRx, double bwHz)
 		return;
 	}
 
-	managed_send_buffer::sptr mbuff = _dci0_ctrl->GetSendDciMessageBuffer(WAIT_TIME);
-	if( mbuff != NULL )
-	{
-		//Create a DCI formatted message.
-		Dci_Property property;
-		property.idprop = (isRx) ? 0x05 : 0x09;
-		property.idtype = PT_BYTE;
-		property.value.vByte = (byte) iValue;
-
-		int len = Dci_TypedProperties_Init(mbuff->cast<void*>(), DCI_MAX_MSGSIZE, idComponent, 1, &property );
-
-		//Send the DCI command.
-		_dci0_ctrl->CommitDciMessageBuffer(mbuff, len, false);
-		mbuff = NULL;  // Release Buffer.
-	}
+	//Submit the proerty.
+	DciProperty prop(idComponent, _dci0_ctrl, WAIT_TIME);
+	byte idProperty = (isRx) ? 0x05 : 0x09;
+	byte val = (byte) iValue;
+	prop.SetProperty<byte, PT_BYTE>(idProperty, val);
 }
 
 double a2300_impl::get_freq(int idComponent, int isRx)
 {
-	// Get work buffer.
-	managed_send_buffer::sptr txbuff = _dci0_ctrl->GetSendDciMessageBuffer(WAIT_TIME);
-	if( txbuff != NULL)
-	{
-		//Query Identify Device.
-		byte idProperty = isRx ? 0x03 : 0x07;	// RxGain, TxGain
-		int len = Dci_TypedPropertiesQuery_Init(txbuff->cast<void*>(), DCI_MAX_MSGSIZE, idComponent, 1, &idProperty, NULL );
-
-		//Send the DCI command.
-		_dci0_ctrl->CommitDciMessageBuffer(txbuff, len, false);
-		txbuff = NULL;
-
-		//Process DCI Response.
-		managed_recv_buffer::sptr rxbuff = _dci0_ctrl->ReceiveDciMessage(WAIT_TIME);
-		if( rxbuff != NULL)
-		{
-			//_dci0_ctrl->Test();
-			byte* buff = rxbuff->cast<byte*>();
-			Dci_TypedProperties* ptp = (Dci_TypedProperties*) buff;
-
-			//If we got back what we expected.
-			if( Dci_Hdr_MatchesId( (Dci_Hdr *)buff, Dci_WcaCategoryId, Dci_TypedProperties_Id)
-				&& ptp->idComponent == idComponent)
-			{
-				Dci_Property *pProp = Dci_TypedProperties_GetProperties(ptp);
-				return( (double)pProp->value.vUint32 * 1000.0 );   // Return Hz.
-			}
-			else
-			{
-				printf( "Frequency: received invalid DCI Message.\n");
-			}
-		}
-	}
-	return(-1.0);  // Error.
+	DciProperty prop(idComponent, _dci0_ctrl, WAIT_TIME);
+	byte idProperty = isRx ? 0x03 : 0x07;	// RxGain, TxGain
+	uint32 val;
+	return (prop.GetProperty<uint32, PT_UINT32>(idProperty, val) == 0 ) ? val*1000.0 : -1.0;
 }
-
 
 /*
  * Frequency in KHz.
  */
 double a2300_impl::set_freq(int idComponent, int isRx, double freqHz)
 {
-	unsigned iFreqKHz = 0;
-	printf("a2300 set_freq(%x,%d,%.2lf)\n", idComponent, isRx, freqHz);
-	if( freqHz > 0.0 )
-	{
-		// Round to KHz.
-		iFreqKHz = (unsigned)( ((unsigned long)freqHz) / 1000L );
+	DciProperty prop(idComponent, _dci0_ctrl, WAIT_TIME);
+	byte idProperty = (isRx) ? 0x03 : 0x07;  // RxFreq, TxFreq
 
-		managed_send_buffer::sptr mbuff = _dci0_ctrl->GetSendDciMessageBuffer(WAIT_TIME);
-		if( mbuff != NULL )
-		{
-			//Create a DCI formatted message.
-			Dci_Property property;
-			property.idprop = (isRx) ? 0x03 : 0x07;  // RxFreq, TxFreq
-			property.idtype = PT_UINT32;
-			property.value.vUint32 = iFreqKHz;
-			int len = Dci_TypedProperties_Init(mbuff->cast<void*>(), DCI_MAX_MSGSIZE, idComponent, 1, &property );
-
-			//Send the DCI command.
-			_dci0_ctrl->CommitDciMessageBuffer(mbuff, len, false);
-			mbuff = NULL;  // Release Buffer.
-		}
-	}
+	uint32 iFreqKHz = (uint32) (freqHz / 1000.0);
+	prop.SetProperty<uint32, PT_UINT32>(idProperty, iFreqKHz );
 	return(iFreqKHz * 1000.0);
 }
 
@@ -961,47 +838,32 @@ void a2300_impl::send_idle_msg()
 	}
 }
 
+std::string a2300_impl::get_fw_version()
+{
+	//
+	return std::string("TODO");
+
+	//Send DCI Infrastructure Message to get Firmware information.
+}
+
+
 
 /*
  * FPGA Version Query
  */
 std::string a2300_impl::get_fpga_version()
 {
-	// Get work buffer.
-	managed_send_buffer::sptr txbuff = _dci0_ctrl->GetSendDciMessageBuffer(1);
-
-	// Request FPGA firmware ID & version information.
-	byte ids[] = {0x2};
-	int len = Dci_TypedPropertiesQuery_Init(txbuff->cast<void*>(), DCI_MAX_MSGSIZE, 0x00, 1, ids, NULL );
-
-	//Send the DCI command.
-	_dci0_ctrl->CommitDciMessageBuffer(txbuff, len, false);
-	txbuff = NULL;
-
-	//Receive information back.
-	managed_recv_buffer::sptr rxBuff = _dci0_ctrl->ReceiveDciMessage(WAIT_TIME);
-	if( rxBuff != NULL)
+	DciProperty prop(0x00, _dci0_ctrl, WAIT_TIME);
+	uint16 val;
+	if(prop.GetProperty<uint16, PT_UINT16>(0x02, val) == 0 )
 	{
-		//_dci0_ctrl->Test();
-		byte* buff = rxBuff->cast<byte*>();
-		Dci_TypedProperties* ptp = (Dci_TypedProperties*) buff;
+		char buffout[32];
+		sprintf(buffout, "%X", val);		// ASR-2300 uses a Hex format.
+		return std::string(buffout);
 
-		//If we got back what we expected.
-		if( Dci_Hdr_MatchesId( (Dci_Hdr *)buff, Dci_WcaCategoryId, Dci_TypedProperties_Id)
-			&& ptp->idComponent == 0x0)
-		{
-			char buffout[32];
-			Dci_Property *pProp = Dci_TypedProperties_GetProperties(ptp);
-			sprintf(buffout, "%X", pProp->value.vUint16);		// ASR-2300 uses a Hex format.
-			return std::string(buffout);
-		}
-		else
-		{
-			printf( "received invalid DCI Message.\n");
-		}
-		//rxBuff->release();
 	}
-	return(std::string("??"));
+	else
+		return std::string("N/A");
 }
 
 
