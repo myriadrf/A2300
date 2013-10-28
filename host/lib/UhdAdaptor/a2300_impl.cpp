@@ -599,4 +599,24 @@ void a2300_impl::set_mb_eeprom(const uhd::usrp::mboard_eeprom_t &mb_eeprom)
  **********************************************************************/
 
 
+#if 1
+/***********************************************************************
+ * currently undefined methods, required for linking using cmak
+ **********************************************************************/
 
+uhd::meta_range_t a2300_impl::get_gain_range()
+{
+  return uhd::meta_range_t(0, 1, 0.1);
+}
+
+std::vector<std::string> a2300_impl::get_gain_names(const std::string &which)
+{
+  return std::vector<std::string>(1, "PGA");
+}
+
+void a2300_impl::issue_stream_command(int idComponent, int idRxTx, const uhd::stream_cmd_t &stream_cmd)
+{
+  std::cout << "Issuing Stream Command has not been implemented!"
+	    << std::endl;
+}
+#endif
