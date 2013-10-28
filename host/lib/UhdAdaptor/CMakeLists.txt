@@ -1,35 +1,55 @@
-#
-# Copyright 2012-2013 Ettus Research LLC
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
+########################################################################
+# Conditionally configure the A2300 UHD Adapter support
+########################################################################
+LIBUHD_REGISTER_COMPONENT("A2300UhdAdapter" ENABLE_A2300UhdAdapter ON "ENABLE_LIBUHD;ENABLE_USB" OFF)
 
-########################################################################
-# This file included, use CMake directory variables
-########################################################################
+IF(ENABLE_A2300UhdAdapter)
 
-########################################################################
-# Conditionally configure the A2300 support
-########################################################################
-LIBUHD_REGISTER_COMPONENT("A2300" ENABLE_A2300 ON "ENABLE_LIBUHD;ENABLE_USB" OFF)
+include_directories(
+    ${UHD_INCLUDE_DIRS}
+    ${Boost_INCLUDE_DIRS}
+    ${LIBUSB_INCLUDE_DIRS}
+)
 
-IF(ENABLE_A2300)
-    LIBUHD_APPEND_SOURCES(
+list(APPEND A2300UhdAdapter_sources
         ${CMAKE_CURRENT_SOURCE_DIR}/a2300_impl.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/a2300_iface.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/a2300_io_impl.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/a2300_uart.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/DciProperty.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Uhd/usrp/usrp1/soft_time_ctrl.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/Uhd/usrp/usrp1/dsp_core_a2300.cpp
+)
+
+# ${CMAKE_CURRENT_SOURCE_DIR}/a2300_uart.cpp
+
+add_library(A2300UhdAdapter SHARED ${A2300UhdAdapter_sources})
+
+TARGET_LINK_LIBRARIES(A2300UhdAdapter
+	Dci
+	${Boost_LIBRARIES}
+	${LIBUSB_LIBRARIES}
+)
+
+if (ENABLE_UHD_INTERNAL)
+   TARGET_LINK_LIBRARIES(A2300UhdAdapter uhd)
+else()
+   TARGET_LINK_LIBRARIES(A2300UhdAdapter ${UHD_LIBRARIES})
+endif()
+
+set_target_properties(A2300UhdAdapter PROPERTIES
+    VERSION ${${PROJECT_NAME}_VERSION_FULL}
+)
+
+if (UNIX)
+    set_target_properties(A2300UhdAdapter PROPERTIES
+        SOVERSION ${${PROJECT_NAME}_VERSION_PATCH}
     )
-ENDIF(ENABLE_A2300)
+endif()
+
+if (APPLE)
+        set_target_properties(A2300UhdAdapter PROPERTIES
+	        INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib$"
+	)
+endif()
+
+ENDIF()

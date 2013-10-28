@@ -1,0 +1,3 @@
+add_executable(uhd_usrp_A2300_probe uhd_usrp_A2300_probe.cpp)
+
+set(CONSOLE_BINARIES uhd_usrp_A2300_probe)
