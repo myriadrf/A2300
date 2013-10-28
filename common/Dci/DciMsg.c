@@ -43,7 +43,7 @@ byte Dci_Hdr_CategoryId( Dci_Hdr* phdr) { return phdr->idCategory;}
 byte Dci_Hdr_TypeId( Dci_Hdr* phdr) 	  { return phdr->idType;}
 uint16 Dci_Hdr_MessageId( Dci_Hdr* phdr){ return (((uint16)phdr->idCategory) << 8) | phdr->idType;}
 
-bool Dci_Hdr_IsDebugMsg( Dci_Hdr* phdr) {return Dci_Hdr_CategoryId( phdr) == Dci_DebugMsg_Id;}
+bool Dci_Hdr_IsDebugMsg( Dci_Hdr* phdr) {return Dci_Hdr_CategoryId( phdr) == Dci_MsgId_Category( Dci_DebugMsg_Id);}
 bool Dci_Hdr_IsIdleMsg( Dci_Hdr* phdr)  {return phdr->idCategory == 0x01 && phdr->idType == 0;}
  
 bool Dci_Hdr_MatchesId(  Dci_Hdr* phdr, byte idCategory, byte idType)
