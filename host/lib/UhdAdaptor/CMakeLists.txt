@@ -1,7 +1,7 @@
 ########################################################################
 # Conditionally configure the A2300 UHD Adapter support
 ########################################################################
-LIBUHD_REGISTER_COMPONENT("A2300UhdAdapter" ENABLE_A2300UhdAdapter ON "ENABLE_LIBUHD;ENABLE_USB" OFF)
+LIBUHD_REGISTER_COMPONENT("A2300UhdAdapter" ENABLE_A2300UhdAdapter ON "ENABLE_UHD;ENABLE_USB" OFF)
 
 IF(ENABLE_A2300UhdAdapter)
 
@@ -24,17 +24,18 @@ list(APPEND A2300UhdAdapter_sources
 
 add_library(A2300UhdAdapter SHARED ${A2300UhdAdapter_sources})
 
-TARGET_LINK_LIBRARIES(A2300UhdAdapter
-	Dci
-	${Boost_LIBRARIES}
-	${LIBUSB_LIBRARIES}
-)
+TARGET_LINK_LIBRARIES(A2300UhdAdapter Dci)
 
 if (ENABLE_UHD_INTERNAL)
    TARGET_LINK_LIBRARIES(A2300UhdAdapter uhd)
 else()
    TARGET_LINK_LIBRARIES(A2300UhdAdapter ${UHD_LIBRARIES})
 endif()
+
+TARGET_LINK_LIBRARIES(A2300UhdAdapter
+	${Boost_LIBRARIES}
+	${LIBUSB_LIBRARIES}
+)
 
 set_target_properties(A2300UhdAdapter PROPERTIES
     VERSION ${${PROJECT_NAME}_VERSION_FULL}
