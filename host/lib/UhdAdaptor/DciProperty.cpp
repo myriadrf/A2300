@@ -10,6 +10,7 @@
 using namespace uhd;
 using namespace uhd::transport;
 
+DciProperty::~DciProperty() {}
 
 int DciProperty::GetProperty(  Dci_Property& prop, double timeout)
 {
