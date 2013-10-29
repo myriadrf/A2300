@@ -16,13 +16,15 @@ list(APPEND A2300UhdAdapter_sources
         ${CMAKE_CURRENT_SOURCE_DIR}/a2300_iface.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/a2300_io_impl.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/DciProperty.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/DspConfig.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/RadioPeripheral.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/RfConfig.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Uhd/usrp/usrp1/soft_time_ctrl.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/Uhd/usrp/usrp1/dsp_core_a2300.cpp
 )
 
-# ${CMAKE_CURRENT_SOURCE_DIR}/a2300_uart.cpp
+ #       ${CMAKE_CURRENT_SOURCE_DIR}/Uhd/usrp/usrp1/dsp_core_a2300.cpp
 
-add_library(A2300UhdAdapter SHARED ${A2300UhdAdapter_sources})
+ add_library(A2300UhdAdapter SHARED ${A2300UhdAdapter_sources})
 
 TARGET_LINK_LIBRARIES(A2300UhdAdapter Dci)
 
