@@ -37,7 +37,7 @@ public:
 	:	 m_idComponent( idComponent), m_piface(piface ), m_timeout( timeout)
 	{
 	}
-	~DciProperty();
+	~DciProperty() {}
 
 	template< typename T, byte _idType> int GetProperty( byte idProp, T& value)
 	{

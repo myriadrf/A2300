@@ -67,6 +67,8 @@ public:
         const int    idConversation
     );
 
+    virtual void SendIdleMsg(double timeout) = 0;
+
 	/*
 	 * DCI Message Receive.
 	 */

@@ -53,6 +53,22 @@ public:
 		/* NOP */
 	}
 
+
+	/*
+	 * Board Alive Test.
+	 */
+	void SendIdleMsg(double timeout)
+	{
+		// Get work buffer.
+		managed_send_buffer::sptr txBuff = GetSendDciMessageBuffer(timeout);
+		if( txBuff != NULL )
+		{
+			int len = Dci_IdleMsg_Init(txBuff->cast<void *>());
+			CommitDciMessageBuffer(txBuff, len, true);
+			txBuff = NULL;
+		}
+	}
+
 	/*
 	 * DCI Message Receive.
 	 */

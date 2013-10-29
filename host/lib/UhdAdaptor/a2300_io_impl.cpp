@@ -62,89 +62,46 @@ static const size_t alignment_padding = 512;
 /***********************************************************************
  * update streamer rates
  **********************************************************************/
-void a2300_impl::update_tick_rate(const double rate)
-{
-    BOOST_FOREACH(radio_perifs_t &perif, _radio_perifs)
-    {
-        boost::shared_ptr<sph::recv_packet_streamer> my_streamer =
-            boost::dynamic_pointer_cast<sph::recv_packet_streamer>(perif.rx_streamer.lock());
-        if (my_streamer) my_streamer->set_tick_rate(rate);
-        //perif.framer->set_tick_rate(_tick_rate);
-    }
-    BOOST_FOREACH(radio_perifs_t &perif, _radio_perifs)
-    {
-        boost::shared_ptr<sph::send_packet_streamer> my_streamer =
-            boost::dynamic_pointer_cast<sph::send_packet_streamer>(perif.tx_streamer.lock());
-        if (my_streamer) my_streamer->set_tick_rate(rate);
-        // CJC perif.deframer->set_tick_rate(_tick_rate);
-    }
-}
+//void a2300_impl::update_tick_rate(const double rate)
+//{
+//    BOOST_FOREACH(radio_perifs_t &perif, _radio_perifs)
+//    {
+//        boost::shared_ptr<sph::recv_packet_streamer> my_streamer =
+//            boost::dynamic_pointer_cast<sph::recv_packet_streamer>(perif.rx_streamer.lock());
+//        if (my_streamer) my_streamer->set_tick_rate(rate);
+//        //perif.framer->set_tick_rate(_tick_rate);
+//    }
+//    BOOST_FOREACH(radio_perifs_t &perif, _radio_perifs)
+//    {
+//        boost::shared_ptr<sph::send_packet_streamer> my_streamer =
+//            boost::dynamic_pointer_cast<sph::send_packet_streamer>(perif.tx_streamer.lock());
+//        if (my_streamer) my_streamer->set_tick_rate(rate);
+//        // CJC perif.deframer->set_tick_rate(_tick_rate);
+//    }
+//}
+//
+//void a2300_impl::update_rx_samp_rate(const size_t dspno, const double rate)
+//{
+//    boost::shared_ptr<sph::recv_packet_streamer> my_streamer =
+//        boost::dynamic_pointer_cast<sph::recv_packet_streamer>(_radio_perifs[dspno].rx_streamer.lock());
+//    if (not my_streamer) return;
+//    my_streamer->set_samp_rate(rate);
+//    //CJC const double adj = _radio_perifs[dspno].ddc->get_scaling_adjustment();
+//    //CJC my_streamer->set_scale_factor(adj);
+//}
+//
+//void a2300_impl::update_tx_samp_rate(const size_t dspno, const double rate)
+//{
+//    boost::shared_ptr<sph::send_packet_streamer> my_streamer =
+//        boost::dynamic_pointer_cast<sph::send_packet_streamer>(_radio_perifs[dspno].tx_streamer.lock());
+//    if (not my_streamer) return;
+//    my_streamer->set_samp_rate(rate);
+//    //CJC const double adj = _radio_perifs[dspno].duc->get_scaling_adjustment();
+//    //CJC my_streamer->set_scale_factor(adj);
+//}
 
-void a2300_impl::update_rx_samp_rate(const size_t dspno, const double rate)
-{
-    boost::shared_ptr<sph::recv_packet_streamer> my_streamer =
-        boost::dynamic_pointer_cast<sph::recv_packet_streamer>(_radio_perifs[dspno].rx_streamer.lock());
-    if (not my_streamer) return;
-    my_streamer->set_samp_rate(rate);
-    //CJC const double adj = _radio_perifs[dspno].ddc->get_scaling_adjustment();
-    //CJC my_streamer->set_scale_factor(adj);
-}
-
-void a2300_impl::update_tx_samp_rate(const size_t dspno, const double rate)
-{
-    boost::shared_ptr<sph::send_packet_streamer> my_streamer =
-        boost::dynamic_pointer_cast<sph::send_packet_streamer>(_radio_perifs[dspno].tx_streamer.lock());
-    if (not my_streamer) return;
-    my_streamer->set_samp_rate(rate);
-    //CJC const double adj = _radio_perifs[dspno].duc->get_scaling_adjustment();
-    //CJC my_streamer->set_scale_factor(adj);
-}
 
 
-/***********************************************************************
- * frontend selection
- **********************************************************************/
-void a2300_impl::update_rx_subdev_spec(const uhd::usrp::subdev_spec_t &spec)
-{
-    //sanity checking
-    // if (spec.size()) validate_subdev_spec(m_tree, spec, "rx");
-    // UHD_ASSERT_THROW(spec.size() <= _radio_perifs.size());
-
-    if (spec.size() > 0)
-    {
-        UHD_ASSERT_THROW(spec[0].db_name == "A");
-        UHD_ASSERT_THROW(spec[0].sd_name == "A");
-    }
-    if (spec.size() > 1)
-    {
-        //TODO we can support swapping at a later date, only this combo is supported
-        UHD_ASSERT_THROW(spec[1].db_name == "A");
-        UHD_ASSERT_THROW(spec[1].sd_name == "B");
-    }
-
-    this->update_enables();
-}
-
-void a2300_impl::update_tx_subdev_spec(const uhd::usrp::subdev_spec_t &spec)
-{
-    //sanity checking
-    // if (spec.size()) validate_subdev_spec(m_tree, spec, "tx");
-    // UHD_ASSERT_THROW(spec.size() <= _radio_perifs.size());
-
-    if (spec.size() > 0)
-    {
-        UHD_ASSERT_THROW(spec[0].db_name == "A");
-        UHD_ASSERT_THROW(spec[0].sd_name == "A");
-    }
-    if (spec.size() > 1)
-    {
-        //TODO we can support swapping at a later date, only this combo is supported
-        UHD_ASSERT_THROW(spec[1].db_name == "A");
-        UHD_ASSERT_THROW(spec[1].sd_name == "B");
-    }
-
-    this->update_enables();
-}
 
 /***********************************************************************
  * Helper struct to associate an offset with a buffer
@@ -588,7 +545,7 @@ rx_streamer::sptr a2300_impl::get_rx_stream(const uhd::stream_args_t &args_){
     _rx_streamer = my_streamer;
 
     //sets all tick and samp rates on this streamer
-    this->update_tick_rate(this->get_tick_rate());
+    //this->update_tick_rate(this->get_tick_rate());
     m_tree->access<double>(str(boost::format("/mboards/0/rx_dsps/%u/rate/value") % chan)).update();
     //this->update_rates();
 
