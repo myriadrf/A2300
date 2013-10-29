@@ -38,6 +38,8 @@ else()
       NO_CMAKE_FIND_ROOT_PATH
    )
 
+   # FIXME: should really check that a header and some functions work ...
+
    if(UHD_INCLUDE_DIRS)
        set(CMAKE_REQUIRED_INCLUDES ${UHD_INCLUDE_DIRS})
    endif()
