@@ -90,4 +90,47 @@
 #define LSDP_WCAEVENT_ALMOSTEMPTY 		0x0  //WCA Event notification fired when TX buff is almost empty.
 #define LSDP_WCAEVENT_ALMOSTFULL		0x1
 
+
+
+//*******************************************************************
+// 4CH TX/RX Register definitions.
+//*******************************************************************
+
+//The Logic defines four DSP channels identified by a WCA Component ID
+//as follows:
+//
+#define WCACOMP_DSP_DUC0 0x10 // Digital Up Converter
+#define WCACOMP_DSP_DDC0 0x20 // Digital Down Converter
+
+#define WCACOMP_DSP_DUC1 0x30 // Digital Up Converter
+#define WCACOMP_DSP_DDC1 0x40 // Digital Down Converter.
+
+//Each of these DSP channels define the following registers.  The specific
+//register address is the sum of the DSP component ID and the register index below.
+
+// DSP_DDUC_CTRL (WcaWriteByteRegister)
+// DDC / DUC component Control register. Enables and disables component
+// functions
+// No values currently defined.
+#define DSP_DDUC_CTRL	  	0x00
+
+// DSP_DDUC_PHASERATE(WcaWriteDwordRegister)
+// Frequency Translation rate.  This is the phase rotation to apply
+// at the 32 MHz sample rate to change the center frequency of the RF
+// baseband input/output. These values are a 32 bit counter value, where
+// the top 12 bits are used to drive cordic rotations.
+#define DSP_DDUC_PHASERATE 0x01
+
+// DSP_DDUC_SAMPRATE(WcaWriteWordRegister)
+// Decimation / Integration sampling rate conversion .  This is the
+// rate for down/up sampling sampling the 32 MHz sampling rate.  Valid
+// range is 2 to 4096 equivalent to 8 MHz to  3906.25 KHz.
+#define DSP_DDUC_SAMPRATE 0x02
+
+
+
+
+
+
+
 #endif /* A2300InterfaceDefs_H_ */
