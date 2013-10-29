@@ -18,7 +18,7 @@ set(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE} CACHE STRING "")
 # Set the version information here
 
 set(VERSION_MAJOR 0)
-set(VERSION_API_COMPAT    1)
+set(VERSION_API_COMPAT 1)
 set(VERSION_MINOR 0)
 set(VERSION_MAINT git)
 
@@ -28,6 +28,44 @@ set(${PROJECT_NAME}_VERSION_FULL
 set(${PROJECT_NAME}_VERSION_PATCH
 	${VERSION_MAJOR}.${VERSION_API_COMPAT}
 )
+
+##############################################################
+# Install Dirs
+##############################################################
+
+#when the library suffix should be 64 (applies to redhat linux family)
+IF(NOT DEFINED LIB_SUFFIX AND CMAKE_SYSTEM_PROCESSOR MATCHES "64$")
+    SET(LIB_SUFFIX 64)
+ENDIF()
+SET(LIB_SUFFIX ${LIB_SUFFIX} CACHE STRING "lib directory suffix")
+SET(RUNTIME_DIR bin)
+SET(LIBRARY_DIR lib${LIB_SUFFIX})
+SET(INCLUDE_DIR include)
+SET(PKG_DATA_DIR share/uhd)
+IF(NOT DEFINED PKG_LIB_DIR)
+    SET(PKG_LIB_DIR ${LIBRARY_DIR}/uhd)
+ENDIF()
+SET(PKG_DOC_DIR share/doc/uhd)
+SET(PKG_MAN_DIR share/man/man1)
+
+##############################################################
+# Make sure LIBRARY_DIR/pkgconfig is in PKG_CONFIG_PATH
+##############################################################
+
+set(PC_PATH $ENV{PKG_CONFIG_PATH})
+
+find_path(UHD_PC_DIR uhd.pc
+    HINTS ${PC_PATH} ${CMAKE_INSTALL_PREFIX}/${LIBRARY_DIR}/pkgconfig
+    PATHS /usr/lib${LIB_SUFFIX}/pkgconfig /lib${LIB_SUFFIX}/pkgconfig
+    /usr/local/lib${LIB_SUFFIX}/pkgconfig /opt/local/lib${LIB_SUFFIX}/pkgconfig
+)
+
+if(NOT UHD_PC_DIR)
+    message(FATAL_ERROR "uhd.pc required (for now) to compile a2300_uhd.")
+endif()
+
+SET(PC_PATH "${UHD_PC_DIR}:${PC_PATH}")
+set(ENV{PKG_CONFIG_PATH} ${PC_PATH})
 
 ##############################################################
 # Compiler specific setup
