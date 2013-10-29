@@ -78,7 +78,7 @@ void RfConfig::Initialize(int idRf, int idComponent, bool bTx, const uhd::fs_pat
         .subscribe(boost::bind(&RfConfig::SetPgaGain, this, _1))
         .set(12.0);
     tree->create<meta_range_t>(pathRf / "gains/PGA/range")
-        .subscribe(boost::bind( &RfConfig::GetPgaGainRange, this));
+        .publish(boost::bind( &RfConfig::GetPgaGainRange, this));
 
 
     //Configure Bandwidth value and range properties.
