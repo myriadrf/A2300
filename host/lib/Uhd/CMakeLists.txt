@@ -1,12 +1,28 @@
+##############################################################
+# Most of this file is copied directly from the top-level
+# uhd/hosts/CMakeLists.txt file; changes are made to allow for the
+# relative build needed to include UHD within the A2300 project
+##############################################################
+
+##############################################################
+# Setup CMake Modules path
+##############################################################
+ 
+SET(UHD_REL_DIR uhd/host)
 LIST(APPEND CMAKE_MODULE_PATH
 ${CMAKE_CURRENT_SOURCE_DIR}/${UHD_REL_DIR}/cmake/Modules)
 
+##############################################################
+# Include the UHD version directly; it is indirect with the UHD build
+##############################################################
+
 INCLUDE(UHDVersion)
 
-########################################################################
-# Install Dirs
-########################################################################
-#when the library suffix should be 64 (applies to redhat linux family)
+##############################################################
+# Define install directories
+##############################################################
+
+# when the library suffix should be 64 (applies to redhat linux family)
 IF(NOT DEFINED LIB_SUFFIX AND REDHAT AND CMAKE_SYSTEM_PROCESSOR MATCHES "64$")
     SET(LIB_SUFFIX 64)
 ENDIF()
@@ -21,14 +37,16 @@ ENDIF()
 SET(PKG_DOC_DIR share/doc/uhd)
 SET(PKG_MAN_DIR share/man/man1)
 
-########################################################################
-# Local Include Dir
-########################################################################
+##############################################################
+# Local include directory
+##############################################################
+
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/${UHD_REL_DIR}/include)
 
-########################################################################
+##############################################################
 # Optional Compiler Flags
-########################################################################
+##############################################################
+
 INCLUDE(CheckCXXCompilerFlag)
 MACRO(UHD_ADD_OPTIONAL_CXX_COMPILER_FLAG flag have)
     CHECK_CXX_COMPILER_FLAG(${flag} ${have})
@@ -79,9 +97,10 @@ IF(WIN32)
     ADD_DEFINITIONS(-DNOMINMAX) #disables stupidity and enables std::min and std::max
 ENDIF(WIN32)
 
-########################################################################
+##############################################################
 # Setup Boost
-########################################################################
+##############################################################
+
 MESSAGE(STATUS "")
 MESSAGE(STATUS "Configuring Boost C++ Libraries...")
 SET(BOOST_REQUIRED_COMPONENTS
@@ -125,9 +144,10 @@ MESSAGE(STATUS "Boost include directories: ${Boost_INCLUDE_DIRS}")
 MESSAGE(STATUS "Boost library directories: ${Boost_LIBRARY_DIRS}")
 MESSAGE(STATUS "Boost libraries: ${Boost_LIBRARIES}")
 
-########################################################################
+##############################################################
 # Check Python Modules
-########################################################################
+##############################################################
+
 INCLUDE(UHDPython)
 
 PYTHON_CHECK_MODULE(
@@ -142,9 +162,10 @@ PYTHON_CHECK_MODULE(
     HAVE_PYTHON_MODULE_CHEETAH
 )
 
-########################################################################
+##############################################################
 # Create Uninstall Target
-########################################################################
+##############################################################
+
 CONFIGURE_FILE(
     ${CMAKE_CURRENT_SOURCE_DIR}/${UHD_REL_DIR}/cmake/cmake_uninstall.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/${UHD_REL_DIR}/cmake_uninstall.cmake
@@ -154,9 +175,10 @@ ADD_CUSTOM_TARGET(uninstall
     ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/${UHD_REL_DIR}/cmake_uninstall.cmake
 )
 
-########################################################################
+##############################################################
 # Install Package Docs
-########################################################################
+##############################################################
+
 UHD_INSTALL(FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/${UHD_REL_DIR}/README.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/${UHD_REL_DIR}/LICENSE.txt
@@ -165,24 +187,26 @@ UHD_INSTALL(FILES
     COMPONENT readme
 )
 
-########################################################################
+##############################################################
 # Images download directory for utils/uhd_images_downloader.py
-########################################################################
+##############################################################
 
 SET(UHD_IMAGES_MD5SUM "1825066668276cb502ee3db62726bc0e")
 SET(UHD_IMAGES_DOWNLOAD_SRC "http://files.ettus.com/binaries/master_images/archive/uhd-images_003.005.004-139-g56f391ad.zip")
 
-########################################################################
+##############################################################
 # Register top level components
-########################################################################
+##############################################################
+
 LIBUHD_REGISTER_COMPONENT("LibUHD" ENABLE_LIBUHD ON "Boost_FOUND;HAVE_PYTHON_PLAT_MIN_VERSION;HAVE_PYTHON_MODULE_CHEETAH" OFF)
 LIBUHD_REGISTER_COMPONENT("Examples" ENABLE_EXAMPLES ON "ENABLE_LIBUHD" OFF)
 LIBUHD_REGISTER_COMPONENT("Utils" ENABLE_UTILS ON "ENABLE_LIBUHD" OFF)
 LIBUHD_REGISTER_COMPONENT("Tests" ENABLE_TESTS ON "ENABLE_LIBUHD" OFF)
 
-########################################################################
+##############################################################
 # Add the subdirectories
-########################################################################
+##############################################################
+
 ADD_SUBDIRECTORY(${UHD_REL_DIR}/docs)
 
 ADD_SUBDIRECTORY(${UHD_REL_DIR}/include)
@@ -203,9 +227,10 @@ IF(ENABLE_UTILS)
     ADD_SUBDIRECTORY(${UHD_REL_DIR}/utils)
 ENDIF(ENABLE_UTILS)
 
-########################################################################
+##############################################################
 # Create Pkg Config File
-########################################################################
+##############################################################
+
 FOREACH(inc ${Boost_INCLUDE_DIRS})
     LIST(APPEND UHD_PC_CFLAGS "-I${inc}")
 ENDFOREACH(inc)
@@ -238,9 +263,10 @@ IF(NOT LIBUHD_PKG AND NOT UHDHOST_PKG)
     )
 ENDIF(NOT LIBUHD_PKG AND NOT UHDHOST_PKG)
 
-########################################################################
+##############################################################
 # Handle pre-built images
-########################################################################
+##############################################################
+
 IF(DEFINED UHD_IMAGES_DIR AND EXISTS "${UHD_IMAGES_DIR}")
     FILE(GLOB _image_files "${UHD_IMAGES_DIR}/*.*")
     MESSAGE(STATUS "Using images:")
@@ -250,9 +276,10 @@ IF(DEFINED UHD_IMAGES_DIR AND EXISTS "${UHD_IMAGES_DIR}")
     UHD_INSTALL(FILES ${_image_files} DESTINATION ${PKG_DATA_DIR}/images COMPONENT images)
 ENDIF(DEFINED UHD_IMAGES_DIR AND EXISTS "${UHD_IMAGES_DIR}")
 
-########################################################################
+##############################################################
 # Print Summary
-########################################################################
+##############################################################
+
 IF(LIBUHD_PKG)
     MESSAGE(STATUS "")
     SET(PRINT_APPEND " (Debian libuhd003 package configuration)")
@@ -267,3 +294,9 @@ UHD_PRINT_COMPONENT_SUMMARY()
 MESSAGE(STATUS "Building version: ${UHD_VERSION}${PRINT_APPEND}")
 MESSAGE(STATUS "Using install prefix: ${CMAKE_INSTALL_PREFIX}")
 MESSAGE(STATUS "Compatible images can be downloaded from: ${UHD_IMAGES_DOWNLOAD_SRC}")
+
+##############################################################
+# set the variable used by the A2300 build system to enable uhd
+##############################################################
+
+SET(ENABLE_UHD ${ENABLE_LIBUHD})

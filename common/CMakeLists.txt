@@ -2,7 +2,7 @@
 # Add subdirectories
 ##############################################################
 
-add_subdirectory(Dci)
+ADD_SUBDIRECTORY(Dci)
 
 # nothing to do there ... yet
-# add_subdirectory(System)
+# ADD_SUBDIRECTORY(System)

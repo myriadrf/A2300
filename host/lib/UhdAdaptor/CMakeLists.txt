@@ -1,17 +1,24 @@
-########################################################################
-# Conditionally configure the A2300 UHD Adapter support
-########################################################################
-LIBUHD_REGISTER_COMPONENT("A2300UhdAdapter" ENABLE_A2300UhdAdapter ON "ENABLE_UHD;ENABLE_USB" OFF)
+##############################################################
+# Register A2300 UHD Adapter: to be ON by default, and depend on UHD
+# and USB being enabled.
+##############################################################
+
+LIBUHD_REGISTER_COMPONENT("A2300 Uhd Adapter"
+    ENABLE_A2300UhdAdapter ON "ENABLE_UHD;ENABLE_USB" OFF)
+
+##############################################################
+# Conditionally configure the A2300 UHD Adapter
+##############################################################
 
 IF(ENABLE_A2300UhdAdapter)
 
-include_directories(
-    ${UHD_INCLUDE_DIRS}
-    ${Boost_INCLUDE_DIRS}
-    ${LIBUSB_INCLUDE_DIRS}
-)
+    INCLUDE_DIRECTORIES(
+        ${UHD_INCLUDE_DIRS}
+        ${Boost_INCLUDE_DIRS}
+        ${LIBUSB_INCLUDE_DIRS}
+    )
 
-list(APPEND A2300UhdAdapter_sources
+    SET(A2300UhdAdapter_sources
         ${CMAKE_CURRENT_SOURCE_DIR}/a2300_impl.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/a2300_iface.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/a2300_io_impl.cpp
@@ -20,39 +27,53 @@ list(APPEND A2300UhdAdapter_sources
         ${CMAKE_CURRENT_SOURCE_DIR}/RadioPeripheral.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/RfConfig.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Uhd/usrp/usrp1/soft_time_ctrl.cpp
-)
-
- #       ${CMAKE_CURRENT_SOURCE_DIR}/Uhd/usrp/usrp1/dsp_core_a2300.cpp
-
- add_library(A2300UhdAdapter SHARED ${A2300UhdAdapter_sources})
-
-TARGET_LINK_LIBRARIES(A2300UhdAdapter Dci)
-
-if (ENABLE_UHD_INTERNAL)
-   TARGET_LINK_LIBRARIES(A2300UhdAdapter uhd)
-else()
-   TARGET_LINK_LIBRARIES(A2300UhdAdapter ${UHD_LIBRARIES})
-endif()
-
-TARGET_LINK_LIBRARIES(A2300UhdAdapter
-	${Boost_LIBRARIES}
-	${LIBUSB_LIBRARIES}
-)
-
-set_target_properties(A2300UhdAdapter PROPERTIES
-    VERSION ${${PROJECT_NAME}_VERSION_FULL}
-)
-
-if (UNIX)
-    set_target_properties(A2300UhdAdapter PROPERTIES
-        SOVERSION ${${PROJECT_NAME}_VERSION_PATCH}
     )
-endif()
 
-if (APPLE)
-        set_target_properties(A2300UhdAdapter PROPERTIES
-	        INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib$"
-	)
-endif()
+    ADD_LIBRARY(A2300UhdAdapter SHARED ${A2300UhdAdapter_sources})
 
-ENDIF()
+    # Dci is always internal to this build, so include it first
+
+    TARGET_LINK_LIBRARIES(A2300UhdAdapter Dci)
+
+    # UHD may or not be internal to this build, so include it after all
+    # other internal libraries
+
+    IF(ENABLE_UHD_INTERNAL)
+        TARGET_LINK_LIBRARIES(A2300UhdAdapter uhd)
+    ELSE()
+        TARGET_LINK_LIBRARIES(A2300UhdAdapter ${UHD_LIBRARIES})
+    ENDIF()
+
+    # all external libraries go last
+
+    IF(NOT ENABLE_UHD_INTERNAL)
+
+        # have to explicitly link to boost and libusb only if UHD is
+        # not an internal build.
+
+        TARGET_LINK_LIBRARIES(A2300UhdAdapter
+            ${Boost_LIBRARIES}
+            ${LIBUSB_LIBRARIES}
+        )
+
+    ENDIF()
+
+    # set library properties
+
+    SET_TARGET_PROPERTIES(A2300UhdAdapter PROPERTIES
+        VERSION ${${PROJECT_NAME}_VERSION_FULL}
+    )
+
+    IF(UNIX)
+        SET_TARGET_PROPERTIES(A2300UhdAdapter PROPERTIES
+            SOVERSION ${${PROJECT_NAME}_VERSION_PATCH}
+        )
+    ENDIF(UNIX)
+
+    IF(APPLE)
+        SET_TARGET_PROPERTIES(A2300UhdAdapter PROPERTIES
+            INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib$"
+        )
+    ENDIF(APPLE)
+
+ENDIF(ENABLE_A2300UhdAdapter)
