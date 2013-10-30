@@ -54,32 +54,54 @@ SET(UHD_MODULE_DIR need_to_define_this)
 # Compiler specific setup
 ##############################################################
 
+INCLUDE(CheckCCompilerFlag)
 INCLUDE(CheckCXXCompilerFlag)
-MACRO(ADD_OPTIONAL_CXX_COMPILER_FLAG flag)
-    CHECK_CXX_COMPILER_FLAG(${flag} HAVE_DUMMY)
-    IF(HAVE_DUMMY)
-        ADD_DEFINITIONS(${flag})
+MACRO(ADD_OPTIONAL_COMPILER_FLAG type flag)
+    
+    IF(${type} STREQUAL "ALL")
+
+        CHECK_C_COMPILER_FLAG(${flag} HAVE_DUMMY)
+        IF(HAVE_DUMMY)
+            ADD_DEFINITIONS(${flag})
+        ENDIF()
+        UNSET(HAVE_DUMMY)
+
+    ELSEIF(${type} STREQUAL "C")
+
+        CHECK_C_COMPILER_FLAG(${flag} HAVE_DUMMY)
+        IF(HAVE_DUMMY)
+            SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${flag}")
+        ENDIF()
+        UNSET(HAVE_DUMMY)
+
+    ELSEIF(${type} STREQUAL "CXX")
+
+        CHECK_CXX_COMPILER_FLAG(${flag} HAVE_DUMMY)
+        IF(HAVE_DUMMY)
+            SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}")
+        ENDIF()
+        UNSET(HAVE_DUMMY)
+
     ENDIF()
-    UNSET(HAVE_DUMMY)
-ENDMACRO(ADD_OPTIONAL_CXX_COMPILER_FLAG)
+ENDMACRO(ADD_OPTIONAL_COMPILER_FLAG)
 
 # http://gcc.gnu.org/wiki/Visibility
-ADD_OPTIONAL_CXX_COMPILER_FLAG(-fvisibility=hidden)
-ADD_OPTIONAL_CXX_COMPILER_FLAG(-fvisibility-inlines-hidden)
+ADD_OPTIONAL_COMPILER_FLAG(CXX -fvisibility=hidden)
+ADD_OPTIONAL_COMPILER_FLAG(CXX -fvisibility-inlines-hidden)
 
 IF(CMAKE_COMPILER_IS_GNUCXX AND
     NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-    ADD_OPTIONAL_CXX_COMPILER_FLAG(-s)
+    ADD_OPTIONAL_COMPILER_FLAG(CXX -s)
 ENDIF()
 
-ADD_OPTIONAL_CXX_COMPILER_FLAG(-Wall)
-ADD_OPTIONAL_CXX_COMPILER_FLAG(-Wextra)
-ADD_OPTIONAL_CXX_COMPILER_FLAG(-Wsign-compare)
-ADD_OPTIONAL_CXX_COMPILER_FLAG(-Wconversion)
-ADD_OPTIONAL_CXX_COMPILER_FLAG(-pedantic)
-ADD_OPTIONAL_CXX_COMPILER_FLAG(-ansi)
+ADD_OPTIONAL_COMPILER_FLAG(ALL -Wall)
+ADD_OPTIONAL_COMPILER_FLAG(ALL -Wextra)
+ADD_OPTIONAL_COMPILER_FLAG(ALL -Wsign-compare)
+#ADD_OPTIONAL_COMPILER_FLAG(ALL -Wconversion)
+#ADD_OPTIONAL_COMPILER_FLAG(ALL -pedantic)
+#ADD_OPTIONAL_COMPILER_FLAG(ALL -ansi)
 
-ADD_OPTIONAL_CXX_COMPILER_FLAG(-fPIC)
+ADD_OPTIONAL_COMPILER_FLAG(ALL -fPIC)
 
 ##############################################################
 # Setup common include paths within this build
