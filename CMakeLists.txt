@@ -82,9 +82,10 @@ MACRO(ADD_OPTIONAL_COMPILER_FLAG type flag)
 ENDMACRO(ADD_OPTIONAL_COMPILER_FLAG)
 
 IF(CMAKE_COMPILER_IS_GNUCXX)
+    # We are not using this yet in A2300; see the url for more info.
     # http://gcc.gnu.org/wiki/Visibility
-    ADD_OPTIONAL_COMPILER_FLAG(CXX -fvisibility=hidden)
-    ADD_OPTIONAL_COMPILER_FLAG(CXX -fvisibility-inlines-hidden)
+    # ADD_OPTIONAL_COMPILER_FLAG(CXX -fvisibility=hidden)
+    # ADD_OPTIONAL_COMPILER_FLAG(CXX -fvisibility-inlines-hidden)
 ENDIF()
 
 IF(CMAKE_COMPILER_IS_GNUCXX AND
