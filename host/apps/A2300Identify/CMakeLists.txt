@@ -6,8 +6,6 @@ INCLUDE_DIRECTORIES(
     ${UHD_INCLUDE_DIRS}
 )
 
-#    ${Boost_INCLUDE_DIRS}
-
 ##############################################################
 # Register "A2300 Identify App" component,
 # dependends on A2300USB; on by default.

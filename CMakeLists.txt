@@ -81,9 +81,11 @@ MACRO(ADD_OPTIONAL_COMPILER_FLAG type flag)
     ENDIF()
 ENDMACRO(ADD_OPTIONAL_COMPILER_FLAG)
 
-# http://gcc.gnu.org/wiki/Visibility
-ADD_OPTIONAL_COMPILER_FLAG(CXX -fvisibility=hidden)
-ADD_OPTIONAL_COMPILER_FLAG(CXX -fvisibility-inlines-hidden)
+IF(CMAKE_COMPILER_IS_GNUCXX)
+    # http://gcc.gnu.org/wiki/Visibility
+    ADD_OPTIONAL_COMPILER_FLAG(CXX -fvisibility=hidden)
+    ADD_OPTIONAL_COMPILER_FLAG(CXX -fvisibility-inlines-hidden)
+ENDIF()
 
 IF(CMAKE_COMPILER_IS_GNUCXX AND
     NOT CMAKE_BUILD_TYPE STREQUAL "Debug")

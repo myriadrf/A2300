@@ -43,6 +43,7 @@ IF(LIBUSB_FOUND)
     STRING(SUBSTRING "${LIBUSB_INCLUDE_DIRS}" ${NDXp1} -1 LIBUSB_INC_DIR)
     STRING(SUBSTRING "${LIBUSB_INCLUDE_DIRS}" 0 ${NDX} LIBUSB_INCLUDE_DIRS)
     UNSET(NDX)
+    UNSET(NDXp1)
 
     # macro used for compiling
 
@@ -54,7 +55,7 @@ ENDIF()
 # Add subdirectories
 ##############################################################
 
+ADD_SUBDIRECTORY(include)
 ADD_SUBDIRECTORY(lib)
 ADD_SUBDIRECTORY(gnuradio)
 ADD_SUBDIRECTORY(apps)
-ADD_SUBDIRECTORY(include)
