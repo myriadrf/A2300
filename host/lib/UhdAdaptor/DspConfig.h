@@ -23,23 +23,31 @@
 #include <uhd/types/ranges.hpp>
 #include <uhd/property_tree.hpp>
 #include "a2300_iface.hpp"
+#include <boost/function.hpp>
+#include <boost/bind.hpp>
 
 /**
  * Class implements DSP Configuration helpers for Asr2300.
  */
-class DspConfig {
+class DspConfig
+{
+	typedef boost::function<void(const double )> UpdateSampleRateHandler;
+
 public:
+
+
 	DspConfig();
 	~DspConfig();
 
     void Initialize( int idDsp,
     		int idComponent, const uhd::fs_path pathroot,
-    		A2300_iface::sptr dci_ctrl, uhd::property_tree::sptr tree);
+    		A2300_iface::sptr dci_ctrl, UpdateSampleRateHandler handler, uhd::property_tree::sptr tree);
 
+    void IssueStreamCommand( const uhd::stream_cmd_t &stream_cmd);
     void ConfigStreaming(const uhd::stream_args_t &stream_args);
-
-protected:
     void SetTickRate(const double rate);
+protected:
+
     void SetLinkRate(const double rate);
 
     double SetHostRate(const double rate);
@@ -55,7 +63,6 @@ protected:
 
 
 
-    void IssueStreamCommand( const uhd::stream_cmd_t &stream_cmd);
 
     void UpdateScalar( void);
 
@@ -65,6 +72,7 @@ private:
     bool   m_bContinuousStreaming;
     double m_tick_rate, m_link_rate;
     double m_scaling_adjustment, m_dsp_extra_scaling, m_host_extra_scaling;
+    UpdateSampleRateHandler  m_handlerSampleRate;
     A2300_iface::sptr  m_dci_ctrl;
 };
 

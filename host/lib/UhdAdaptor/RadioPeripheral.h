@@ -54,12 +54,30 @@ public:
     		A2300_iface::sptr dci_ctrl,
     		uhd::property_tree::sptr tree);
 
+	DspConfig&  Ddc() { return m_cfgDspRx;}
+	DspConfig&  Duc() { return m_cfgDspTx;}
+	RfConfig&   Rx()  { return m_cfgRfRx;}
+	RfConfig&   Tx()  { return m_cfgRfTx;}
+
+	void TxStreamer( boost::weak_ptr<uhd::tx_streamer> txstreamer){ tx_streamer = txstreamer;}
 	boost::weak_ptr<uhd::tx_streamer> TxStreamer(){ return tx_streamer;}
+
+	void RxStreamer( boost::weak_ptr<uhd::rx_streamer> rxstreamer){ rx_streamer = rxstreamer;}
 	boost::weak_ptr<uhd::rx_streamer> RxStreamer(){ return rx_streamer;}
+
+	void SetTickRate( double rate);
+protected:
+	void OnUpdateTxSampleRate( const double rate);
+	void OnUpdateRxSampleRate( const double rate);
+
+
+
 private:
 	InitArgs  						  m_args;
+
 	boost::weak_ptr<uhd::rx_streamer> rx_streamer;
     boost::weak_ptr<uhd::tx_streamer> tx_streamer;
+
     uhd::property_tree::sptr 		  m_tree;
     DspConfig						  m_cfgDspRx;
     DspConfig						  m_cfgDspTx;

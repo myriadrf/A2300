@@ -57,6 +57,7 @@ DspConfig::~DspConfig() {
 
 void DspConfig::Initialize(
 		int idDsp, int idComponent, const fs_path pathroot, A2300_iface::sptr dci_ctrl,
+		UpdateSampleRateHandler handler,
 		uhd::property_tree::sptr tree)
 {
 	//Save the relevant information.
@@ -64,7 +65,7 @@ void DspConfig::Initialize(
 	m_idDsp 		= idDsp;
 	m_idComponent 	= idComponent;
 	m_dci_ctrl  	= dci_ctrl;
-
+	m_handlerSampleRate = handler;
 
     //Set up Tree.
     //tree->access<double>(pathroot / "tick_rate")
@@ -147,17 +148,17 @@ double DspConfig::SetHostRate(const double rate){
 
     //determine which half-band filters are activated
     int hb0 = 0, hb1 = 0;
-    if (decim % 2 == 0){
-        hb0 = 1;
-        decim /= 2;
-    }
-    if (decim % 2 == 0){
-        hb1 = 1;
-        decim /= 2;
-    }
+//    if (decim % 2 == 0){
+//        hb0 = 1;
+//        decim /= 2;
+//    }
+//    if (decim % 2 == 0){
+//        hb1 = 1;
+//        decim /= 2;
+//    }
 
     //Set the decimation rate and turn on halband filters on ASR-2300.
-
+    //UHD_MSG(status) << boost::format( "DDUC Decimation = %d") % decim;
     // DSP_DDUC_SAMPRATE(WcaWriteWordRegister)
     // Decimation / Integration sampling rate conversion .  This is the
     // rate for down/up sampling sampling the 32 MHz sampling rate.  Valid
@@ -166,20 +167,24 @@ double DspConfig::SetHostRate(const double rate){
 	prop.SetProperty<int32, PT_INT32>(DSP_DDUC_SAMPRATE,  decim );
 
 
-	if (decim > 1 and hb0 == 0 and hb1 == 0)
-    {
-        UHD_MSG(warning) << boost::format(
-            "The requested decimation is odd; the user should expect CIC rolloff.\n"
-            "Select an even decimation to ensure that a halfband filter is enabled.\n"
-            "decimation = dsp_rate/samp_rate -> %d = (%f MHz)/(%f MHz)\n"
-        ) % decim_rate % (m_tick_rate/1e6) % (rate/1e6);
-    }
+
+
+//	if (decim > 1 and hb0 == 0 and hb1 == 0)
+//    {
+//        UHD_MSG(warning) << boost::format(
+//            "The requested decimation is odd; the user should expect CIC rolloff.\n"
+//            "Select an even decimation to ensure that a halfband filter is enabled.\n"
+//            "decimation = dsp_rate/samp_rate -> %d = (%f MHz)/(%f MHz)\n"
+//        ) % decim_rate % (m_tick_rate/1e6) % (rate/1e6);
+//    }
 
     // Calculate CIC decimation (i.e., without halfband decimators)
     // Calculate closest multiplier constant to reverse gain absent scale multipliers
     const double rate_pow = std::pow(double(decim & 0xff), 4);
     m_scaling_adjustment = std::pow(2, ceil_log2(rate_pow))/(1.65*rate_pow);
     this->UpdateScalar();
+
+    m_handlerSampleRate( rate);
 
     return m_tick_rate/decim_rate;
 }

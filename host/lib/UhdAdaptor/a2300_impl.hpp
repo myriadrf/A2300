@@ -71,6 +71,10 @@ public:
     virtual uhd::tx_streamer::sptr get_tx_stream(const uhd::stream_args_t &args);
     virtual bool recv_async_msg(uhd::async_metadata_t &, double);
 
+    double get_tick_rate();
+    double set_tick_rate(const double rate);
+    void   update_tick_rate(const double rate);
+
 private:
     bool _is_setup;
     uhd::property_tree::sptr m_tree;
@@ -91,10 +95,6 @@ private:
 
     double _master_clock_rate; //clock rate shadow
 
-    //weak pointers to streamers for update purposes
-    boost::weak_ptr<uhd::rx_streamer> _rx_streamer;
-    boost::weak_ptr<uhd::tx_streamer> _tx_streamer;
-
     const uhd::usrp::mboard_eeprom_t & get_mb_eeprom(void);
     void set_mb_eeprom(const uhd::usrp::mboard_eeprom_t &);
     void update_rx_subdev_spec(const uhd::usrp::subdev_spec_t &);
@@ -109,13 +109,14 @@ private:
     //Create RF Peripherials
     std::vector<RadioPeripheral> m_perifs;
 
+    void handle_overflow(const size_t i);
+
     //handle io stuff
     UHD_PIMPL_DECL(io_impl) _io_impl;
     void io_init(void);
     void rx_stream_on_off(bool);
     void tx_stream_on_off(bool);
     void handle_overrun(size_t);
-
     void vandal_conquest_loop(void);
 
     //Property control

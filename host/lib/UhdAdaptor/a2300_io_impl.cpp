@@ -57,51 +57,8 @@ using namespace uhd;
 using namespace uhd::usrp;
 using namespace uhd::transport;
 
+
 static const size_t alignment_padding = 512;
-
-/***********************************************************************
- * update streamer rates
- **********************************************************************/
-//void a2300_impl::update_tick_rate(const double rate)
-//{
-//    BOOST_FOREACH(radio_perifs_t &perif, _radio_perifs)
-//    {
-//        boost::shared_ptr<sph::recv_packet_streamer> my_streamer =
-//            boost::dynamic_pointer_cast<sph::recv_packet_streamer>(perif.rx_streamer.lock());
-//        if (my_streamer) my_streamer->set_tick_rate(rate);
-//        //perif.framer->set_tick_rate(_tick_rate);
-//    }
-//    BOOST_FOREACH(radio_perifs_t &perif, _radio_perifs)
-//    {
-//        boost::shared_ptr<sph::send_packet_streamer> my_streamer =
-//            boost::dynamic_pointer_cast<sph::send_packet_streamer>(perif.tx_streamer.lock());
-//        if (my_streamer) my_streamer->set_tick_rate(rate);
-//        // CJC perif.deframer->set_tick_rate(_tick_rate);
-//    }
-//}
-//
-//void a2300_impl::update_rx_samp_rate(const size_t dspno, const double rate)
-//{
-//    boost::shared_ptr<sph::recv_packet_streamer> my_streamer =
-//        boost::dynamic_pointer_cast<sph::recv_packet_streamer>(_radio_perifs[dspno].rx_streamer.lock());
-//    if (not my_streamer) return;
-//    my_streamer->set_samp_rate(rate);
-//    //CJC const double adj = _radio_perifs[dspno].ddc->get_scaling_adjustment();
-//    //CJC my_streamer->set_scale_factor(adj);
-//}
-//
-//void a2300_impl::update_tx_samp_rate(const size_t dspno, const double rate)
-//{
-//    boost::shared_ptr<sph::send_packet_streamer> my_streamer =
-//        boost::dynamic_pointer_cast<sph::send_packet_streamer>(_radio_perifs[dspno].tx_streamer.lock());
-//    if (not my_streamer) return;
-//    my_streamer->set_samp_rate(rate);
-//    //CJC const double adj = _radio_perifs[dspno].duc->get_scaling_adjustment();
-//    //CJC my_streamer->set_scale_factor(adj);
-//}
-
-
-
 
 /***********************************************************************
  * Helper struct to associate an offset with a buffer
@@ -188,7 +145,8 @@ static void usrp1_bs_vrt_unpacker(
 /***********************************************************************
  * IO Implementation Details
  **********************************************************************/
-struct a2300_impl::io_impl{
+struct a2300_impl::io_impl
+{
     io_impl(zero_copy_if::sptr data_transport):
         data_transport(data_transport),
         curr_buff(offset_send_buffer(data_transport->get_send_buff())),
@@ -482,75 +440,122 @@ bool a2300_impl::recv_async_msg(
 /***********************************************************************
  * Receive streamer
  **********************************************************************/
-rx_streamer::sptr a2300_impl::get_rx_stream(const uhd::stream_args_t &args_){
+rx_streamer::sptr a2300_impl::get_rx_stream(const uhd::stream_args_t &args_)
+{
     stream_args_t args = args_;
 
     //setup defaults for unspecified values
-    args.otw_format = args.otw_format.empty()? "sc16" : args.otw_format;
-	args.channels = args.channels.empty()? std::vector<size_t>(1, 0) : args.channels;
-    // args.channels.clear(); //NOTE: we have no choice about the channel mapping
-    size_t chan = 1; // _rx_subdev_spec.size();
-    for (size_t ch = 0; ch < chan; ch++){
-        args.channels.push_back(ch);
-    }
+    if (args.otw_format.empty()) args.otw_format = "sc16";
+    args.channels = args.channels.empty()? std::vector<size_t>(1, 0) : args.channels;
 
-    if (args.otw_format == "sc16")
+    boost::shared_ptr<a2300_recv_packet_streamer> my_streamer;
+    for (size_t stream_i = 0; stream_i < args.channels.size(); stream_i++)
     {
-//        _iface->poke32(FR_RX_FORMAT, 0
-//            | (0 << bmFR_RX_FORMAT_SHIFT_SHIFT)
-//            | (16 << bmFR_RX_FORMAT_WIDTH_SHIFT)
-//            | bmFR_RX_FORMAT_WANT_Q
-//        );
+        const size_t chan = args.channels[stream_i];
+        RadioPeripheral &perif = m_perifs[chan];
+
+        if (args.otw_format != "sc16")
+        {
+            throw uhd::value_error("A2300 RX cannot handle requested wire format: " + args.otw_format);
+        }
+
+        //calculate packet size
+//        static const size_t hdr_size = 0
+//            + vrt::max_if_hdr_words32*sizeof(boost::uint32_t)
+//            + sizeof(vrt::if_packet_info_t().tlr) //forced to have trailer
+//            - sizeof(vrt::if_packet_info_t().cid) //no class id ever used
+//            - sizeof(vrt::if_packet_info_t().tsi) //no int time ever used
+//        ;
+
+        //calculate packet size
+        const size_t bpp = _data_transport->get_recv_frame_size(); //-hdr_size;
+        const size_t bpi = convert::get_bytes_per_item(args.otw_format);
+        size_t spp = unsigned(args.args.cast<double>("spp", bpp/bpi));
+        spp = std::min<size_t>(2000, spp); //magic maximum for framing at full rate
+
+
+        //make the new streamer given the samples per packet
+        if (not my_streamer)
+        {
+        	my_streamer = boost::make_shared<a2300_recv_packet_streamer>(spp, _soft_time_ctrl);
+
+        	//init some streamer stuff
+            my_streamer->resize(args.channels.size());
+            my_streamer->set_tick_rate(_master_clock_rate);
+            my_streamer->set_vrt_unpacker(&usrp1_bs_vrt_unpacker);
+            my_streamer->set_xport_chan_get_buff(0, boost::bind(
+                &uhd::transport::zero_copy_if::get_recv_buff, _io_impl->data_transport, _1
+            ));
+        }
+
+        //set the converter
+        uhd::convert::id_type id;
+        id.input_format = args.otw_format + "_item16_usrp1";
+        id.num_inputs = 1;
+        id.output_format = args.cpu_format;
+        id.num_outputs = args.channels.size();
+        my_streamer->set_converter(id);
+
+
+//        perif.framer->clear();
+//        perif.framer->set_nsamps_per_packet(spp);
+//        perif.framer->set_sid(sid);
+//        perif.framer->setup(args);
+        perif.Ddc().ConfigStreaming(args);
+        //_demux->realloc_sid(sid);
+
+//        my_streamer->set_xport_chan_get_buff(stream_i, boost::bind(
+//           &recv_packet_demuxer_3000::get_recv_buff, _demux, sid, _1
+//        ), true /*flush*/);
+        my_streamer->set_overflow_handler(stream_i, boost::bind(
+            &a2300_impl::handle_overflow, this, chan
+        ));
+        my_streamer->set_issue_stream_cmd(stream_i, boost::bind(
+            &DspConfig::IssueStreamCommand, &(perif.Ddc()), _1
+        ));
+        perif.RxStreamer(my_streamer); //store weak pointer
+
+        //sets all tick and samp rates on this streamer
+        this->update_tick_rate(this->get_tick_rate());
+        m_tree->access<double>(str(boost::format("/mboards/0/rx_dsps/%u/rate/value") % chan)).update();
     }
-//    else if (args.otw_format == "sc8"){
-//        _iface->poke32(FR_RX_FORMAT, 0
-//            | (8 << bmFR_RX_FORMAT_SHIFT_SHIFT)
-//            | (8 << bmFR_RX_FORMAT_WIDTH_SHIFT)
-//            | bmFR_RX_FORMAT_WANT_Q
-//        );
-//    }
-    else
-    {
-        throw uhd::value_error("A2300 RX cannot handle requested wire format: " + args.otw_format);
-    }
-
-    //calculate packet size
-    const size_t bpp = _data_transport->get_recv_frame_size()/1; // CJC /args.channels.size();
-    const size_t spp = bpp/convert::get_bytes_per_item(args.otw_format);
-
-    //make the new streamer given the samples per packet
-    boost::shared_ptr<a2300_recv_packet_streamer> my_streamer =
-        boost::make_shared<a2300_recv_packet_streamer>(spp, _soft_time_ctrl);
-
-    //init some streamer stuff
-    my_streamer->set_tick_rate(_master_clock_rate);
-    my_streamer->set_vrt_unpacker(&usrp1_bs_vrt_unpacker);
-    my_streamer->set_xport_chan_get_buff(0, boost::bind(
-        &uhd::transport::zero_copy_if::get_recv_buff, _io_impl->data_transport, _1
-    ));
-
-    //set the converter
-    uhd::convert::id_type id;
-    id.input_format = args.otw_format + "_item16_usrp1";
-    id.num_inputs = 1;
-    id.output_format = args.cpu_format;
-    id.num_outputs = 1; // CJCargs.channels.size();
-    my_streamer->set_converter(id);
-
-    //special scale factor change for sc8
-    if (args.otw_format == "sc8")
-        my_streamer->set_scale_factor(1.0/127);
-
-    //save as weak ptr for update access
-    _rx_streamer = my_streamer;
-
-    //sets all tick and samp rates on this streamer
-    //this->update_tick_rate(this->get_tick_rate());
-    m_tree->access<double>(str(boost::format("/mboards/0/rx_dsps/%u/rate/value") % chan)).update();
-    //this->update_rates();
+    this->update_enables();
 
     return my_streamer;
 }
+
+void a2300_impl::handle_overflow(const size_t i)
+{
+    boost::shared_ptr<sph::recv_packet_streamer> my_streamer =
+            boost::dynamic_pointer_cast<sph::recv_packet_streamer>(m_perifs[i].RxStreamer().lock());
+
+    if (my_streamer->get_num_channels() == 2) //MIMO time
+    {
+        //find out if we were in continuous mode before stopping
+        const bool in_continuous_streaming_mode = true;//_m_perifs[i].framer->in_continuous_streaming_mode();
+        //stop streaming
+        my_streamer->issue_stream_cmd(stream_cmd_t::STREAM_MODE_STOP_CONTINUOUS);
+
+        //flush demux
+        //_demux->realloc_sid(B200_RX_DATA0_SID);
+        //_demux->realloc_sid(B200_RX_DATA1_SID);
+        //flush actual transport
+        while (_data_transport->get_recv_buff(0.001)){}
+
+        //restart streaming
+        if (in_continuous_streaming_mode)
+        {
+            stream_cmd_t stream_cmd(stream_cmd_t::STREAM_MODE_START_CONTINUOUS);
+            stream_cmd.stream_now = false;
+//TODO            stream_cmd.time_spec = m_perifs[i].time64->get_time_now() + time_spec_t(0.01);
+            my_streamer->issue_stream_cmd(stream_cmd);
+        }
+    }
+    //else
+    //	m_perifs[i].framer->handle_overflow();
+}
+
+
 
 /***********************************************************************
  * Transmit streamer
@@ -559,53 +564,119 @@ tx_streamer::sptr a2300_impl::get_tx_stream(const uhd::stream_args_t &args_){
     stream_args_t args = args_;
 
     //setup defaults for unspecified values
-    args.otw_format = args.otw_format.empty()? "sc16" : args.otw_format;
-    args.channels.clear(); //NOTE: we have no choice about the channel mapping
-    size_t nChan = 2; // _tx_subdev_spec.size();
-    for (size_t ch = 0; ch < nChan; ch++){
-        args.channels.push_back(ch);
+     if (args.otw_format.empty()) args.otw_format = "sc16";
+     args.channels = args.channels.empty()? std::vector<size_t>(1, 0) : args.channels;
+
+     boost::shared_ptr<a2300_send_packet_streamer> my_streamer;
+     for (size_t stream_i = 0; stream_i < args.channels.size(); stream_i++)
+     {
+         const size_t chan = args.channels[stream_i];
+         RadioPeripheral &perif = m_perifs[chan];
+         if (args.otw_format != "sc16"){
+             throw uhd::value_error("A2300 TX cannot handle requested wire format: " + args.otw_format);
+         }
+
+         //calculate packet size
+         static const size_t hdr_size = 0;
+//             + vrt::max_if_hdr_words32*sizeof(boost::uint32_t)
+//             //+ sizeof(vrt::if_packet_info_t().tlr) //forced to have trailer
+//             - sizeof(vrt::if_packet_info_t().cid) //no class id ever used
+//             - sizeof(vrt::if_packet_info_t().tsi) //no int time ever used
+         ;
+
+         static const size_t bpp = _data_transport->get_send_frame_size() - hdr_size;
+         const size_t spp = bpp/convert::get_bytes_per_item(args.otw_format);
+
+         //make the new streamer given the samples per packet
+         if (not my_streamer)
+		 {
+             boost::function<void(bool)> tx_fcn = boost::bind(&a2300_impl::tx_stream_on_off, this, _1);
+             my_streamer = boost::make_shared<a2300_send_packet_streamer>(spp, _soft_time_ctrl, tx_fcn);
+
+             my_streamer->resize(args.channels.size());
+
+             //init some streamer stuff
+             my_streamer->set_tick_rate(_master_clock_rate);
+             my_streamer->set_vrt_packer(&usrp1_bs_vrt_packer);
+             my_streamer->set_xport_chan_get_buff(stream_i, boost::bind(
+                 &zero_copy_if::get_send_buff, _data_transport, _1 ));
+
+             my_streamer->set_enable_trailer(false); //TODO not implemented trailer support yet
+
+		 }
+
+         //set the converter
+         uhd::convert::id_type id;
+         id.input_format = args.cpu_format;
+         id.num_inputs = args.channels.size();
+         id.output_format = args.otw_format + "_item16_usrp1";
+         id.num_outputs = 1;
+         my_streamer->set_converter(id);
+
+         //TODO setup framed data.
+         //perif.deframer->clear();
+         //perif.deframer->setup(args);
+         //perif.duc->setup(args);
+
+         //TODO
+         //my_streamer->set_async_receiver(boost::bind(
+         //    &async_md_type::pop_with_timed_wait, _async_task_data->async_md, _1, _2
+         //));
+         //my_streamer->set_xport_chan_sid(stream_i, true, chan?B200_TX_DATA1_SID:B200_TX_DATA0_SID);
+         perif.TxStreamer(my_streamer); //store weak pointer
+
+         //sets all tick and samp rates on this streamer
+         this->update_tick_rate(this->get_tick_rate());
+         m_tree->access<double>(str(boost::format("/mboards/0/tx_dsps/%u/rate/value") % chan)).update();
+     }
+     this->update_enables();
+
+     return my_streamer;
+}
+
+/***********************************************************************
+ * Tick rate comprehension below
+ **********************************************************************/
+double a2300_impl::set_tick_rate(const double rate)
+{
+//    UHD_MSG(status) << "Asking for clock rate " << rate/1e6 << " MHz\n";
+//    _tick_rate = _codec_ctrl->set_clock_rate(rate);
+//    UHD_MSG(status) << "Actually got clock rate " << _tick_rate/1e6 << " MHz\n";
+//
+//    //reset after clock rate change
+//    this->reset_codec_dcm();
+
+
+	//BOOST_FOREACH(RadioPeripheral &perif, m_perifs)
+    //{
+    	//TODO Update
+        //perif.time64->set_tick_rate(_tick_rate);
+        //perif.time64->self_test();
+    //}
+    return rate;
+}
+
+double a2300_impl::get_tick_rate()
+{
+	return A2300_MAX_SAMPLING_FREQ;
+}
+
+void a2300_impl::update_tick_rate(const double rate)
+{
+    BOOST_FOREACH(RadioPeripheral &perif, m_perifs)
+    {
+        boost::shared_ptr<a2300_recv_packet_streamer> my_streamer =
+            boost::dynamic_pointer_cast<a2300_recv_packet_streamer>(perif.RxStreamer().lock());
+        if (my_streamer) my_streamer->set_tick_rate(rate);
+
+        perif.SetTickRate( rate);
     }
+    BOOST_FOREACH(RadioPeripheral &perif, m_perifs)
+    {
+        boost::shared_ptr<a2300_recv_packet_streamer> my_streamer =
+            boost::dynamic_pointer_cast<a2300_recv_packet_streamer>(perif.TxStreamer().lock());
+        if (my_streamer) my_streamer->set_tick_rate(rate);
 
-    if (args.otw_format != "sc16"){
-        throw uhd::value_error("A2300 TX cannot handle requested wire format: " + args.otw_format);
+        perif.SetTickRate( rate);
     }
-
-   // _iface->poke32(FR_TX_FORMAT, bmFR_TX_FORMAT_16_IQ);
-
-    //calculate packet size
-    size_t n = args.channels.size();
-    printf("got here 33\n");
-    size_t bpp = _data_transport->get_send_frame_size()/n;
-    printf("got here 35\n");
-    bpp -= alignment_padding - 1; //minus the max remainder after LUT commit
-    const size_t spp = bpp/convert::get_bytes_per_item(args.otw_format);
-
-    //make the new streamer given the samples per packet
-    boost::function<void(bool)> tx_fcn = boost::bind(&a2300_impl::tx_stream_on_off, this, _1);
-    boost::shared_ptr<a2300_send_packet_streamer> my_streamer =
-        boost::make_shared<a2300_send_packet_streamer>(spp, _soft_time_ctrl, tx_fcn);
-
-    //init some streamer stuff
-    my_streamer->set_tick_rate(_master_clock_rate);
-    my_streamer->set_vrt_packer(&usrp1_bs_vrt_packer);
-    my_streamer->set_xport_chan_get_buff(0, boost::bind(
-        &a2300_impl::io_impl::get_send_buff, _io_impl.get(), _1
-    ));
-
-    //set the converter
-    uhd::convert::id_type id;
-    id.input_format = args.cpu_format;
-    id.num_inputs = args.channels.size();
-    id.output_format = args.otw_format + "_item16_usrp1";
-    id.num_outputs = 1;
-    my_streamer->set_converter(id);
-
-    //save as weak ptr for update access
-    my_streamer->set_enable_trailer(false); //TODO not implemented trailer support yet
-    _tx_streamer = my_streamer; //store weak pointer
-
-    //sets all tick and samp rates on this streamer
-    //this->update_rates();
-
-    return my_streamer;
 }
