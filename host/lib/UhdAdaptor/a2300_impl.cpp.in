@@ -29,7 +29,7 @@
 #include <uhd/usrp/dboard_eeprom.hpp>
 #include <uhd/types/ranges.hpp>
 
-#include <libusb-1.0/libusb.h>
+#include <@LIBUSB_INC_DIR@/libusb.h>
 
 #include "DciProperty.h"
 #include <boost/format.hpp>

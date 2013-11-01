@@ -1,6 +1,9 @@
 ##############################################################
-# Add subdirectories
+# Install information
 ##############################################################
 
-ADD_SUBDIRECTORY(Dci)
-ADD_SUBDIRECTORY(System)
+UHD_INSTALL(FILES
+    DataTypes.h
+    DESTINATION ${INCLUDE_DIR}/A2300/System
+    COMPONENT headers
+)

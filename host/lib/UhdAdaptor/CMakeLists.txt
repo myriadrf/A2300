@@ -13,13 +13,24 @@ LIBUHD_REGISTER_COMPONENT("A2300 Uhd Adapter"
 IF(ENABLE_A2300UhdAdapter)
 
     INCLUDE_DIRECTORIES(
+        ${CMAKE_CURRENT_BINARY_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}
         ${UHD_INCLUDE_DIRS}
         ${Boost_INCLUDE_DIRS}
         ${LIBUSB_INCLUDE_DIRS}
     )
 
+##############################################################
+# Replace LIBUSB_INC_DIR in this files
+##############################################################
+
+    CONFIGURE_FILE(
+        ${CMAKE_CURRENT_SOURCE_DIR}/a2300_impl.cpp.in
+        ${CMAKE_CURRENT_BINARY_DIR}/a2300_impl.cpp
+    @ONLY)
+
     SET(A2300UhdAdapter_sources
-        ${CMAKE_CURRENT_SOURCE_DIR}/a2300_impl.cpp
+        ${CMAKE_CURRENT_BINARY_DIR}/a2300_impl.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/a2300_iface.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/a2300_io_impl.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/DciProperty.cpp

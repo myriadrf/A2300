@@ -7,7 +7,7 @@
 ##############################################################
 # Setup CMake Modules path
 ##############################################################
- 
+
 SET(UHD_REL_DIR uhd/host)
 LIST(APPEND CMAKE_MODULE_PATH
 ${CMAKE_CURRENT_SOURCE_DIR}/${UHD_REL_DIR}/cmake/Modules)
@@ -160,31 +160,6 @@ PYTHON_CHECK_MODULE(
     "Cheetah templates 2.0.0 or greater"
     "Cheetah" "Cheetah.Version >= '2.0.0'"
     HAVE_PYTHON_MODULE_CHEETAH
-)
-
-##############################################################
-# Create Uninstall Target
-##############################################################
-
-CONFIGURE_FILE(
-    ${CMAKE_CURRENT_SOURCE_DIR}/${UHD_REL_DIR}/cmake/cmake_uninstall.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/${UHD_REL_DIR}/cmake_uninstall.cmake
-@ONLY)
-
-ADD_CUSTOM_TARGET(uninstall
-    ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/${UHD_REL_DIR}/cmake_uninstall.cmake
-)
-
-##############################################################
-# Install Package Docs
-##############################################################
-
-UHD_INSTALL(FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/${UHD_REL_DIR}/README.txt
-    ${CMAKE_CURRENT_SOURCE_DIR}/${UHD_REL_DIR}/LICENSE.txt
-    ${CMAKE_CURRENT_SOURCE_DIR}/${UHD_REL_DIR}/AUTHORS.txt
-    DESTINATION ${PKG_DOC_DIR}
-    COMPONENT readme
 )
 
 ##############################################################

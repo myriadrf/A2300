@@ -4,7 +4,6 @@
 # pre-installed version as found by pkg-config
 ##############################################################
 
-INCLUDE(UHDComponent)
 LIBUHD_REGISTER_COMPONENT("UHD Internal"
     ENABLE_UHD_INTERNAL OFF "" OFF)
 
@@ -39,13 +38,6 @@ ELSE()
 
     SET(PC_PATH "${UHD_PC_DIR}:${PC_PATH}")
     SET(ENV{PKG_CONFIG_PATH} ${PC_PATH})
-
-    # Find libusb1; fail if not found
-
-    FIND_PACKAGE(USB1 REQUIRED)
-
-    LIBUHD_REGISTER_COMPONENT("USB" ENABLE_USB ON
-        "LIBUSB_FOUND" OFF)
 
     # Find UHD using pkg-config
 
@@ -106,5 +98,5 @@ ENDIF()
 # Add subdirectories
 ##############################################################
 
+ADD_SUBDIRECTORY(A2300Usb)
 ADD_SUBDIRECTORY(UhdAdaptor)
-#ADD_SUBDIRECTORY(A2300Usb)

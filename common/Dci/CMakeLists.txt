@@ -13,3 +13,19 @@ SET(Dci_sources
 )
 
 ADD_LIBRARY(Dci STATIC ${Dci_sources})
+
+##############################################################
+# Install information
+##############################################################
+
+UHD_INSTALL(FILES
+    BinaryStreamFormatter.h
+    DciConversation.h
+    DciMsg.h
+    DciUtils.h
+    InfrastructureMsgs.h
+    StandardMsgs.h
+    WcaMsgs.h
+    DESTINATION ${INCLUDE_DIR}/A2300/Dci
+    COMPONENT headers
+)

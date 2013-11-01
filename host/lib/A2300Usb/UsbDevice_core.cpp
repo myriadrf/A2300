@@ -25,7 +25,7 @@ A2300::UsbDevice::UsbDevice(int vid, int pid):
    ,m_usbAddress(A2300_ADDR_UNDEF)
 #if defined(WIN32)
 	,m_pCypressDevice(NULL)
-#elif defined(LINUX)
+#elif defined(HAVE_LIBUSB)
     ,m_pDevHandle(0)
 	,m_pCtx(NULL)
 #endif
@@ -38,7 +38,7 @@ A2300::UsbDevice::~UsbDevice()
 #if defined(WIN32)
 	if( m_pCypressDevice )
 		delete m_pCypressDevice;
-#elif defined(LINUX)
+#elif defined(HAVE_LIBUSB)
 #endif
 }
 

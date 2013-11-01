@@ -1,11 +1,4 @@
 ##############################################################
-# Setup CMake Module Path to include local files
-##############################################################
-
-LIST(APPEND CMAKE_MODULE_PATH
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
-
-##############################################################
 # Find boost
 ##############################################################
 
@@ -30,8 +23,38 @@ ENDIF()
 ADD_DEFINITIONS(-DBOOST_ALL_DYN_LINK)
 
 ##############################################################
+# Find libusb
+##############################################################
+
+# Find libusb1
+
+FIND_PACKAGE(USB1)
+
+LIBUHD_REGISTER_COMPONENT("USB" ENABLE_USB ON
+    "LIBUSB_FOUND" OFF)
+
+IF(LIBUSB_FOUND)
+
+    # we use <@LIBUSB_INC_DIR@/libusb.h>, so have to define both header include
+    # path and LIBUSB_INC_DIR, taking from LIBUSB_INCLUDE_DIRS
+
+    STRING(FIND "${LIBUSB_INCLUDE_DIRS}" "/" NDX REVERSE)
+    MATH(EXPR NDXp1 "${NDX}+1")
+    STRING(SUBSTRING "${LIBUSB_INCLUDE_DIRS}" ${NDXp1} -1 LIBUSB_INC_DIR)
+    STRING(SUBSTRING "${LIBUSB_INCLUDE_DIRS}" 0 ${NDX} LIBUSB_INCLUDE_DIRS)
+    UNSET(NDX)
+
+    # macro used for compiling
+
+    ADD_DEFINITIONS(-DHAVE_LIBUSB)
+
+ENDIF()
+
+##############################################################
 # Add subdirectories
 ##############################################################
 
 ADD_SUBDIRECTORY(lib)
 ADD_SUBDIRECTORY(gnuradio)
+ADD_SUBDIRECTORY(apps)
+ADD_SUBDIRECTORY(include)

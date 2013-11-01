@@ -15,6 +15,7 @@
 
 #include <A2300/UsbDevice.h>
 #include <stdexcept>
+#include <string>
 #include <vector>
 
 /**

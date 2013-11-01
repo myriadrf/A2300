@@ -41,14 +41,10 @@ SET(LIB_SUFFIX ${LIB_SUFFIX} CACHE STRING "lib directory suffix")
 SET(RUNTIME_DIR bin)
 SET(LIBRARY_DIR lib${LIB_SUFFIX})
 SET(INCLUDE_DIR include)
-SET(PKG_DATA_DIR share/uhd)
-IF(NOT DEFINED PKG_LIB_DIR)
-    SET(PKG_LIB_DIR ${LIBRARY_DIR}/uhd)
-ENDIF()
-SET(PKG_DOC_DIR share/doc/uhd)
+SET(PKG_DATA_DIR share/A2300)
+SET(PKG_DOC_DIR share/doc/A2300)
 SET(PKG_MAN_DIR share/man/man1)
-# UHD MODULE DIR
-SET(UHD_MODULE_DIR need_to_define_this)
+SET(UHD_MODULE_DIR ${PKG_DATA_DIR}/modules)
 
 ##############################################################
 # Compiler specific setup
@@ -109,7 +105,41 @@ ADD_OPTIONAL_COMPILER_FLAG(ALL -fPIC)
 
 INCLUDE_DIRECTORIES(
     ${CMAKE_CURRENT_SOURCE_DIR}/host/include
+    ${CMAKE_CURRENT_BINARY_DIR}/host/include
     ${CMAKE_CURRENT_SOURCE_DIR}/common
+)
+
+##############################################################
+# Setup CMake Module Path to include local files
+##############################################################
+
+LIST(APPEND CMAKE_MODULE_PATH
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
+
+##############################################################
+# Create Uninstall Target
+##############################################################
+
+CONFIGURE_FILE(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
+@ONLY)
+
+ADD_CUSTOM_TARGET(uninstall
+    ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
+)
+
+##############################################################
+# Install Package Docs
+##############################################################
+
+INCLUDE(UHDComponent)
+UHD_INSTALL(FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/README.txt
+    ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt
+    ${CMAKE_CURRENT_SOURCE_DIR}/AUTHORS.txt
+    DESTINATION ${PKG_DOC_DIR}
+    COMPONENT readme
 )
 
 ##############################################################

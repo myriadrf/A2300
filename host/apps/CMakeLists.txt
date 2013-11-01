@@ -2,5 +2,4 @@
 # Add subdirectories
 ##############################################################
 
-ADD_SUBDIRECTORY(Dci)
-ADD_SUBDIRECTORY(System)
+ADD_SUBDIRECTORY(A2300Identify)

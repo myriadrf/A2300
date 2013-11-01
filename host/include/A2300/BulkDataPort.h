@@ -66,7 +66,7 @@ namespace A2300
 		// reference to UsbDriver instance mostly used for logging
 		uint				m_timeout;
 
-#ifdef LINUX		
+#if defined(HAVE_LIBUSB)
 		/**
 		*  Checks if the given end point is available
 		*/
