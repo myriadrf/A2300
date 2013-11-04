@@ -218,7 +218,7 @@ void   RfConfig::SetPathProfile( const std::string& sPathId)
     {
     	if( m_bIsTx )
     	{
-    		idPath = (sPathId[0] == 'W')? 0 : 1;
+    		idPath = (sPathId[0] == 'W')? 1 : 0;
     	}
     	else
     	{

@@ -218,9 +218,9 @@ a2300_impl::a2300_impl(const device_addr_t &device_addr)
     // Create DCI Interface Objects to access ASR-2300 Command and Control Interface
     ////////////////////////////////////////////////////////////////////
     device_addr_t dci0_hints( device_addr);
-    dci0_hints["num_recv_frames"] = "3";   // CJC 16 ?
+    dci0_hints["num_recv_frames"] = "3";
     dci0_hints["recv_frame_size"] = "512";
-    dci0_hints["num_send_frames"] = "2";   // CJC 16 ?
+    dci0_hints["num_send_frames"] = "2";
     dci0_hints["send_frame_size"] = "512";
     _idc0_transport = usb_zero_copy::make(
     		handle,     // identifier
@@ -241,6 +241,7 @@ a2300_impl::a2300_impl(const device_addr_t &device_addr)
     ////////////////////////////////////////////////////////////////////
     // Initialize the properties tree
     ////////////////////////////////////////////////////////////////////
+
     ////////////////////////////////////////////////////////////////////
     // create user-defined control objects
     ////////////////////////////////////////////////////////////////////
@@ -279,7 +280,7 @@ a2300_impl::a2300_impl(const device_addr_t &device_addr)
 			0, 0x08,       // OUT interface, endpoint
 			data_xport_args);  // param hints
 
-	while (_data_transport->get_recv_buff(0.0)){} //flush ctrl xport
+	while (_data_transport->get_recv_buff(0.0)){} //flush data xport
 
 	_soft_time_ctrl = soft_time_ctrl::make(
 			boost::bind(&a2300_impl::rx_stream_on_off, this, _1));
@@ -301,11 +302,11 @@ a2300_impl::a2300_impl(const device_addr_t &device_addr)
 	////////////////////////////////////////////////////////////////////
 	// create clock control objects
 	////////////////////////////////////////////////////////////////////
-	m_tree->create<double>(mb_path / "tick_rate");
-	   //.coerce(boost::bind(&a2300_impl::set_tick_rate, this, _1))
-	   //.subscribe(boost::bind(&a2300_impl::set_tick_rate, this, _1))
-	   //.publish(boost::bind(&a2300_impl::get_tick_rate, this));
-	   //.subscribe(boost::bind(&a2300_impl::update_tick_rate, this, _1));
+	m_tree->create<double>(mb_path / "tick_rate")
+	   .coerce(boost::bind(&a2300_impl::set_tick_rate, this, _1))
+	   .subscribe(boost::bind(&a2300_impl::set_tick_rate, this, _1))
+	   .publish(boost::bind(&a2300_impl::get_tick_rate, this))
+	   .subscribe(boost::bind(&a2300_impl::update_tick_rate, this, _1));
 	m_tree->create<time_spec_t>(mb_path / "time" / "cmd");
 
 	////////////////////////////////////////////////////////////////////
@@ -480,6 +481,10 @@ void * a2300_impl::FindDevice(uint16 vid, uint16 pid, int usbAddress)
  **********************************************************************/
 // Not Used.
 
+
+
+
+
 /***********************************************************************
  * Reference time and clock
  **********************************************************************/
@@ -551,8 +556,6 @@ std::string a2300_impl::get_fpga_version()
 	return std::string(buffout);
 
 }
-
-
 
 
 void a2300_impl::update_enables(void)
