@@ -16,21 +16,7 @@
 #ifndef A2300_USBDEVICE_H_
 #define A2300_USBDEVICE_H_
 
-// Using libusb on linux and CyAPI on windows
-#ifdef  __cplusplus
-extern "C" {
-#endif
-#ifdef HAVE_LIBUSB
-#include <@LIBUSB_INC_DIR@/libusb.h>
-#elif defined(WIN32)
-#include <Windows.h>
-#include <CyAPI.h>
-#endif
-
-#ifdef __cplusplus
-}
-#endif
-
+#include <A2300/libusb_ext.h>
 #include <System/DataTypes.h>
 #include <vector>			// Used in FindAttached().
 
@@ -213,4 +199,3 @@ namespace A2300
 }
 
 #endif /* A2300_USBDEVICE_H_ */
-

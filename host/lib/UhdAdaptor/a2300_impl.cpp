@@ -18,6 +18,7 @@
 #include "a2300_impl.hpp"
 #include <A2300/A2300_Defs.h>
 #include <A2300/A2300InterfaceDefs.h>
+#include <A2300/libusb_ext.h>
 
 #include <uhd/utils/log.hpp>
 #include <uhd/transport/usb_control.hpp>
@@ -28,8 +29,6 @@
 #include <uhd/utils/safe_call.hpp>
 #include <uhd/usrp/dboard_eeprom.hpp>
 #include <uhd/types/ranges.hpp>
-
-#include <@LIBUSB_INC_DIR@/libusb.h>
 
 #include "DciProperty.h"
 #include <boost/format.hpp>

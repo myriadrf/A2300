@@ -32,7 +32,7 @@ IF(ENABLE_A2300_IDENTIFY_APP)
 # Install information
 ##############################################################
 
-    UHD_INSTALL(TARGETS A2300Identify RUNTIME DESTINATION ${RUNTIME_DIR} COMPONENT apps)
+    UHD_INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/A2300Identify
+        DESTINATION ${RUNTIME_DIR} COMPONENT utilities)
 
 ENDIF()
-

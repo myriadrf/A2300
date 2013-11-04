@@ -23,20 +23,19 @@ ENDIF()
 ADD_DEFINITIONS(-DBOOST_ALL_DYN_LINK)
 
 ##############################################################
-# Find libusb
-##############################################################
-
 # Find libusb1
+##############################################################
 
 FIND_PACKAGE(USB1)
 
-LIBUHD_REGISTER_COMPONENT("USB" ENABLE_USB ON
+LIBUHD_REGISTER_COMPONENT("LIBUSB" ENABLE_LIBUSB ON
     "LIBUSB_FOUND" OFF)
 
 IF(LIBUSB_FOUND)
 
-    # we use <@LIBUSB_INC_DIR@/libusb.h>, so have to define both header include
-    # path and LIBUSB_INC_DIR, taking from LIBUSB_INCLUDE_DIRS
+    # we use <@LIBUSB_INC_DIR@/libusb.h>, so have to define both
+    # header include path and LIBUSB_INC_DIR, taking from
+    # LIBUSB_INCLUDE_DIRS
 
     STRING(FIND "${LIBUSB_INCLUDE_DIRS}" "/" NDX REVERSE)
     MATH(EXPR NDXp1 "${NDX}+1")
@@ -49,12 +48,17 @@ IF(LIBUSB_FOUND)
 
     ADD_DEFINITIONS(-DHAVE_LIBUSB)
 
+ELSE()
+
+    MESSAGE(FATAL_ERROR "LIBUSB1 required to compile A2300UhdAdapter and related projects")
+
 ENDIF()
 
 ##############################################################
 # Add subdirectories
 ##############################################################
 
+ADD_SUBDIRECTORY(extern)
 ADD_SUBDIRECTORY(include)
 ADD_SUBDIRECTORY(lib)
 ADD_SUBDIRECTORY(gnuradio)

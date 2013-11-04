@@ -24,7 +24,7 @@ IF(ENABLE_A2300USB)
             ${CMAKE_CURRENT_SOURCE_DIR}/BulkDataPort_cypressUsb.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/UsbDevice_cypressusb.cpp
         )
-    ELSEIF(UNIX AND ENABLE_USB)
+    ELSEIF(UNIX AND ENABLE_LIBUSB)
         LIST(APPEND A2300Usb_sources
             ${CMAKE_CURRENT_SOURCE_DIR}/BulkDataPort_libusb.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/UsbDevice_libusb.cpp
@@ -59,8 +59,16 @@ IF(ENABLE_A2300USB)
 
     IF(APPLE)
         SET_TARGET_PROPERTIES(A2300Usb PROPERTIES
-            INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib$"
+            INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/${LIBRARY_DIR}"
         )
     ENDIF(APPLE)
+
+    # Install information
+
+    INSTALL(TARGETS A2300Usb
+        LIBRARY DESTINATION ${LIBRARY_DIR} COMPONENT libraries # .so file
+        ARCHIVE DESTINATION ${LIBRARY_DIR} COMPONENT libraries # .lib file
+        RUNTIME DESTINATION ${RUNTIME_DIR} COMPONENT libraries # .dll file
+    )
 
 ENDIF(ENABLE_A2300USB)

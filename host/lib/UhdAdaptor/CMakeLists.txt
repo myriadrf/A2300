@@ -4,7 +4,7 @@
 ##############################################################
 
 LIBUHD_REGISTER_COMPONENT("A2300 Uhd Adapter"
-    ENABLE_A2300UhdAdapter ON "ENABLE_UHD;ENABLE_USB" OFF)
+    ENABLE_A2300UhdAdapter ON "ENABLE_UHD;ENABLE_LIBUSB" OFF)
 
 ##############################################################
 # Conditionally configure the A2300 UHD Adapter
@@ -20,18 +20,9 @@ IF(ENABLE_A2300UhdAdapter)
         ${LIBUSB_INCLUDE_DIRS}
     )
 
-##############################################################
-# Replace LIBUSB_INC_DIR in this files
-##############################################################
-
-    CONFIGURE_FILE(
-        ${CMAKE_CURRENT_SOURCE_DIR}/a2300_impl.cpp.in
-        ${CMAKE_CURRENT_BINARY_DIR}/a2300_impl.cpp
-    @ONLY)
-
     SET(A2300UhdAdapter_sources
-        ${CMAKE_CURRENT_BINARY_DIR}/a2300_impl.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/a2300_iface.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/a2300_impl.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/a2300_io_impl.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/DciProperty.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/DspConfig.cpp
@@ -83,8 +74,16 @@ IF(ENABLE_A2300UhdAdapter)
 
     IF(APPLE)
         SET_TARGET_PROPERTIES(A2300UhdAdapter PROPERTIES
-            INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib$"
+            INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/${LIBRARY_DIR}"
         )
     ENDIF(APPLE)
+
+    # Install information
+
+    INSTALL(TARGETS A2300UhdAdapter
+        LIBRARY DESTINATION ${UHD_MODULE_DIR} COMPONENT libraries # .so file
+        ARCHIVE DESTINATION ${UHD_MODULE_DIR} COMPONENT libraries # .lib file
+        RUNTIME DESTINATION ${UHD_MODULE_DIR} COMPONENT libraries # .dll file
+    )
 
 ENDIF(ENABLE_A2300UhdAdapter)

@@ -44,7 +44,7 @@ SET(INCLUDE_DIR include)
 SET(PKG_DATA_DIR share/A2300)
 SET(PKG_DOC_DIR share/doc/A2300)
 SET(PKG_MAN_DIR share/man/man1)
-SET(UHD_MODULE_DIR ${PKG_DATA_DIR}/modules)
+SET(UHD_MODULE_DIR share/uhd/modules)
 
 ##############################################################
 # Compiler specific setup
@@ -138,6 +138,7 @@ ADD_CUSTOM_TARGET(uninstall
 
 INCLUDE(UHDComponent)
 UHD_INSTALL(FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/README.md
     ${CMAKE_CURRENT_SOURCE_DIR}/README.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/AUTHORS.txt
@@ -151,3 +152,9 @@ UHD_INSTALL(FILES
 
 ADD_SUBDIRECTORY(common)
 ADD_SUBDIRECTORY(host)
+
+##############################################################
+# Final summary of components to build and install
+##############################################################
+
+UHD_PRINT_COMPONENT_SUMMARY()
