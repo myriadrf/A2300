@@ -95,6 +95,21 @@ namespace A2300
 
 		virtual int BindPort(PortBase* pPort);
 
+		/**
+		 * Polls ansynchronous events.
+		 */
+#ifdef LINUX
+		inline int PollAsynchronousEvents()
+		{
+			return libusb_handle_events_completed( m_pCtx, NULL);
+		}
+#elif defined( WIN32)
+		inline int PollAsynchronousEvents()
+		{
+			return 0; // NOTHING.
+		}
+#endif
+
     protected:
 #if defined(WIN32)
 		// Cypress usb library support
@@ -143,11 +158,12 @@ namespace A2300
 		 */
 		static int FindAttachedUsb(std::vector<int>& addrVect, int vid, int pid);
 
+
 	// Accessors.
 	public:
 		int GetUsbAddress() const { return (int)m_usbAddress; }
-		int SetBulkInTransfer(uint8* data, uint32 length);
-		int SetBulkOutTransfer(uint8* data, uint32 length);
+		//int SetBulkInTransfer(uint8* data, uint32 length);
+		//int SetBulkOutTransfer(uint8* data, uint32 length);
 		// Find a list of addresses for the specified VID/PID.
 		static int FindAttached(std::vector<int>& addrVect,
 						int vid = A2300_VENDOR_ID, int pid = A2300_PRODUCT_ID);
@@ -178,6 +194,7 @@ namespace A2300
 		// Allow access to Init().
 		friend class UsbDevice;
 	public:
+		static const byte EP_UNDEF = 0;
 		PortBase();
 		PortBase( byte epidIn, byte epidOut);
 

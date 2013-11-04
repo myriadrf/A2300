@@ -334,8 +334,8 @@ a2300_impl::a2300_impl(const device_addr_t &device_addr)
 	//Define two Peripherals covering the 4 RF Inputs and 4 DSP Channels.
 	const RadioPeripheral::InitArgs _iargs[] =
 	{
-		{0, 0,0,0,  WCACOMP_DSP_DUC0, WCACOMP_DSP_DDC0, WCACOMP_RF0},
-		{1, 1,1,1,  WCACOMP_DSP_DUC1, WCACOMP_DSP_DDC1, WCACOMP_RF1}
+		{0, 0,0,0,  WCACOMP_DSP_DDC0, WCACOMP_DSP_DUC0, WCACOMP_RF0},
+		{1, 1,1,1,  WCACOMP_DSP_DDC1, WCACOMP_DSP_DUC1, WCACOMP_RF1}
 	};
 
 	m_perifs.resize(2);
@@ -549,8 +549,8 @@ std::string a2300_impl::get_fpga_version()
 	DciProperty prop(0x00, _dci0_ctrl, A2300_WAIT_TIME);
 	uint16 id =0, ver =0;
 
-	prop.GetProperty<uint16, PT_UINT16>( 0x01, id);
-	prop.GetProperty<uint16, PT_UINT16>(0x02, ver);
+	prop.GetProperty<uint16>( 0x01, id);
+	prop.GetProperty<uint16>(0x02, ver);
 
 	char buffout[32];
 	sprintf(buffout, "%04X - %02X.%02X", id, (ver>>8), ver & 0x00FF);		// ASR-2300 uses a Hex format.
