@@ -19,6 +19,12 @@ ${CMAKE_CURRENT_SOURCE_DIR}/${UHD_REL_DIR}/cmake/Modules)
 INCLUDE(UHDVersion)
 
 ##############################################################
+# Add libusb full header path
+##############################################################
+
+INCLUDE_DIRECTORIES(${LIBUSB_INCLUDE_DIRS}/${LIBUSB_INC_DIR})
+
+##############################################################
 # Define install directories
 ##############################################################
 
