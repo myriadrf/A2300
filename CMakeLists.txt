@@ -47,6 +47,18 @@ SET(PKG_MAN_DIR share/man/man1)
 SET(UHD_MODULE_DIR share/uhd/modules)
 
 ##############################################################
+# Add definition for host OS
+##############################################################
+
+IF(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    ADD_DEFINITIONS(-DLINUX)
+ELSEIF(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+    ADD_DEFINITIONS(-DAPPLE)
+ELSEIF(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    ADD_DEFINITIONS(-DWIN32)
+ENDIF()
+
+##############################################################
 # Compiler specific setup
 ##############################################################
 

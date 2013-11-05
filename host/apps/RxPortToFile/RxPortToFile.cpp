@@ -20,10 +20,10 @@
 ////////////////////////////////////////////////////////////////////////
 // Use architecture defines to determine the implementation
 ////////////////////////////////////////////////////////////////////////
-#if defined(linux) || defined(__linux) || defined(__linux__)
+#if defined(LINUX)
     #define A2300_HRT_USE_CLOCK_GETTIME
     #include <ctime>
-#elif defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
+#elif defined(APPLE)
     #define A2300_HRT_USE_MACH_ABSOLUTE_TIME
     #include <mach/mach_time.h>
 #else

@@ -18,7 +18,7 @@
 
 #include "DciMsg.h"
 
-#if defined( WIN32) || defined(LINUX)
+#if defined( WIN32) || defined(LINUX) || defined(APPLE)
 	#pragma pack(push, 1)
 #endif
 
@@ -105,11 +105,8 @@ pcstr Dci_DebugMsg_Message( Dci_DebugMsg* pmsg);
 }
 #endif
 
-#if defined( WIN32) || defined(LINUX)
+#if defined( WIN32) || defined(LINUX) || defined(APPLE)
 	#pragma pack(pop)
 #endif
 
 #endif /* INFRASTRUCTURE_MSGS_H */
-
-
-

@@ -18,13 +18,6 @@ LIBUHD_REGISTER_COMPONENT("RxPortToFile App"
 IF(ENABLE_RXPORTTOFILE_APP)
 
 ##############################################################
-# Add definition for OS type
-##############################################################
-
-#message("CMAKE_SYSTEM_NAME is '${CMAKE_SYSTEM_NAME}'")
-    #ADD_DEFINITIONS(-D${CMAKE_SYSTEM_NAME})
-
-##############################################################
 # Create executables
 ##############################################################
 

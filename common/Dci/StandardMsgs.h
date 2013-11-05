@@ -18,7 +18,7 @@
 
 #include "DciMsg.h"
 
-#if defined( WIN32) || defined(LINUX)
+#if defined( WIN32) || defined(LINUX) || defined(APPLE)
 	#pragma pack(push, 1)
 #endif
 
@@ -146,9 +146,8 @@ int Dci_TypedDataRecordQuery_Init( void* buff, uint16 idtype, uint16 flags);
 }
 #endif
 
-#if defined( WIN32) || defined(LINUX)
+#if defined( WIN32) || defined(LINUX) || defined(APPLE)
 	#pragma pack(pop)
 #endif
 
 #endif
-

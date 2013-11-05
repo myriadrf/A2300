@@ -18,7 +18,7 @@
 
 #include "../System/DataTypes.h"
 
-#if defined( WIN32) || defined(LINUX)
+#if defined( WIN32) || defined(LINUX) || defined(APPLE)
 	#pragma pack(push, 1)
 #endif
 
@@ -119,7 +119,7 @@ int32 Dci_SwapInt32( int32 intVal);
 }
 #endif
 
-#if defined( WIN32) || defined(LINUX)
+#if defined( WIN32) || defined(LINUX) || defined(APPLE)
 	#pragma pack(pop)
 #endif
 

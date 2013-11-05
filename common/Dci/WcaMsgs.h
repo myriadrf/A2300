@@ -18,7 +18,7 @@
 
 #include "DciMsg.h"
 
-#if defined( WIN32) || defined(LINUX)
+#if defined( WIN32) || defined(LINUX) || defined(APPLE)
 	#pragma pack(push, 1)
 #endif
 
@@ -320,9 +320,8 @@ int Dci_HalEventNotification_Init( void* buff,
 }
 #endif
 
-#if defined( WIN32) || defined(LINUX)
+#if defined( WIN32) || defined(LINUX) || defined(APPLE)
 	#pragma pack(pop)
 #endif
 
 #endif /* WcaMsgs_h */
-
