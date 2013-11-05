@@ -16,8 +16,8 @@ IF(ENABLE_A2300UhdAdapter)
         ${CMAKE_CURRENT_BINARY_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${UHD_INCLUDE_DIRS}
-        ${Boost_INCLUDE_DIRS}
         ${LIBUSB_INCLUDE_DIRS}
+        ${Boost_INCLUDE_DIRS}
     )
 
     SET(A2300UhdAdapter_sources

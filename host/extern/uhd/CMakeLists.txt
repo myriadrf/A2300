@@ -277,7 +277,8 @@ MESSAGE(STATUS "Using install prefix: ${CMAKE_INSTALL_PREFIX}")
 MESSAGE(STATUS "Compatible images can be downloaded from: ${UHD_IMAGES_DOWNLOAD_SRC}")
 
 ##############################################################
-# set the variable used by the A2300 build system to enable uhd
+# set variables used by the A2300 build system for UHD
 ##############################################################
 
-SET(ENABLE_UHD ${ENABLE_LIBUHD})
+SET(ENABLE_UHD ${ENABLE_LIBUHD} CACHE INTERNAL "" FORCE)
+SET(UHD_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/${UHD_REL_DIR}/include CACHE INTERNAL "" FORCE)
