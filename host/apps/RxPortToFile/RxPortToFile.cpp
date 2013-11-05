@@ -17,9 +17,22 @@
 #include <Windows.h>
 #endif
 
+////////////////////////////////////////////////////////////////////////
+// Use architecture defines to determine the implementation
+////////////////////////////////////////////////////////////////////////
+#if defined(linux) || defined(__linux) || defined(__linux__)
+    #define A2300_HRT_USE_CLOCK_GETTIME
+    #include <ctime>
+#elif defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
+    #define A2300_HRT_USE_MACH_ABSOLUTE_TIME
+    #include <mach/mach_time.h>
+#else
+    #error "Unknown system; not sure how to get time."
+#endif
+
 #include <stdio.h>
 #include <math.h>
-#include <time.h>
+// #include <time.h>
 #include <stdexcept>
 #include <vector>
 
@@ -220,6 +233,9 @@ int RxPortToFile::DoRxPortToFile( UsbDevice& device, BulkDataPort& portDci)
 
 	//Process for 10 seconds.
 	printf("Starting Run\n");
+
+#if defined(A2300_HRT_USE_CLOCK_GETTIME)
+
 	struct timespec tStart, tEnd;
 	clock_gettime(CLOCK_REALTIME, &tStart);
 	tEnd = tStart;
@@ -230,8 +246,31 @@ int RxPortToFile::DoRxPortToFile( UsbDevice& device, BulkDataPort& portDci)
 		clock_gettime(CLOCK_REALTIME, &tEnd);
 	}
 
+#elif defined(A2300_HRT_USE_MACH_ABSOLUTE_TIME)
+
+        mach_timebase_info_data_t timebase_info;
+        mach_timebase_info(&timebase_info);
+	typedef unsigned long long time_t;
+
+	time_t mach_timebase_multiplier =
+	  ((time_t) (1000000000UL) *
+	   (time_t) (timebase_info.numer) /
+	   (time_t) (timebase_info.denom));
+
+	time_t tStart, tEnd;
+	tStart = tEnd = time_t(mach_absolute_time()) * mach_timebase_multiplier;
+	int retval = 0;
+	while((retval == 0) && (tEnd < (tStart + 10)))
+	{
+		printf(".");
+		fflush(stdout);
+		retval= device.PollAsynchronousEvents();
+		tEnd = time_t(mach_absolute_time()) * mach_timebase_multiplier;
+	}
+
+#endif
 	//Set Path Profile to Disabled.
-	printf("Completed Run:  Packets = %d, Bytes = %d\n", m_ctPackets, m_ctData);
+	printf("\nCompleted Run:  Packets = %d, Bytes = %d\n", m_ctPackets, m_ctData);
 	fflush(stdout);
 	rfProps.SetProperty<uint16>(0x0D, 0x00);
 
@@ -276,25 +315,3 @@ void WriteHeader( )
 		   "* www.loctronix.com\n" 
 		   "*********************************************************************\n");
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

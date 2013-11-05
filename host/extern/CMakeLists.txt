@@ -2,4 +2,7 @@
 # Add subdirectories
 ##############################################################
 
-ADD_SUBDIRECTORY(uhd)
+
+IF(ENABLE_UHD_INTERNAL)
+    ADD_SUBDIRECTORY(uhd)
+ENDIF()
