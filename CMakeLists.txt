@@ -112,6 +112,7 @@ ADD_OPTIONAL_COMPILER_FLAG(ALL -Wsign-compare)
 #ADD_OPTIONAL_COMPILER_FLAG(ALL -pedantic)
 #ADD_OPTIONAL_COMPILER_FLAG(ALL -ansi)
 
+ADD_OPTIONAL_COMPILER_FLAG(ALL -fmessage-length=0)
 ADD_OPTIONAL_COMPILER_FLAG(ALL -fPIC)
 
 ##############################################################
