@@ -47,6 +47,9 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/common}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include&quot;"/>
 								</option>
+								<option id="gnu.c.compiler.option.preprocessor.def.symbols.114397469" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="LINUX=2"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.903060425" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.so.debug.950211481" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.so.debug">
@@ -83,7 +86,7 @@
 					</fileInfo>
 					<fileInfo id="cdt.managedbuild.config.gnu.so.debug.1203608567.694928303" name="A2300UsbLib.sln" rcbsApplicability="disable" resourcePath="A2300UsbLib.sln" toolsToInvoke=""/>
 					<sourceEntries>
-						<entry excluding="UsbDevice_cypressusb.cpp|BulkDataPort_cypressUsb.cpp|BulkDataPort_cypresswin.cpp|UsbDriver_libusb.orig.cpp|A2300UsbLib.vcproj|A2300UsbLib.sln|UsbDriver_cypressLnx.cpp|UsbDriver_cypresswin.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="AsynchronousUsb.cpp|UsbDevice_cypressusb.cpp|BulkDataPort_cypressUsb.cpp|BulkDataPort_cypresswin.cpp|UsbDriver_libusb.orig.cpp|A2300UsbLib.vcproj|A2300UsbLib.sln|UsbDriver_cypressLnx.cpp|UsbDriver_cypresswin.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -144,6 +147,9 @@
 								<option id="gnu.c.compiler.option.include.paths.1835341320" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Common}&quot;"/>
 								</option>
+								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1635901929" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="LINUX=2"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1269521657" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.so.release.1550184306" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.so.release">
@@ -170,6 +176,9 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<sourceEntries>
+						<entry excluding="AsynchronousUsb.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings">

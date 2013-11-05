@@ -139,7 +139,7 @@ void RfConfig::SetPgaGain( const double gain)
 	DciProperty prop(m_idComponent, m_dci_ctrl, A2300_WAIT_TIME);
 	byte idProperty = (m_bIsTx) ?  0x06 : 0x02;
 	byte val = ((byte)gain + 2) / 3;  // Round to closest step.
-	prop.SetProperty<byte, PT_BYTE>(idProperty, val);
+	prop.SetProperty<byte>(idProperty, val);
 }
 uhd::meta_range_t 	RfConfig::GetPgaGainRange(void)
 {
@@ -164,7 +164,7 @@ void RfConfig::SetRfBandwidth( const double bandwidth)
 	DciProperty prop(m_idComponent, m_dci_ctrl, A2300_WAIT_TIME);
 	byte idProperty = (m_bIsTx) ?  0x09 : 0x05;
 	byte val = (byte) idxBw;
-	prop.SetProperty<byte, PT_BYTE>(idProperty, val);
+	prop.SetProperty<byte>(idProperty, val);
 }
 
 uhd::meta_range_t 	RfConfig::GetRfBandwidthRange(void)
@@ -202,7 +202,7 @@ void RfConfig::SetRfFrequency( const double freq)
 	DciProperty prop(m_idComponent, m_dci_ctrl, A2300_WAIT_TIME);
 	byte idProperty = (m_bIsTx) ?  0x07 : 0x03;
 	uint32 iFreqKHz = (uint32) (freq/ 1000.0);
-	prop.SetProperty<uint32, PT_UINT32>(idProperty, iFreqKHz );
+	prop.SetProperty<uint32>(idProperty, iFreqKHz );
 }
 
 uhd::meta_range_t 	RfConfig::GetRfFrequencyRange(void)
@@ -250,6 +250,6 @@ void   RfConfig::SetPathProfile( const std::string& sPathId)
 
 	DciProperty prop(m_idComponent, m_dci_ctrl, A2300_WAIT_TIME);
 	byte idProperty = (m_bIsTx) ?  0x0E : 0x0D;
-	prop.SetProperty<byte, PT_BYTE>(idProperty, idPath);
+	prop.SetProperty<byte>(idProperty, idPath);
 
 }

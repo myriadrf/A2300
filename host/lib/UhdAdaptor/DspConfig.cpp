@@ -71,23 +71,34 @@ void DspConfig::Initialize(
     //tree->access<double>(pathroot / "tick_rate")
     //		.subscribe(boost::bind(&DspConfig::SetTickRate, this, _1));
 
-    tree->create<meta_range_t>(pathdsp / "rate" / "range")
+
+	//Set up DDUC configuration register properties.
+	tree->create<byte>(pathdsp / "configreg" )
+			.subscribe(boost::bind(&DspConfig::SetConfiguration, this,  _1))
+			.set(0); //Disable it.
+
+	//Set up Host Sampling rate range and value properties.
+	tree->create<meta_range_t>(pathdsp / "rate" / "range")
     		.publish(boost::bind(&DspConfig::GetHostRates, this));
 
     tree->create<double>(pathdsp / "rate" / "value")
     		.subscribe(boost::bind(&DspConfig::SetHostRate, this,  _1))
         	.set(2e6);
 
+    //Setup DDC Frequency control range and value settings.
+    tree->create<meta_range_t>(pathdsp / "freq" / "range")
+        .publish(boost::bind(&DspConfig::GetFreqRange, this));
+
     tree->create<double>(pathdsp / "freq" / "value")
 					.subscribe(boost::bind(&DspConfig::SetFrequency, this, _1))
 					//.publish(boost::bind(&DspConfig::GetFrequency, this, idDdcComp))
 					.set(0.0);
 
-    tree->create<meta_range_t>(pathdsp / "freq" / "range")
-        .publish(boost::bind(&DspConfig::GetFreqRange, this));
+
 
 	tree->create<stream_cmd_t>(pathdsp / "stream_cmd")
         .subscribe(boost::bind(&DspConfig::IssueStreamCommand, this, _1));
+
 
 
     this->UpdateScalar();
@@ -142,16 +153,21 @@ uhd::meta_range_t DspConfig::GetHostRates(void){
     return range;
 }
 
+
+
+
 double DspConfig::SetHostRate(const double rate){
     const size_t decim_rate = boost::math::iround(m_tick_rate/this->GetHostRates().clip(rate, true));
     int32 decim = decim_rate;
 
     //determine which half-band filters are activated
     int hb0 = 0, hb1 = 0;
-//    if (decim % 2 == 0){
-//        hb0 = 1;
-//        decim /= 2;
-//    }
+    if (decim % 2 == 0){
+        hb0 = 1;
+        decim /= 2;
+    }
+
+    //Current design has one half band filter.
 //    if (decim % 2 == 0){
 //        hb1 = 1;
 //        decim /= 2;
@@ -164,19 +180,19 @@ double DspConfig::SetHostRate(const double rate){
     // rate for down/up sampling sampling the 32 MHz sampling rate.  Valid
     // range is 2 to 4096 equivalent to 8 MHz to  3906.25 KHz.
 	DciProperty prop(m_idComponent, m_dci_ctrl, A2300_WAIT_TIME);
-	prop.SetProperty<int32, PT_INT32>(DSP_DDUC_SAMPRATE,  decim );
+	prop.SetProperty<uint16>(DSP_DDUC_SAMPRATE,  (uint16) decim );
 
 
 
 
-//	if (decim > 1 and hb0 == 0 and hb1 == 0)
-//    {
-//        UHD_MSG(warning) << boost::format(
-//            "The requested decimation is odd; the user should expect CIC rolloff.\n"
-//            "Select an even decimation to ensure that a halfband filter is enabled.\n"
-//            "decimation = dsp_rate/samp_rate -> %d = (%f MHz)/(%f MHz)\n"
-//        ) % decim_rate % (m_tick_rate/1e6) % (rate/1e6);
-//    }
+	if (decim > 1 and hb0 == 0 and hb1 == 0)
+    {
+        UHD_MSG(warning) << boost::format(
+            "The requested decimation is odd; the user should expect CIC rolloff.\n"
+            "Select an even decimation to ensure that a halfband filter is enabled.\n"
+            "decimation = dsp_rate/samp_rate -> %d = (%f MHz)/(%f MHz)\n"
+        ) % decim_rate % (m_tick_rate/1e6) % (rate/1e6);
+    }
 
     // Calculate CIC decimation (i.e., without halfband decimators)
     // Calculate closest multiplier constant to reverse gain absent scale multipliers
@@ -215,7 +231,7 @@ double DspConfig::SetFrequency(const double freq)
 	uint32  deltaphase = (uint32)  boost::math::iround(freq/A2300_MAX_SAMPLING_FREQ * 2147483648);
 
 	DciProperty prop(m_idComponent, m_dci_ctrl, A2300_WAIT_TIME);
-	prop.SetProperty<uint32, PT_UINT32>(DSP_DDUC_PHASERATE, deltaphase );
+	prop.SetProperty<uint32>(DSP_DDUC_PHASERATE, deltaphase );
 
 	return ( freq );
 }
@@ -226,9 +242,17 @@ uhd::meta_range_t DspConfig::GetFreqRange(void)
 }
 
 
+byte DspConfig::SetConfiguration( const byte config)
+{
+	DciProperty prop(m_idComponent, m_dci_ctrl, A2300_WAIT_TIME);
+	prop.SetProperty<byte>(DSP_DDUC_CTRL, config);
+	return config;
+}
+
+
 void DspConfig::IssueStreamCommand( const uhd::stream_cmd_t &stream_cmd)
 {
-	if ( this->m_idComponent >= 0)
+	if ( this->m_idComponent < 0)
 	{
 		UHD_MSG(warning) << "ASR-2300 DSP Configuration not setup yet!";
 		return;
@@ -259,8 +283,9 @@ void DspConfig::IssueStreamCommand( const uhd::stream_cmd_t &stream_cmd)
 	cmd_word |= (inst_samps)? stream_cmd.num_samps : ((inst_stop)? 0 : 1);
 
 
-	//TODO:  TURN ON STREAMING ON THE DEVICE for this associated Port.
-	//const boost::uint64_t ticks = (stream_cmd.stream_now)? 0 : stream_cmd.time_spec.to_ticks(m_tick_rate);
+	//TODO map this call to the Property Tree so configuration state remains in synch.
+	if( stream_cmd.stream_now)
+		SetConfiguration( 0x01);
 
 
 }

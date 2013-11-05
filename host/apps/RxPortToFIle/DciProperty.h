@@ -19,13 +19,13 @@
 #define DCIPROPERTY_H_
 
 
-#include "Dci/DciMsg.h"
-#include "Dci/DciConversation.h"
-#include "Dci/InfrastructureMsgs.h"
-#include "Dci/WcaMsgs.h"
-#include "Dci/StandardMsgs.h"
-
-#include "a2300_iface.hpp"
+#include <Dci/DciMsg.h>
+#include <Dci/DciConversation.h>
+#include <Dci/InfrastructureMsgs.h>
+#include <Dci/WcaMsgs.h>
+#include <Dci/StandardMsgs.h>
+#include <A2300/BulkDataPort.h>
+#include <stdexcept>
 
 /**
  * Helper class takes the pain out of setting and getting component properties.
@@ -33,8 +33,8 @@
 class DciProperty
 {
 public:
-	DciProperty(byte idComponent, A2300_iface::sptr piface, double timeout)
-	:	 m_idComponent( idComponent), m_piface(piface ), m_timeout( timeout)
+	DciProperty(int idComponent, A2300::BulkDataPort* pPort, double timeout, Dci_Conversation* pconv)
+	:	 m_idComponent( (byte) idComponent), m_pPort(pPort), m_timeout( timeout), m_pConv(pconv)
 	{
 	}
 	~DciProperty() {}
@@ -52,12 +52,16 @@ public:
 	int GetProperty( Dci_Property& prop, double timeout);
 	int SetProperty( Dci_Property& prop, double timeout);
 
+
+
+
+
 private:
 	byte			  m_idComponent;
-	A2300_iface::sptr m_piface;
+	A2300::BulkDataPort*  m_pPort;
 	double			  m_timeout;
+	Dci_Conversation* m_pConv;
 };
-
 
 template <> int DciProperty::GetProperty( int idProp, byte& value);
 
@@ -100,6 +104,5 @@ template <> int DciProperty::SetProperty( int idProp, uint64 value);
 
 template <> int DciProperty::SetProperty( int idProp, int64 value);
 */
-
 
 #endif /* DCIPROPERTY_H_ */

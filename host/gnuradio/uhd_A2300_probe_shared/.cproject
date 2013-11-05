@@ -32,7 +32,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.1846413808" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug">
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.exe.debug.option.optimization.level.706716578" name="Optimization Level" superClass="gnu.c.compiler.exe.debug.option.optimization.level" valueType="enumerated"/>
 								<option id="gnu.c.compiler.exe.debug.option.debugging.level.1093527300" name="Debug Level" superClass="gnu.c.compiler.exe.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
-								<option id="gnu.c.compiler.option.include.paths.517986308" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath"/>
+								<option id="gnu.c.compiler.option.include.paths.517986308" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths"/>
 								<option id="gnu.c.compiler.option.misc.other.447336497" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.646575947" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
@@ -62,8 +62,11 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.1950438565.1903114253" name="rx_samples_to_file.cpp" rcbsApplicability="disable" resourcePath="rx_samples_to_file.cpp" toolsToInvoke="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.803083112.2038873321">
+						<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.803083112.2038873321" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.803083112"/>
+					</fileInfo>
 					<sourceEntries>
-						<entry excluding="rx_samples_to_udp.cpp|rx_samples_to_file.cpp|tx_waveforms.cpp|uhd_A2300_probe_shared.cpp|uhd_A2300_probe.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="uhd_usrp_probe.cpp|rx_samples_to_udp.cpp|tx_waveforms.cpp|uhd_A2300_probe_shared.cpp|uhd_A2300_probe.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -121,6 +124,12 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="cdt.managedbuild.config.gnu.exe.release.1491394936.2039119838" name="rx_samples_to_file.cpp" rcbsApplicability="disable" resourcePath="rx_samples_to_file.cpp" toolsToInvoke="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.670902799.209675395">
+						<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.670902799.209675395" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.670902799"/>
+					</fileInfo>
+					<sourceEntries>
+						<entry excluding="uhd_usrp_probe.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>

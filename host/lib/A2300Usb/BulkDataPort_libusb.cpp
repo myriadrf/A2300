@@ -61,13 +61,90 @@ void A2300::BulkDataPort::Open( )
 
 	m_pDevHandle = DeviceHandle();
 
-	if (   (epidIn() > 0  && !EndPointAvailable(epidIn()))
-		|| (epidOut() > 0 && !EndPointAvailable(epidOut())))
-	{
-		throw std::runtime_error("Required USB end point could not be found.");
-	}
+	if(epidIn() > PortBase::EP_UNDEF  && !EndPointAvailable(epidIn()))
+		throw std::runtime_error("Input USB end point could not be found.");
+
+	if (epidOut() > PortBase::EP_UNDEF && !EndPointAvailable(epidOut()))
+		throw std::runtime_error("Output USB end point could not be found.");
 
 }
+
+void A2300::BulkDataPort::LibusbAsyncReadCallback(libusb_transfer *lut)
+{
+	//Fill out the Transfer Context
+    TransferContext *ptc = (TransferContext*)lut->user_data;
+    ptc->bCompleted = true;
+    ptc->status = lut->status;
+    ptc->nActualLength = lut->actual_length;
+
+    ptc->pSrc->m_evtRead( ptc);
+}
+
+void A2300::BulkDataPort::LibusbAsyncWriteCallback(libusb_transfer *lut)
+{
+	//Fill out the Transfer Context
+    TransferContext *ptc = (TransferContext*)lut->user_data;
+    ptc->bCompleted = true;
+    ptc->status = lut->status;
+    ptc->nActualLength = lut->actual_length;
+
+    ptc->pSrc->m_evtWrite( ptc);
+}
+
+
+A2300::BulkDataPort::TransferContext*	A2300::BulkDataPort::CreateReadTransferContext(
+		byte* bufFrame, size_t sizeFrame)
+{
+    libusb_transfer *lut = libusb_alloc_transfer(0);
+    TransferContext* pctxt = new TransferContext();
+
+     libusb_fill_bulk_transfer(
+         lut,                                                    // transfer
+         DeviceHandle(),                                         // dev_handle
+         epidIn(),                                               // endpoint
+         bufFrame,      // buffer
+         sizeFrame,                                 // length
+         &A2300::BulkDataPort::LibusbAsyncReadCallback,                // callback
+         pctxt,          // user_data
+         0                                                       // timeout (ms)
+     );
+
+     pctxt->pSrc = this;
+     pctxt->lut = lut;
+     pctxt->bufFrame = bufFrame;
+     pctxt->nFrameSize = sizeFrame;
+     m_listReadContexts.push_back( pctxt);
+
+     return pctxt;
+}
+
+A2300::BulkDataPort::TransferContext*	A2300::BulkDataPort::CreateWriteTransferContext(
+		byte* bufFrame, size_t sizeFrame)
+{
+    libusb_transfer *lut = libusb_alloc_transfer(0);
+    TransferContext* pctxt = new TransferContext();
+
+     libusb_fill_bulk_transfer(
+         lut,                                                    // transfer
+         DeviceHandle(),                                         // dev_handle
+         epidOut(),                                               // endpoint
+         bufFrame,      // buffer
+         sizeFrame,                                 // length
+         &A2300::BulkDataPort::LibusbAsyncWriteCallback,                // callback
+         pctxt,          // user_data
+         0                                                       // timeout (ms)
+     );
+
+     pctxt->pSrc = this;
+     pctxt->bufFrame = bufFrame;
+     pctxt->nFrameSize = sizeFrame;
+
+     m_listWriteContexts.push_back( pctxt);
+     return pctxt;
+
+}
+
+
 
 /**
  * Read the specified number of bytes from the port.
@@ -83,6 +160,9 @@ int A2300::BulkDataPort::Read( byte * pdata, int ctBytes, int msecTimeout )
 
 	return (retval == 0) ? ctRead: retval;
 }
+
+
+
 
 /**
  * Writes the specified number bytes to the port.

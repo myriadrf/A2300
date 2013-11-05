@@ -50,6 +50,7 @@ protected:
 
     void SetLinkRate(const double rate);
 
+    byte SetConfiguration( const byte config);
     double SetHostRate(const double rate);
     double SetFrequency(const double freq);
 

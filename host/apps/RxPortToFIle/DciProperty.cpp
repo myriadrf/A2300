@@ -16,28 +16,26 @@
 // limitations under the License.
 
 #include "DciProperty.h"
-
-using namespace uhd;
-using namespace uhd::transport;
-
+#include <string.h>
 int DciProperty::GetProperty(  Dci_Property& prop, double timeout)
 {
-	// Get work buffer.
-	managed_send_buffer::sptr txbuff = m_piface->GetSendDciMessageBuffer(timeout);
+	byte buff[DCI_MAX_MSGSIZE];
 
 	//Query Identify Device.
-	void* buff = txbuff->cast<void*>();
 	int len = Dci_TypedPropertiesQuery_Init(buff, DCI_MAX_MSGSIZE, m_idComponent, 1, &(prop.idprop), &(prop.idtype) );
 
+	Dci_Conversation_PrepareMessageHdr( m_pConv, (Dci_Hdr*) buff, false);
+
 	//Send the DCI command.
-	m_piface->CommitDciMessageBuffer(txbuff, len, false);
-	txbuff = NULL;
+	m_pPort->Write(buff, len, timeout);
 
 	//Process DCI Response.
-	managed_recv_buffer::sptr rxbuff = m_piface->ReceiveDciMessage(timeout);
-	if( rxbuff != NULL)
+	int ctRead = m_pPort->Read(buff, DCI_MAX_MSGSIZE, timeout);
+
+	if( ctRead > 0)
 	{
-		buff = rxbuff->cast<byte*>();
+		Dci_Conversation_UpdateState( m_pConv, buff, ctRead);
+
 		Dci_TypedProperties* ptp = (Dci_TypedProperties*) buff;
 
 		//If we got back what we expected.
@@ -54,33 +52,22 @@ int DciProperty::GetProperty(  Dci_Property& prop, double timeout)
 
 int DciProperty::SetProperty( Dci_Property& prop, double timeout)
 {
-	managed_send_buffer::sptr txbuff = m_piface->GetSendDciMessageBuffer(timeout);
-	if( txbuff != NULL )
-	{
-		void* buff = txbuff->cast<void*>();
-		int len = Dci_TypedProperties_Init(buff, DCI_MAX_MSGSIZE, m_idComponent, 1, &prop );
+	byte buff[DCI_MAX_MSGSIZE];
+	int len = Dci_TypedProperties_Init(buff, DCI_MAX_MSGSIZE, m_idComponent, 1, &prop );
 
-		//Send the DCI command.
-		m_piface->CommitDciMessageBuffer(txbuff, len, false);
-		txbuff = NULL;  // Release Buffer.
+	Dci_Conversation_PrepareMessageHdr( m_pConv, (Dci_Hdr*) buff, true);
 
-		//Process DCI Response. should be an ack.
-		//TODO Speed up without requiring ack, to do this requires that we block
-		//on the FX3 so that it does not go too fast.  Currently, we can
-		//miss messages by going to fast. Using the ack trick forces a command
-		//response to complete.
-		managed_recv_buffer::sptr rxbuff = m_piface->ReceiveDciMessage(timeout);
-		if( rxbuff != NULL)
-		{
-			buff = rxbuff->cast<byte*>();
+	//Send the DCI command.
+	int wresult = m_pPort->Write(buff, len, timeout);
 
-			//TODO make sure it was just and acq.  or check for error messages.
-		}
-		return 0;
-	}
-	else
-		return -1;
+	//Wait for Ack
+	//Process DCI Response.
+	int ctRead = m_pPort->Read(buff, DCI_MAX_MSGSIZE, timeout);
+
+	return (ctRead > 0 ) ? wresult : -1;
+
 }
+
 
 template <> int DciProperty::GetProperty( int idProp, byte& value)
 {
@@ -231,3 +218,4 @@ template <> int DciProperty::SetProperty( int idProp, int64 value)
 	return SetProperty( prop, m_timeout );
 }
 */
+

@@ -356,6 +356,7 @@ public:
 
     void issue_stream_cmd(const stream_cmd_t &stream_cmd)
     {
+    	sph::recv_packet_handler::issue_stream_cmd(stream_cmd);
         _stc->issue_stream_cmd(stream_cmd);
     }
 
