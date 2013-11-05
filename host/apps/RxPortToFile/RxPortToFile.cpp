@@ -178,7 +178,7 @@ int RxPortToFile::DoRxPortToFile( UsbDevice& device, BulkDataPort& portDci)
 	//3) Path Profile
 	DciProperty rfProps(WCACOMP_RF0, &portDci, A2300_WAIT_TIME, &s_conv);
 
-	//TODO REMOVE
+//	//TODO REMOVE
 	rfProps.SetProperty<byte>(6,4);
 	rfProps.SetProperty<byte>(9,0);
 	rfProps.SetProperty<uint32>(7,2400000);
@@ -186,12 +186,12 @@ int RxPortToFile::DoRxPortToFile( UsbDevice& device, BulkDataPort& portDci)
 	rfProps.SetProperty<byte>(2,4);
 	rfProps.SetProperty<byte>(5,0);
 	rfProps.SetProperty<uint32>(3,2400000);
+//
 
 
 
 
-
-	rfProps.SetProperty<byte>(0x0D, 0x02);
+	rfProps.SetProperty<byte>(0x0D, 0x01);
 
 	byte profile;
 	rfProps.GetProperty<byte>(0x0D, profile);
@@ -203,9 +203,9 @@ int RxPortToFile::DoRxPortToFile( UsbDevice& device, BulkDataPort& portDci)
 	//1) Host Data Rate
 	DciProperty dspProps(WCACOMP_DSP_DDC0, &portDci, A2300_WAIT_TIME, &s_conv);
 	dspProps.SetProperty<uint16>(DSP_DDUC_SAMPRATE, 2);
+	dspProps.SetProperty<byte>(DSP_DDUC_CTRL, 1);
 
 	//2) If Frequency
-
 
 
 	//3) RF Frequency and Gain.
