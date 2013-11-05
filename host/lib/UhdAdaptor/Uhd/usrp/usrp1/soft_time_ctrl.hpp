@@ -70,6 +70,9 @@ public:
 
     //! Stops threads before deconstruction to avoid race conditions
     virtual void stop(void) = 0;
+
+    /* to make strict compilers happy */
+    virtual ~soft_time_ctrl(void) {}
 };
 
 }} //namespace
