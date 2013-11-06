@@ -35,9 +35,9 @@ IF(ENABLE_A2300USB)
 
     ADD_LIBRARY(A2300Usb SHARED ${A2300Usb_sources})
 
-    # Dci is always internal to this build, so include it first
+    # A2300Dci is always internal to this build, so include it first
 
-    TARGET_LINK_LIBRARIES(A2300Usb Dci)
+    TARGET_LINK_LIBRARIES(A2300Usb A2300Dci)
 
     # all external libraries go last
 

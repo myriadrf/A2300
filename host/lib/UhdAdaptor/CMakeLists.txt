@@ -33,9 +33,9 @@ IF(ENABLE_A2300UhdAdapter)
 
     ADD_LIBRARY(A2300UhdAdapter SHARED ${A2300UhdAdapter_sources})
 
-    # Dci is always internal to this build, so include it first
+    # A2300Dci is always internal to this build, so include it first
 
-    TARGET_LINK_LIBRARIES(A2300UhdAdapter Dci)
+    TARGET_LINK_LIBRARIES(A2300UhdAdapter A2300Dci)
 
     # UHD may or not be internal to this build, so include it after all
     # other internal libraries
