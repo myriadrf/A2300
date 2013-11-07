@@ -344,6 +344,9 @@ public:
         const double timeout,
         const bool one_packet
     ){
+        // reset error code to NONE before processing
+        metadata.error_code = ::uhd::rx_metadata_t::ERROR_CODE_NONE;
+
         //interleave a "soft" inline message into the receive stream:
         if (_stc->get_inline_queue().pop_with_haste(metadata)) return 0;
 
