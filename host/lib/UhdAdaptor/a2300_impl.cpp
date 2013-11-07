@@ -357,14 +357,14 @@ a2300_impl::a2300_impl(const device_addr_t &device_addr)
 	// create time and clock control objects
 	////////////////////////////////////////////////////////////////////
 	//register time now and pps onto available radio cores
-	m_tree->create<time_spec_t>(mb_path / "time" / "now");
-		//.publish(boost::bind(&time_core_3000::get_time_now, m_perifs[0].time64));
+	m_tree->create<time_spec_t>(mb_path / "time" / "now")
+	  .publish(boost::bind(&soft_time_ctrl::get_time, _soft_time_ctrl));
 	m_tree->create<time_spec_t>(mb_path / "time" / "pps");
 		//.publish(boost::bind(&time_core_3000::get_time_last_pps, m_perifs[0].time64));
 	for (size_t i = 0; i < m_perifs.size(); i++)
 	{
-		m_tree->access<time_spec_t>(mb_path / "time" / "now");
-		//    .subscribe(boost::bind(&time_core_3000::set_time_now, m_perifs[i].time64, _1));
+		m_tree->access<time_spec_t>(mb_path / "time" / "now")
+		  .subscribe(boost::bind(&soft_time_ctrl::set_time, _soft_time_ctrl, _1));
 		m_tree->access<time_spec_t>(mb_path / "time" / "pps");
 		//    .subscribe(boost::bind(&time_core_3000::set_time_next_pps, m_perifs[i].time64, _1));
 	}
