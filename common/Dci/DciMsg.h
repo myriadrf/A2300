@@ -31,8 +31,8 @@ extern "C" {
 #define DCI_MIN_MSGSIZE 	 4
 #define DCI_MAX_MSGSIZE     320
 
-#define Dci_MsgId_Category(MsgId) ((byte)(MsgId >> 8))
-#define Dci_MsgId_TypeId(MsgId) ((byte)(MsgId & (uint16)0x00ff))
+//#define Dci_MsgId_Category(MsgId) ((byte)(MsgId >> 8))
+//#define Dci_MsgId_TypeId(MsgId) ((byte)(MsgId & (uint16)0x00ff))
 
 #define Dci_IdleMsg_Id 		(uint16)(0x0100)
 #define Dci_DebugMsg_Id 	(uint16)(0x0501)

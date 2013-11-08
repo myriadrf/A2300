@@ -85,7 +85,7 @@ namespace A2300
 			int status;
 			bool bCompleted;
 
-#ifdef HAVE_LIBUSB
+#ifdef LINUX
 			TransferContext() : pSrc(NULL), bufFrame(NULL), nFrameSize(0),
 					nActualLength(0), status(0), bCompleted( false), lut(NULL){}
 			~TransferContext()
@@ -103,6 +103,16 @@ namespace A2300
 			{
 				lut->length = nFrameSize;
 				return libusb_submit_transfer(lut);
+			}
+
+			inline int Cancel()
+			{
+				return libusb_cancel_transfer(lut);
+			}
+
+			inline void Destroy()
+			{
+				delete this;
 			}
 
 		protected:
@@ -167,11 +177,12 @@ namespace A2300
 		// reference to UsbDriver instance mostly used for logging
 		uint				m_timeout;
 
-#if defined(HAVE_LIBUSB)
 		TransferEvent m_evtRead;
 		TransferEvent m_evtWrite;
 		TransferContextList m_listReadContexts;
 		TransferContextList m_listWriteContexts;
+
+#ifdef LINUX		
 		/**
 		*  Checks if the given end point is available
 		*/

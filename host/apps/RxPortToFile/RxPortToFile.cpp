@@ -17,37 +17,17 @@
 #include <Windows.h>
 #endif
 
-////////////////////////////////////////////////////////////////////////
-// Use architecture defines to determine the implementation
-////////////////////////////////////////////////////////////////////////
-#if defined(LINUX)
-    #define A2300_HRT_USE_CLOCK_GETTIME
-    #include <ctime>
-#elif defined(APPLE)
-    #define A2300_HRT_USE_MACH_ABSOLUTE_TIME
-    #include <mach/mach_time.h>
-#else
-    #error "Unknown system; not sure how to get time."
-#endif
-
 #include <stdio.h>
 #include <math.h>
-// #include <time.h>
+#include <time.h>
 #include <stdexcept>
 #include <vector>
+#include <unistd.h>
 
-#include <A2300/UsbDevice.h>
-#include <A2300/BulkDataPort.h>
-#include "DciProperty.h"
-#include <A2300/A2300InterfaceDefs.h>
-#include <A2300/A2300_Defs.h>
-
+#include <A2300/ConfigDevice.h>
 using namespace A2300;
 
-const int A2300_PID = A2300_PRODUCT_ID;
-const int A2300_VID = A2300_VENDOR_ID;
 
-Dci_Conversation s_conv;
 const size_t  s_ctFrames = 16;
 const size_t  s_sizeFrame = 8192;
 byte  		  s_Frames[s_ctFrames*s_sizeFrame];
@@ -62,13 +42,17 @@ class RxPortToFile
 {
 
 public:
-	RxPortToFile() : m_ctPackets(0), m_ctData(0) {}
-	int DoRxPortToFile( UsbDevice& device, BulkDataPort& portDci);
+	RxPortToFile() : m_ctPackets(0), m_ctData(0), m_bRunning(false) {}
+	int Run();
+	int DoRxPortToFile( );
 	void OnFrameReady( BulkDataPort::TransferContext* pctxt);
 
+
 private:
+	ConfigDevice  m_config;
 	unsigned int  m_ctPackets;
 	unsigned int  m_ctData;
+	bool 		  m_bRunning;
 };
 
 void WriteHeader( );
@@ -83,73 +67,49 @@ int main(int argc, char** argv)
 	//ASR-2300 Product information.
 	WriteHeader();
 
-	Dci_Conversation_Init( &s_conv, 0);
 
+	RxPortToFile rptf;
+	return rptf.Run();
+}
 
-	// Find the list of addresses at the specified VID/PID.
-	printf("\n");
-	printf (" Enumerating ASR-2300 devices...\n");
-	printf ("--------------------------------------\n");
-
-	// Get a list of all attached devices.
-	std::vector<int> addrs;
-	int ctDevices = UsbDevice::FindAttached(addrs, A2300_VID, A2300_PID);
-	if (ctDevices == 0)
+int RxPortToFile::Run()
+{
+	try
 	{
-		printf(" No devices found.\n\n");
+		// Find the list of addresses at the specified VID/PID.
+		printf("\n");
+		printf (" Enumerating ASR-2300 devices...\n");
+		printf ("--------------------------------------\n");
+
+		int addr = m_config.Attach();
+
+		printf("Attached to ASR-2300 at address = %d\n", addr);
+
+	}
+	catch( std::runtime_error& re)
+	{
+		printf("Error:  %s\n", re.what() );
 		return -1;
 	}
 
-	int addr = addrs.at(0);
 
+	//Print out Device information
+	std::string sId 		= m_config.IdentifyDevice();
+	std::string sVer 		= m_config.FirmwareVersion(0);
+	uint16	    idFpga 		= m_config.FpgaId();
+	uint16 		verFpga 	= m_config.FpgaVersion();
+	int  		iVer = (verFpga>>8);
+	int	 		iRev = (verFpga& 0x00ff);
 
-	//Create a Driver and PortA2300_PID
-	UsbDevice device;
-	BulkDataPort portDci(A2300_DciIdc0_EpIn, A2300_DciIdc0_EpOut );
+	printf("\n");
+	printf( "Identity:    %s\n", sId.c_str());
+	printf( "FW Ver:      %s\n", sVer.c_str());
+	printf( "FPGA ID-Ver: %04X-%02X.%02X\n\n", idFpga, iVer, iRev);
 
-	// Initialize (and Open) the USB driver.
-	if( device.Initialize(addr) != 0)
-	{
-		printf("Error Initializing A2300 Device.");
-		return -2;
-	}
+	//Execute the bulk data transfer program.
+	int retval = DoRxPortToFile( );
 
-	// Start USB driver activity (open portDci if not already opened).
-	if( device.Start() != 0)
-	{
-		printf("Error Initializing A2300 Device.");
-		return -3;
-	}
-
-	// Bind the USB driver to a portDci.
-	if( device.BindPort( &portDci) != 0)
-	{
-		printf("Error Binding to DCI IDC0 data portDci.");
-		device.Stop();
-		device.Terminate();
-		return -4;
-	}
-
-	//Open portDci so we can communicate.
-	portDci.Open();
-
-	//Get the Version information of the FPGA.
-	uint16 id, ver;
-	DciProperty dspProps(WCACOMP_HALDEFAULT, &portDci, A2300_WAIT_TIME, &s_conv);
-	dspProps.GetProperty<uint16>(0x01, id);
-	dspProps.GetProperty<uint16>(0x02, ver);
-	printf( "FPGA Logic ID/Ver: %04X-%02X.%02X\n\n", id, (ver>>8), ver&0x00ff);
-
-
-	RxPortToFile rtpf;
-	int retval = 0;
-	retval = rtpf.DoRxPortToFile( device, portDci);
-
-
-	// Unitialize portDci.
-	portDci.Close();			//Done with USB
-	device.Stop();
-	device.Terminate();
+	m_config.Detach();
 
 	return(retval);
 }
@@ -157,15 +117,16 @@ int main(int argc, char** argv)
 /**
  *
  */
-int RxPortToFile::DoRxPortToFile( UsbDevice& device, BulkDataPort& portDci)
+int RxPortToFile::DoRxPortToFile( )
 {
 	// Find the list of addresses at the specified VID/PID.
 	printf("\n");
 	printf (" Opening Data Port...\n");
 	printf ("--------------------------------------\n");
 
-
 	BulkDataPort portData(0x88, PortBase::EP_UNDEF);
+
+	UsbDevice& device  = m_config.Device();
 
 	// Bind the USB driver to a portDci.
 	if( device.BindPort( &portData) != 0)
@@ -174,48 +135,40 @@ int RxPortToFile::DoRxPortToFile( UsbDevice& device, BulkDataPort& portDci)
 		return -5;
 	}
 
+	TransportDci& td = m_config.Dci0Transport();
 
 	//3) Path Profile
-	DciProperty rfProps(WCACOMP_RF0, &portDci, A2300_WAIT_TIME, &s_conv);
 
-//	//TODO REMOVE
-	rfProps.SetProperty<byte>(6,4);
-	rfProps.SetProperty<byte>(9,0);
-	rfProps.SetProperty<uint32>(7,2400000);
-	rfProps.SetProperty<byte>(14,0);
-	rfProps.SetProperty<byte>(2,4);
-	rfProps.SetProperty<byte>(5,0);
-	rfProps.SetProperty<uint32>(3,2400000);
-//
+	//TODO REMOVE
+//	td.SetProperty<byte>(WCACOMP_RF0, 6, 4);
+//	td.SetProperty<byte>(WCACOMP_RF0, 9, 0);
+//	td.SetProperty<uint32>(WCACOMP_RF0, 7, 2400000);
+	td.SetProperty<byte>(WCACOMP_RF0, 14,0);
+	td.SetProperty<byte>(WCACOMP_RF0, 2,4);
+	td.SetProperty<byte>(WCACOMP_RF0, 5,0);
+//	td.SetProperty<uint32>(WCACOMP_RF0, 3,2400000);
 
 
-
-
-	rfProps.SetProperty<byte>(0x0D, 0x01);
+	td.SetProperty<byte>(WCACOMP_RF0, 0x0D, 0x01);
 
 	byte profile;
-	rfProps.GetProperty<byte>(0x0D, profile);
+	td.GetProperty<byte>(WCACOMP_RF0, 0x0D, profile);
 	printf("Profile: %02X\n", profile);
 
 
 	//Initialize the properties:
 
 	//1) Host Data Rate
-	DciProperty dspProps(WCACOMP_DSP_DDC0, &portDci, A2300_WAIT_TIME, &s_conv);
-	dspProps.SetProperty<uint16>(DSP_DDUC_SAMPRATE, 2);
-	dspProps.SetProperty<byte>(DSP_DDUC_CTRL, 1);
+	td.SetProperty<uint16>(WCACOMP_DSP_DDC0, DSP_DDUC_SAMPRATE, 2);
 
 	//2) If Frequency
 
-
 	//3) RF Frequency and Gain.
-	rfProps.SetProperty<byte>(RFPROP_RXGAIN, 0x05);
-	rfProps.SetProperty<uint32>(RFPROP_RXFREQ, 1575420);
+	td.SetProperty<byte>(WCACOMP_DSP_DDC0, RFPROP_RXGAIN, 0x05);
+	td.SetProperty<uint32>(WCACOMP_DSP_DDC0, RFPROP_RXFREQ, 1575420);
 
 
-
-
-
+	//4) Open the port and prepare it for reading.
 	portData.Open();
 
 	//Attach read callback
@@ -223,19 +176,24 @@ int RxPortToFile::DoRxPortToFile( UsbDevice& device, BulkDataPort& portDci)
 			&Delegate<void, RxPortToFile, BulkDataPort::TransferContext*, &RxPortToFile::OnFrameReady>);
 
 	//Initialize the buffers and queue for processing.
+	m_bRunning = true;
+	BulkDataPort::TransferContextList listContext;
 	for( size_t i = 0; i < s_ctFrames; i++)
 	{
 		BulkDataPort::TransferContext* pctxt = portData.CreateReadTransferContext(
 				s_Frames + i*s_sizeFrame, s_sizeFrame);
 
 		pctxt->Submit();
+
+		listContext.push_back( pctxt);
 	}
 
-	//Process for 10 seconds.
+	//5) Turn on the DDUC Port to pump data.
+	td.SetProperty<byte>(WCACOMP_DSP_DDC0, DSP_DDUC_CTRL, 1);
+
+
+	//6) Process for 10 seconds.
 	printf("Starting Run\n");
-
-#if defined(A2300_HRT_USE_CLOCK_GETTIME)
-
 	struct timespec tStart, tEnd;
 	clock_gettime(CLOCK_REALTIME, &tStart);
 	tEnd = tStart;
@@ -246,39 +204,37 @@ int RxPortToFile::DoRxPortToFile( UsbDevice& device, BulkDataPort& portDci)
 		clock_gettime(CLOCK_REALTIME, &tEnd);
 	}
 
-#elif defined(A2300_HRT_USE_MACH_ABSOLUTE_TIME)
+	//8) Turn off the DDC Port and reset
+	td.SetProperty<byte>(WCACOMP_DSP_DDC0, DSP_DDUC_CTRL, 0x2);
+	td.SetProperty<byte>(WCACOMP_DSP_DDC0, DSP_DDUC_CTRL, 0x0);
 
-        mach_timebase_info_data_t timebase_info;
-        mach_timebase_info(&timebase_info);
-	typedef unsigned long long time_t;
+	sleep(1);
 
-	time_t mach_timebase_multiplier =
-	  ((time_t) (1000000000UL) *
-	   (time_t) (timebase_info.numer) /
-	   (time_t) (timebase_info.denom));
+	//9) Set Path Profile to Disabled.
+	printf("Completed Run:  Packets = %d, Bytes = %d\n", m_ctPackets, m_ctData);
+	fflush(stdout);
 
-	time_t tStart, tEnd;
-	tStart = tEnd = time_t(mach_absolute_time()) * mach_timebase_multiplier;
-	int retval = 0;
-	while((retval == 0) && (tEnd < (tStart + 10)))
+	//10) Disable the RF Communications
+	td.SetProperty<uint16>(WCACOMP_RF0, 0x0D, 0x00);
+
+
+
+	//11) Clean up outstanding transfer operations.
+	BulkDataPort::TransferContextList::iterator iter = listContext.begin();
+	for( ; iter != listContext.end(); iter++)
 	{
-		printf(".");
-		fflush(stdout);
-		retval= device.PollAsynchronousEvents();
-		tEnd = time_t(mach_absolute_time()) * mach_timebase_multiplier;
+		if( (*iter)->Cancel() == 0) //Cancel current transfer operation.
+		{
+			(*iter)->Destroy(); // All done.
+		}
 	}
 
-#endif
-	//Set Path Profile to Disabled.
-	printf("\nCompleted Run:  Packets = %d, Bytes = %d\n", m_ctPackets, m_ctData);
-	fflush(stdout);
-	rfProps.SetProperty<uint16>(0x0D, 0x00);
 
 
 
+
+	//11) clean up objects.
 	portData.Close();
-
-
 
 	return 0;
 }
@@ -291,9 +247,11 @@ void RxPortToFile::OnFrameReady( BulkDataPort::TransferContext* pctxt)
 		m_ctPackets++;
 		m_ctData += pctxt->nActualLength;
 		if( (m_ctPackets % 488) == 0) putc('.', stdout);
+
+		//Resubmit.
+		pctxt->Submit();
+
 	}
-	//Resubmit.
-	pctxt->Submit();
 }
 
 //*************************************************************************
@@ -308,10 +266,32 @@ void RxPortToFile::OnFrameReady( BulkDataPort::TransferContext* pctxt)
 void WriteHeader( )
 {
 	printf("*********************************************************************\n"
-		   "* ASR-2300 RX portDci to File  \n"
+		   "* ASR-2300 RX Port to File  \n"
 		   "*********************************************************************\n"
 		   "*\n"
 		   "* This software example provided by Loctronix Corporation (2013) \n"
 		   "* www.loctronix.com\n" 
 		   "*********************************************************************\n");
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

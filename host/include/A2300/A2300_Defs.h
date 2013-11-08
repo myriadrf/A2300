@@ -9,6 +9,10 @@
 #ifndef A2300_DEFS_H_
 #define A2300_DEFS_H_
 
+#include <string>
+#include <list>
+
+
 // Loctronix System Defaults
 #define A2300_DEFAULT_FREQ      (1.946e9)   	// gHz -> mHz -> kHz
 #define A2300_DEFAULT_GAIN		(0.0)
@@ -41,5 +45,18 @@
 #define A2300_SYSTEM_CLOCK		(100e6)
 
 #define A2300_WAIT_TIME 		(0.1)
+
+
+/**
+ * Interface implemented components supporting device configuration
+ * api.
+ */
+struct IConfigComponent
+{
+	virtual std::string name() = 0;
+	virtual int  componentId() = 0;
+	virtual void Reset()= 0;
+	virtual void Synch() = 0;
+};
 
 #endif /* A2300_DEFS_H_ */

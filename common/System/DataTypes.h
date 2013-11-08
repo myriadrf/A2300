@@ -23,6 +23,7 @@ typedef unsigned short		uint16;
 typedef long				int32;
 typedef unsigned long		uint32;
 
+
 typedef unsigned char		byte;
 typedef unsigned short		ushort;
 typedef unsigned int		uint;
