@@ -21,7 +21,7 @@ IF(ENABLE_RXPORTTOFILE_APP)
 # Create executables
 ##############################################################
 
-    ADD_EXECUTABLE(RxPortToFile RxPortToFile.cpp DciProperty.cpp)
+    ADD_EXECUTABLE(RxPortToFile RxPortToFile.cpp)
 
 ##############################################################
 # Conditionally embed the A2300 UHD Adapter

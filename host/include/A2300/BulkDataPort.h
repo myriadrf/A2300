@@ -85,7 +85,7 @@ namespace A2300
 			int status;
 			bool bCompleted;
 
-#ifdef LINUX
+#ifdef HAVE_LIBUSB
 			TransferContext() : pSrc(NULL), bufFrame(NULL), nFrameSize(0),
 					nActualLength(0), status(0), bCompleted( false), lut(NULL){}
 			~TransferContext()
@@ -182,7 +182,7 @@ namespace A2300
 		TransferContextList m_listReadContexts;
 		TransferContextList m_listWriteContexts;
 
-#ifdef LINUX		
+#ifdef HAVE_LIBUSB		
 		/**
 		*  Checks if the given end point is available
 		*/

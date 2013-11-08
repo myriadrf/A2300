@@ -16,21 +16,7 @@
 #ifndef A2300_USBDEVICE_H_
 #define A2300_USBDEVICE_H_
 
-// Using libusb on linux and CyAPI on windows
-#ifdef  __cplusplus
-extern "C" {
-#endif
-#ifdef LINUX
-#include <libusb-1.0/libusb.h>
-#elif defined(WIN32)
-#include <Windows.h>
-#include <CyAPI.h>
-#endif
-
-#ifdef __cplusplus
-}
-#endif
-
+#include <A2300/libusb_ext.h>
 #include <System/DataTypes.h>
 #include <vector>			// Used in FindAttached().
 
@@ -98,7 +84,7 @@ namespace A2300
 		/**
 		 * Polls ansynchronous events.
 		 */
-#ifdef LINUX
+#if defined(HAVE_LIBUSB)
 		inline int PollAsynchronousEvents()
 		{
 			return libusb_handle_events_completed( m_pCtx, NULL);
@@ -114,7 +100,7 @@ namespace A2300
 #if defined(WIN32)
 		// Cypress usb library support
 		CCyUSBDevice * CyUSBDevice() { return m_pCypressDevice; }
-#elif defined(LINUX)
+#elif defined(HAVE_LIBUSB)
 		//Access to underlying LIB USB Support.
 		libusb_device_handle* 	DeviceHandle() { return m_pDevHandle;}
 #endif
@@ -173,7 +159,7 @@ namespace A2300
 		uint16 		m_productId;
 		uint16		m_usbAddress;
 
-#ifdef LINUX
+#ifdef HAVE_LIBUSB
 		// Libusb specific
 		libusb_device_handle* 	m_pDevHandle;
 		libusb_context * 		m_pCtx;
@@ -204,7 +190,7 @@ namespace A2300
 
 	protected:
 		bool IsInitialized() { return m_pUsbDevice != NULL; }
-#ifdef LINUX
+#ifdef HAVE_LIBUSB
 		//Access to underlying LIB USB Support.
 		libusb_device_handle* 	DeviceHandle() { return m_pUsbDevice->DeviceHandle();}
 #elif defined(WIN32)
