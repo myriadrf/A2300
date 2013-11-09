@@ -30,6 +30,7 @@
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1330279585" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="LINUX=1"/>
+									<listOptionValue builtIn="false" value="HAVE_LIBUSB=1"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.148456300" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -43,6 +44,7 @@
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1362830819" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="LINUX=1"/>
+									<listOptionValue builtIn="false" value="HAVE_LIBUSB=1"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.911849489" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
@@ -120,6 +122,7 @@
 								<option id="gnu.cpp.compiler.exe.release.option.debugging.level.1724811220" name="Debug Level" superClass="gnu.cpp.compiler.exe.release.option.debugging.level" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1181202738" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="LINUX=1"/>
+									<listOptionValue builtIn="false" value="HAVE_LIBUSB=1"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.include.paths.2022703987" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Common}&quot;"/>
@@ -132,6 +135,7 @@
 								<option id="gnu.c.compiler.exe.release.option.debugging.level.1261795648" name="Debug Level" superClass="gnu.c.compiler.exe.release.option.debugging.level" value="gnu.c.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1168724636" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="LINUX=1"/>
+									<listOptionValue builtIn="false" value="HAVE_LIBUSB=1"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.481274128" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>

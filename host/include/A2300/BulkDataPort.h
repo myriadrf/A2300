@@ -18,6 +18,7 @@
 
 #include <A2300/UsbDevice.h>
 #include <list>
+#include <stdlib.h>
 
 namespace A2300
 {

@@ -39,6 +39,7 @@
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.512855642" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="LINUX=1"/>
+									<listOptionValue builtIn="false" value="HAVE_LIBUSB=1"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.other.pic.1151142818" name="Position Independent Code (-fPIC)" superClass="gnu.cpp.compiler.option.other.pic" value="true" valueType="boolean"/>
 								<option id="gnu.cpp.compiler.option.other.other.96997072" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0" valueType="string"/>
@@ -145,6 +146,7 @@
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1933879654" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="LINUX=1"/>
+									<listOptionValue builtIn="false" value="HAVE_LIBUSB=1"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.other.pic.1023457630" name="Position Independent Code (-fPIC)" superClass="gnu.cpp.compiler.option.other.pic" value="true" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.965211892" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>

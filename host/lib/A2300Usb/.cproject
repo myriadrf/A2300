@@ -35,6 +35,7 @@
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.512855642" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="LINUX=1"/>
+									<listOptionValue builtIn="false" value="HAVE_LIBUSB=1"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.other.pic.1151142818" name="Position Independent Code (-fPIC)" superClass="gnu.cpp.compiler.option.other.pic" value="true" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1878256132" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -47,8 +48,9 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/common}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include&quot;"/>
 								</option>
-								<option id="gnu.c.compiler.option.preprocessor.def.symbols.114397469" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+								<option id="gnu.c.compiler.option.preprocessor.def.symbols.114397469" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="LINUX=2"/>
+									<listOptionValue builtIn="false" value="HAVE_LIBUSB=1"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.903060425" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
@@ -136,6 +138,7 @@
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1933879654" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="LINUX=1"/>
+									<listOptionValue builtIn="false" value="HAVE_LIBUSB=1"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.other.pic.1023457630" name="Position Independent Code (-fPIC)" superClass="gnu.cpp.compiler.option.other.pic" value="true" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.965211892" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -147,8 +150,9 @@
 								<option id="gnu.c.compiler.option.include.paths.1835341320" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Common}&quot;"/>
 								</option>
-								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1635901929" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1635901929" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="LINUX=2"/>
+									<listOptionValue builtIn="false" value="HAVE_LIBUSB=1"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1269521657" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
