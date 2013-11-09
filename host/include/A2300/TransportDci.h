@@ -36,8 +36,8 @@ namespace A2300
 	class TransportDci
 	{
 	public:
-		static const double DEFAULT_TIMEOUT_VALUE = 0.1;
-		static const int USE_DEFAULT_TIMEOUT = -1;
+		static const double DEFAULT_TIMEOUT_VALUE;
+		static const int USE_DEFAULT_TIMEOUT;
 	public:
 		TransportDci();
 

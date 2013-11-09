@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="A2300Identify"
+	Name="RxPortToFile"
 	ProjectGUID="{A2CB3134-0644-40EC-987A-D919E9ED3570}"
 	RootNamespace="A2300Identify"
 	Keyword="Win32Proj"
@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\common&quot;;&quot;$(SolutionDir)\host\extern\CypressFx3UsbDriver\include&quot;;&quot;$(SolutionDir)\host\A2300Usb&quot;;&quot;$(SolutionDir)/host/include&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\..\common&quot;;&quot;$(ProjectDir)\..\..\extern\CypressFx3UsbDriver\include&quot;;&quot;$(ProjectDir)\..\..\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -63,7 +63,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="A2300Usb.lib A2300Common.lib CyAPI.lib Setupapi.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)/host/lib/A2300Usb/Debug&quot;;&quot;$(SolutionDir)/host/extern/CypressFx3UsbDriver/lib/x86&quot;;&quot;$(SolutionDir)/common/Debug&quot;"
+				AdditionalLibraryDirectories="&quot;$(ProjectDir)/../../lib/A2300Usb/Debug&quot;;&quot;$(ProjectDir)/../../extern/CypressFx3UsbDriver/lib/x86&quot;;&quot;$(ProjectDir)/../../../common/Debug&quot;"
 				IgnoreDefaultLibraryNames="LIBC;LIBCMT"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -135,7 +135,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="A2300Common.lib A2300Usb.lib CyAPI.lib Setupapi.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)/host/lib/A2300Usb/Release&quot;;&quot;$(SolutionDir)/host/extern/CypressFx3UsbDriver/lib/x86&quot;;&quot;$(SolutionDir)/common/Release&quot;"
+				AdditionalLibraryDirectories="&quot;$(ProjectDir)/../../lib/A2300Usb/Release&quot;;&quot;$(ProjectDir)/../../extern/CypressFx3UsbDriver/lib/x86&quot;;&quot;$(ProjectDir)/../../../common/Release&quot;"
 				IgnoreDefaultLibraryNames="LIBC;LIBCMT"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -187,7 +187,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\main.cpp"
+				RelativePath=".\RxPortToFile.cpp"
 				>
 			</File>
 		</Filter>

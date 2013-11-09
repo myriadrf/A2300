@@ -167,11 +167,31 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\BitUtil.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\BulkDataPort_cypressUsb.cpp"
 				>
 			</File>
 			<File
+				RelativePath=".\ConfigDevice.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ConfigDsp.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ConfigRf.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\PortBase.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TransportDci.cpp"
 				>
 			</File>
 			<File

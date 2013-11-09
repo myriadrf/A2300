@@ -81,18 +81,14 @@ namespace A2300
 
 		virtual int BindPort(PortBase* pPort);
 
+#if defined(HAVE_LIBUSB)
 		/**
 		 * Polls ansynchronous events.
 		 */
-#if defined(HAVE_LIBUSB)
+
 		inline int PollAsynchronousEvents()
 		{
 			return libusb_handle_events_completed( m_pCtx, NULL);
-		}
-#elif defined( WIN32)
-		inline int PollAsynchronousEvents()
-		{
-			return 0; // NOTHING.
 		}
 #endif
 

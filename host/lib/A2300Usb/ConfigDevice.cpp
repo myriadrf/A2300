@@ -50,7 +50,7 @@ std::string ConfigDevice::IdentifyDevice()
 	return std::string("-N/A-");
 }
 
-std::string ConfigDevice::FirmwareVersion( int idWhich)
+std::string ConfigDevice::FirmwareVersion( int /*idWhich*/)
 {
 	byte buff[DCI_MAX_MSGSIZE];
 	char sbuff[256];
@@ -219,7 +219,7 @@ void ConfigDevice::DciCtrl::Init( UsbDevice& device, int idc, double timeout)
 		//Open the port
 		port.Open();
 
-		Dci_Conversation_Init( &conversation, idc);
+		Dci_Conversation_Init( &conversation, (byte) idc);
 
 		//Initialize transport to simplify drudgery of communicating.
 		transport.Init( &port, timeout, &conversation);

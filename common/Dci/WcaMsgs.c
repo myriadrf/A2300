@@ -112,7 +112,7 @@ int Dci_TypedPropertiesQuery_Init( void* buff, uint16 sizeBuff,
 	if( aTypeIds != NULL)
 	{	
 		if( lenMsg <= sizeBuff )
-			memcpy( (byte*)(buff + lenHdr + ctProperties), aTypeIds, ctProperties);
+			memcpy( ((byte*)buff + lenHdr + ctProperties), aTypeIds, ctProperties);
 		return(lenMsg);
 	}
 	return (lenMsg < sizeBuff) ? lenMsg : -1;

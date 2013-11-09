@@ -29,6 +29,8 @@ A2300::BulkDataPort::BulkDataPort( byte epidIn, byte epidOut)
 	, m_pEndPointIn( NULL )
 	, m_pEndPointOut( NULL )
 {
+	TransferContextList::iterator m_iterNextRead = m_listReadContexts.begin();
+	TransferContextList::iterator m_iterNextWrite = m_listWriteContexts.begin();
 }
 
 A2300::BulkDataPort::~BulkDataPort()
@@ -45,13 +47,11 @@ int A2300::BulkDataPort::OnInit()
  */
 void A2300::BulkDataPort::Close( )
 {
-#if defined(WIN32)
 	//Tear down endpoint input
 	m_pEndPointIn = NULL; //Is delete needed?
 
 	//Tear down endpoint output
 	m_pEndPointOut = NULL; //Is delete needed?
-#endif
 }
 
 /**
@@ -62,7 +62,6 @@ void A2300::BulkDataPort::Open( )
 	if( !IsInitialized() )
 		throw std::runtime_error("Port must be initialized before Open().");
 
-#if defined(WIN32)
 	m_pCypressDevice = CyUSBDevice();
 
 	// Enumerate the EP to find the match, skip EP0 (control EP)
@@ -90,8 +89,29 @@ void A2300::BulkDataPort::Open( )
 		// Exception error.
 		throw std::runtime_error("Unable to open port.");
 	}
-#endif
+
+	//Initialize the context lists.
+	m_iterNextRead  = m_listReadContexts.end();
+	m_iterNextWrite = m_listWriteContexts.end();
 }
+
+A2300::BulkDataPort::TransferContext*	A2300::BulkDataPort::CreateReadTransferContext(byte* bufFrame, size_t sizeFrame)
+{
+	TransferContext* pctxt = new TransferContext(this, 
+		this->m_pEndPointIn, bufFrame, sizeFrame);
+	m_listReadContexts.push_back(pctxt);
+	return pctxt;
+
+}
+A2300::BulkDataPort::TransferContext*	A2300::BulkDataPort::CreateWriteTransferContext(byte* bufFrame, size_t sizeFrame)
+{
+	TransferContext* pctxt = new TransferContext(this, 
+		this->m_pEndPointOut, bufFrame, sizeFrame);
+	m_listWriteContexts.push_back(pctxt);
+	return pctxt;
+}
+
+
 
 /**
  * Read the specified number of bytes from the port.
@@ -131,4 +151,80 @@ int A2300::BulkDataPort::Write(byte * pdata, int ctBytes, int msecTimeout )
 	}
 	//printf(" bytesWritten= %d\n", ctBytesWrote);
 	return (int)ctBytesWrote;
+}
+
+
+/**
+* Win32 interface, waits for a read transfer event and initiates callbacks 
+*/
+A2300::BulkDataPort::TransferContext&  A2300::BulkDataPort::WaitForReadTransferEvent(int timeout)
+{
+	//Make sure we are initialized properly
+	//and have the next transfer context.
+	if( m_iterNextRead == m_listReadContexts.end() )
+	{
+		m_iterNextRead = m_listReadContexts.begin();
+		if( m_listReadContexts.empty())
+			throw std::runtime_error("BulkDataPort aynschronous read transfer not properly initialized. No transfer contexts defined.");
+	}
+
+	//Wait for the next transfer context to become available.
+	//Finish the transfer accordingly.
+	TransferContext& ctxt = *(*m_iterNextRead);
+
+	ctxt.bCompleted = ctxt.WaitForTransfer( timeout);
+	if(ctxt.bCompleted)
+	{
+		ctxt.FinishTransfer();
+	}
+	else
+	{
+		ctxt.Cancel();
+	}
+
+	//Fire callback 
+	m_evtRead( &ctxt);
+
+	//Set up for next read.
+	m_iterNextRead++;
+
+	return ctxt;
+}
+
+/**
+* Win32 interface, waits for a write transfer event and initiates callbacks 
+*/
+A2300::BulkDataPort::TransferContext&  A2300::BulkDataPort::WaitForWriteTransferEvent(int timeout)
+{
+	//Make sure we are initialized properly
+	//and have the next transfer context.
+	if( m_iterNextWrite == m_listWriteContexts.end() )
+	{
+		m_iterNextWrite = m_listWriteContexts.begin();
+		if( m_listWriteContexts.empty())
+			throw std::runtime_error("BulkDataPort aynschronous write transfer not properly initialized. No transfer contexts defined.");
+	}
+
+	//Wait for the next transfer context to become available.
+	//Finish the transfer accordingly.
+	TransferContext& ctxt = *(*m_iterNextWrite);
+
+	ctxt.bCompleted = ctxt.WaitForTransfer( timeout);
+	if(ctxt.bCompleted)
+	{
+		ctxt.FinishTransfer();
+	}
+	else
+	{
+		ctxt.status = -1; // timeout.
+		ctxt.Cancel();
+	}
+
+	//Fire callback 
+	m_evtWrite( &ctxt);
+
+	//Set up for next write.
+	m_iterNextWrite++;
+
+	return ctxt;
 }

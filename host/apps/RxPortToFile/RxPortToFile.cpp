@@ -13,19 +13,32 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-#ifdef WIN32
-#include <Windows.h>
-#endif
-
 ////////////////////////////////////////////////////////////////////////
 // Use architecture defines to determine the implementation
 ////////////////////////////////////////////////////////////////////////
 #if defined(linux) || defined(__linux) || defined(__linux__)
     #define A2300_HRT_USE_CLOCK_GETTIME
     #include <ctime>
+	#include <unistd.h>
 #elif defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
     #define A2300_HRT_USE_MACH_ABSOLUTE_TIME
     #include <mach/mach_time.h>
+	#include <unistd.h>
+#elif defined(WIN32)
+	#define A2300_HRT_USE_WINDOWS
+	#include <Windows.h>
+
+double CalculateElapsedSec( FILETIME& ft1, FILETIME& ft2)  
+{
+	ULARGE_INTEGER ul1, ul2;    
+	ul1.LowPart  = ft1.dwLowDateTime;    
+	ul1.HighPart = ft1.dwHighDateTime;    
+	ul2.LowPart  = ft2.dwLowDateTime;    
+	ul2.HighPart = ft2.dwHighDateTime;    
+
+	ULONGLONG diff = ul1.QuadPart - ul2.QuadPart;
+	return  diff*1.0e-7;
+}
 #else
     #error "Unknown system; not sure how to get time."
 #endif
@@ -34,7 +47,6 @@
 #include <math.h>
 #include <stdexcept>
 #include <vector>
-#include <unistd.h>
 
 #include <A2300/ConfigDevice.h>
 using namespace A2300;
@@ -74,12 +86,10 @@ void WriteHeader( );
 //*************************************************************************
 // Main Program Entry Point.
 //*************************************************************************
-int main(int argc, char** argv)
+int main(int /*argc*/, char** /*argv*/)
 {
 	//ASR-2300 Product information.
 	WriteHeader();
-
-
 	RxPortToFile rptf;
 	return rptf.Run();
 }
@@ -241,6 +251,21 @@ int RxPortToFile::DoRxPortToFile( )
 		tEnd = time_t(mach_absolute_time()) * mach_timebase_multiplier;
 	}
 
+#elif defined(A2300_HRT_USE_WINDOWS)
+	FILETIME tStart, tEnd;
+	GetSystemTimeAsFileTime(&tStart);
+	tEnd = tStart;
+	int retval = 0;
+	while( retval == 0 && (CalculateElapsedSec( tEnd, tStart) < 10.0))
+	{
+		//Windows implementation does not have a PollAsynchronous Data method.
+		//Instead, we wait for events on each port.
+		BulkDataPort::TransferContext& ctxt = portData.WaitForReadTransferEvent( 1000);
+		retval = ctxt.status;
+
+		GetSystemTimeAsFileTime(&tEnd);
+	}	
+
 #endif
 
 	printf("\nCompleted Run:  Packets = %d, Bytes = %d\n", m_ctPackets, m_ctData);
@@ -249,7 +274,7 @@ int RxPortToFile::DoRxPortToFile( )
 	td.SetProperty<byte>(WCACOMP_DSP_DDC0, DSP_DDUC_CTRL, 0x2);
 	td.SetProperty<byte>(WCACOMP_DSP_DDC0, DSP_DDUC_CTRL, 0x0);
 
-	sleep(1);
+	//sleep(1);
 
 	//9) Set Path Profile to Disabled.
 	printf("Completed Run:  Packets = %d, Bytes = %d\n", m_ctPackets, m_ctData);

@@ -120,7 +120,68 @@ namespace A2300
 			libusb_transfer *lut;
 
 #elif defined(WIN32)
-		//TODO
+		public:
+			TransferContext( BulkDataPort* psrc, CCyBulkEndPoint* pEndpoint, byte* bframe,int nframesize)
+				: pSrc(psrc),  bufFrame(bframe), nFrameSize(nframesize),
+					nActualLength(0), status(0), bCompleted( false), 
+					pep(pEndpoint)
+			{
+				//Create an event to monitor.
+				overlap.hEvent = CreateEvent( NULL, false, false, NULL);
+			}
+			
+			~TransferContext()
+			{
+				if( overlap.hEvent != NULL) 
+					CloseHandle(overlap.hEvent);
+			}
+
+			inline ULONG Submit( int size)
+			{
+				context = pep->BeginDataXfer( bufFrame, size, &overlap);
+				return ( pep->NtStatus || pep->UsbdStatus )? pep->NtStatus : 0;
+			}
+
+			inline ULONG Submit( )
+			{
+				return Submit( nFrameSize);
+			}
+
+			inline bool Cancel()
+			{
+                pep->Abort();
+                if (pep->LastError == ERROR_IO_PENDING)
+                    WaitForSingleObject(overlap.hEvent,2000);
+				
+				LONG size = (LONG) nFrameSize;
+				bool bResult = pep->FinishDataXfer(bufFrame, size, &overlap, context);
+				return bResult;
+			}
+
+			inline void Destroy()
+			{
+				delete this;
+			}
+		protected:
+			bool WaitForTransfer(int timeout)
+			{
+				status = 0;
+				bCompleted = pep->WaitForXfer(&overlap, timeout);
+				if( !bCompleted) status = -1;
+				return bCompleted;
+			}
+
+			void FinishTransfer()
+			{
+				LONG size;
+				bCompleted  = pep->FinishDataXfer(bufFrame, size, &overlap, context);
+				nActualLength = size;
+				status = (bCompleted) ? 0 : -2;
+			}
+
+			CCyBulkEndPoint* pep;
+			OVERLAPPED	  overlap;
+			PUCHAR		  context;
 #endif
 
 		};
@@ -156,7 +217,6 @@ namespace A2300
 		 */
 		TransferEvent& WriteTransfer() { return m_evtWrite;}
 
-
 		/**
 		* Synchronous read the specified number of bytes from the port.
 		*/
@@ -168,7 +228,17 @@ namespace A2300
 		 */
 		int Write(byte * pdata, int ctBytes, int msecTimeout );
 
+#ifdef WIN32
+		/**
+		* Win32 interface, waits for a read transfer event and initiates callbacks 
+		*/
+		TransferContext&  WaitForReadTransferEvent(int timeout);
 
+		/**
+		* Win32 interface, waits for a write transfer event and initiates callbacks 
+		*/
+		TransferContext&  WaitForWriteTransferEvent(int timeout);
+#endif
 	protected:
 		virtual void* OnGetInterface() { return this;}
 
@@ -194,6 +264,8 @@ namespace A2300
 		static void  LibusbAsyncWriteCallback(libusb_transfer *lut);
 
 #elif defined(WIN32)
+		TransferContextList::iterator m_iterNextRead;
+		TransferContextList::iterator m_iterNextWrite;
 		CCyUSBDevice * 		m_pCypressDevice;
 		CCyBulkEndPoint* 	m_pEndPointIn;
 		CCyBulkEndPoint* 	m_pEndPointOut;
