@@ -86,6 +86,11 @@ namespace A2300
 			int status;
 			bool bCompleted;
 
+			/**
+			* Pointer to user defined object.
+			*/
+			void* pObj;
+
 #ifdef HAVE_LIBUSB
 			TransferContext() : pSrc(NULL), bufFrame(NULL), nFrameSize(0),
 					nActualLength(0), status(0), bCompleted( false), lut(NULL){}
@@ -247,12 +252,8 @@ namespace A2300
 
 		// reference to UsbDriver instance mostly used for logging
 		uint				m_timeout;
-
 		TransferEvent m_evtRead;
 		TransferEvent m_evtWrite;
-		TransferContextList m_listReadContexts;
-		TransferContextList m_listWriteContexts;
-
 #ifdef HAVE_LIBUSB		
 		/**
 		*  Checks if the given end point is available
@@ -264,6 +265,8 @@ namespace A2300
 		static void  LibusbAsyncWriteCallback(libusb_transfer *lut);
 
 #elif defined(WIN32)
+		TransferContextList m_listReadContexts;
+		TransferContextList m_listWriteContexts;
 		TransferContextList::iterator m_iterNextRead;
 		TransferContextList::iterator m_iterNextWrite;
 		CCyUSBDevice * 		m_pCypressDevice;

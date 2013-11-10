@@ -42,13 +42,6 @@ int A2300::BulkDataPort::OnInit()
  */
 void A2300::BulkDataPort::Close( )
 {
-#if defined(WIN32)
-	//Tear down endpoint input
-	m_pEndPointIn = NULL; //Is delete needed?
-
-	//Tear down endpoint output
-	m_pEndPointOut = NULL; //Is delete needed?
-#endif
 }
 
 /**
@@ -113,7 +106,7 @@ A2300::BulkDataPort::TransferContext*	A2300::BulkDataPort::CreateReadTransferCon
      pctxt->lut = lut;
      pctxt->bufFrame = bufFrame;
      pctxt->nFrameSize = sizeFrame;
-     m_listReadContexts.push_back( pctxt);
+     //m_listReadContexts.push_back( pctxt);
 
      return pctxt;
 }
@@ -139,7 +132,7 @@ A2300::BulkDataPort::TransferContext*	A2300::BulkDataPort::CreateWriteTransferCo
      pctxt->bufFrame = bufFrame;
      pctxt->nFrameSize = sizeFrame;
 
-     m_listWriteContexts.push_back( pctxt);
+     //m_listWriteContexts.push_back( pctxt);
      return pctxt;
 
 }

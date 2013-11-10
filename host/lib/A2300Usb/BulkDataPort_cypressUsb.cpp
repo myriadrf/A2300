@@ -52,6 +52,11 @@ void A2300::BulkDataPort::Close( )
 
 	//Tear down endpoint output
 	m_pEndPointOut = NULL; //Is delete needed?
+
+	//Clear out the read and write transfer contexts.
+	//Note the user must make sure they delete everything.
+	m_listReadContexts.clear();
+	m_listWriteContexts.clear();
 }
 
 /**
