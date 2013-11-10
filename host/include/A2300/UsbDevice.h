@@ -90,6 +90,8 @@ namespace A2300
 		{
 			return libusb_handle_events_completed( m_pCtx, NULL);
 		}
+
+		int PollAsynchronousEvents( const double timeout, int& completed);
 #endif
 
     protected:

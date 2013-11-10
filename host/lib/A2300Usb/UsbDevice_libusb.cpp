@@ -12,7 +12,7 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-
+#include <time.h>
 #include <A2300/UsbDevice.h>
 #include <stdexcept>
 #include <vector>
@@ -170,4 +170,15 @@ int A2300::UsbDevice::FindAttachedUsb(std::vector<int>& addrVect, int vid, int p
 	libusb_exit(pCtx);
 	return ctDeviceFound;
 }
+
+int A2300::UsbDevice::PollAsynchronousEvents( const double timeout, int& completed)
+{
+	timeval tv;
+	tv.tv_sec = (long)(timeout);
+	tv.tv_usec = (long) (timeout*1.0e6); /*10ms*/
+
+	return libusb_handle_events_timeout_completed(m_pCtx, &tv, &completed);
+}
+
+
 

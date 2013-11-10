@@ -13,36 +13,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-////////////////////////////////////////////////////////////////////////
-// Use architecture defines to determine the implementation
-////////////////////////////////////////////////////////////////////////
-#if defined(linux) || defined(__linux) || defined(__linux__)
-    #define A2300_HRT_USE_CLOCK_GETTIME
-    #include <ctime>
-	#include <unistd.h>
-#elif defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
-    #define A2300_HRT_USE_MACH_ABSOLUTE_TIME
-    #include <mach/mach_time.h>
-	#include <unistd.h>
-#elif defined(WIN32)
-	#define A2300_HRT_USE_WINDOWS
-	#include <Windows.h>
-
-double CalculateElapsedSec( FILETIME& ft1, FILETIME& ft2)  
-{
-	ULARGE_INTEGER ul1, ul2;    
-	ul1.LowPart  = ft1.dwLowDateTime;    
-	ul1.HighPart = ft1.dwHighDateTime;    
-	ul2.LowPart  = ft2.dwLowDateTime;    
-	ul2.HighPart = ft2.dwHighDateTime;    
-
-	ULONGLONG diff = ul1.QuadPart - ul2.QuadPart;
-	return  diff*1.0e-7;
-}
-#else
-    #error "Unknown system; not sure how to get time."
-#endif
-
+#include <time.h>
 #include <stdio.h>
 #include <math.h>
 #include <stdexcept>
@@ -216,90 +187,62 @@ int RxPortToFile::DoRxPortToFile( )
 
 	//6) Process for 10 seconds.
 	printf("Starting Run\n");
-
-#if defined(A2300_HRT_USE_CLOCK_GETTIME)
-
-	struct timespec tStart, tEnd;
-	clock_gettime(CLOCK_REALTIME, &tStart);
-	tEnd = tStart;
 	int retval = 0;
-	while( retval == 0 and (tEnd.tv_sec < (tStart.tv_sec + 10)))
+	time_t ttCur, ttEnd;
+	time(&ttCur);
+	ttEnd = ttCur + 10;
+
+	while( retval == 0 && ttCur < ttEnd)
 	{
+#if defined(HAVE_LIBUSB)
 		retval= device.PollAsynchronousEvents();
-		clock_gettime(CLOCK_REALTIME, &tEnd);
-	}
-
-#elif defined(A2300_HRT_USE_MACH_ABSOLUTE_TIME)
-
-        mach_timebase_info_data_t timebase_info;
-        mach_timebase_info(&timebase_info);
-	typedef unsigned long long time_t;
-
-	time_t mach_timebase_multiplier =
-	  ((time_t) (1000000000UL) *
-	   (time_t) (timebase_info.numer) /
-	   (time_t) (timebase_info.denom));
-
-	time_t tStart, tEnd;
-	tStart = tEnd = time_t(mach_absolute_time()) * mach_timebase_multiplier;
-	int retval = 0;
-	while((retval == 0) && (tEnd < (tStart + 10)))
-	{
-		printf(".");
-		fflush(stdout);
-		retval= device.PollAsynchronousEvents();
-		tEnd = time_t(mach_absolute_time()) * mach_timebase_multiplier;
-	}
-
-#elif defined(A2300_HRT_USE_WINDOWS)
-	FILETIME tStart, tEnd;
-	GetSystemTimeAsFileTime(&tStart);
-	tEnd = tStart;
-	int retval = 0;
-	while( retval == 0 && (CalculateElapsedSec( tEnd, tStart) < 10.0))
-	{
+#elif defined(WIN32)
 		//Windows implementation does not have a PollAsynchronous Data method.
 		//Instead, we wait for events on each port.
-		BulkDataPort::TransferContext& ctxt = portData.WaitForReadTransferEvent( 1000);
+		BulkDataPort::TransferContext& ctxt = portData.WaitForReadTransferEvent( 0.1);
 		retval = ctxt.status;
-
-		GetSystemTimeAsFileTime(&tEnd);
-	}	
-
 #endif
+		time(&ttCur);
+	}
 
-	printf("\nCompleted Run:  Packets = %d, Bytes = %d\n", m_ctPackets, m_ctData);
 
 	//8) Turn off the DDC Port and reset
 	td.SetProperty<byte>(WCACOMP_DSP_DDC0, DSP_DDUC_CTRL, 0x2);
 	td.SetProperty<byte>(WCACOMP_DSP_DDC0, DSP_DDUC_CTRL, 0x0);
 
-	//sleep(1);
-
 	//9) Set Path Profile to Disabled.
-	printf("Completed Run:  Packets = %d, Bytes = %d\n", m_ctPackets, m_ctData);
+	printf("\n\nCompleted Run:  Packets = %d, Bytes = %d\n", m_ctPackets, m_ctData);
 	fflush(stdout);
 
 	//10) Disable the RF Communications
 	td.SetProperty<uint16>(WCACOMP_RF0, 0x0D, 0x00);
 
 
+	//11) Cancel all transfer operations.
+	BulkDataPort::TransferContextList::iterator iter;
+	for( iter = listContext.begin(); iter != listContext.end(); iter++)
+		(*iter)->Cancel();
 
-	//11) Clean up outstanding transfer operations.
-	BulkDataPort::TransferContextList::iterator iter = listContext.begin();
-	for( ; iter != listContext.end(); iter++)
+	//Wait for the transfer cancellations to complete.
+	time(&ttCur);
+	ttEnd = ttCur + 2;
+
+#ifdef HAVE_LIBUSB
+	//We must provide events in LIBUSB.
+	int completed = 0;
+	while( !completed && (ttCur < ttEnd))
 	{
-		if( (*iter)->Cancel() == 0) //Cancel current transfer operation.
-		{
-			(*iter)->Destroy(); // All done.
-		}
+		device.PollAsynchronousEvents(0.010, completed);
+		time(&ttCur);
 	}
+#endif
+
+	//12) Destroy all the transfer contexts.
+	for( iter = listContext.begin(); iter != listContext.end(); iter++)
+		(*iter)->Destroy(); // All done.
 
 
-
-
-
-	//11) clean up objects.
+	//11) Close the Data Port
 	portData.Close();
 
 	return 0;
@@ -312,7 +255,11 @@ void RxPortToFile::OnFrameReady( BulkDataPort::TransferContext* pctxt)
 	{
 		m_ctPackets++;
 		m_ctData += pctxt->nActualLength;
-		if( (m_ctPackets % 488) == 0) putc('.', stdout);
+		if( (m_ctPackets % 488) == 0)
+		{
+			putc('.', stdout);
+			fflush(stdout);
+		}
 
 		//Resubmit.
 		pctxt->Submit();
