@@ -168,10 +168,10 @@ namespace A2300
 				delete this;
 			}
 		protected:
-			bool WaitForTransfer(int timeout)
+			bool WaitForTransfer(int msecTimeout)
 			{
 				status = 0;
-				bCompleted = pep->WaitForXfer(&overlap, timeout);
+				bCompleted = pep->WaitForXfer(&overlap, msecTimeout);
 				if( !bCompleted) status = -1;
 				return bCompleted;
 			}
@@ -237,12 +237,12 @@ namespace A2300
 		/**
 		* Win32 interface, waits for a read transfer event and initiates callbacks 
 		*/
-		TransferContext&  WaitForReadTransferEvent(int timeout);
+		TransferContext&  WaitForReadTransferEvent(int msecTimeout);
 
 		/**
 		* Win32 interface, waits for a write transfer event and initiates callbacks 
 		*/
-		TransferContext&  WaitForWriteTransferEvent(int timeout);
+		TransferContext&  WaitForWriteTransferEvent(int msecTimeout);
 #endif
 	protected:
 		virtual void* OnGetInterface() { return this;}

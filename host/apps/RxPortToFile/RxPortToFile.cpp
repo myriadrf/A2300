@@ -199,12 +199,13 @@ int RxPortToFile::DoRxPortToFile( )
 #elif defined(WIN32)
 		//Windows implementation does not have a PollAsynchronous Data method.
 		//Instead, we wait for events on each port.
-		BulkDataPort::TransferContext& ctxt = portData.WaitForReadTransferEvent( 0.1);
+		BulkDataPort::TransferContext& ctxt = portData.WaitForReadTransferEvent( 1000);
 		retval = ctxt.status;
 #endif
 		time(&ttCur);
 	}
 
+	if( retval != 0) printf("USB error occurred transfer stopped.\n");
 
 	//8) Turn off the DDC Port and reset
 	td.SetProperty<byte>(WCACOMP_DSP_DDC0, DSP_DDUC_CTRL, 0x2);

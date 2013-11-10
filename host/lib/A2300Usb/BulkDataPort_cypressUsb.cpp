@@ -162,7 +162,7 @@ int A2300::BulkDataPort::Write(byte * pdata, int ctBytes, int msecTimeout )
 /**
 * Win32 interface, waits for a read transfer event and initiates callbacks 
 */
-A2300::BulkDataPort::TransferContext&  A2300::BulkDataPort::WaitForReadTransferEvent(int timeout)
+A2300::BulkDataPort::TransferContext&  A2300::BulkDataPort::WaitForReadTransferEvent(int msecTimeout)
 {
 	//Make sure we are initialized properly
 	//and have the next transfer context.
@@ -177,7 +177,7 @@ A2300::BulkDataPort::TransferContext&  A2300::BulkDataPort::WaitForReadTransferE
 	//Finish the transfer accordingly.
 	TransferContext& ctxt = *(*m_iterNextRead);
 
-	ctxt.bCompleted = ctxt.WaitForTransfer( timeout);
+	ctxt.bCompleted = ctxt.WaitForTransfer( msecTimeout);
 	if(ctxt.bCompleted)
 	{
 		ctxt.FinishTransfer();
@@ -199,7 +199,7 @@ A2300::BulkDataPort::TransferContext&  A2300::BulkDataPort::WaitForReadTransferE
 /**
 * Win32 interface, waits for a write transfer event and initiates callbacks 
 */
-A2300::BulkDataPort::TransferContext&  A2300::BulkDataPort::WaitForWriteTransferEvent(int timeout)
+A2300::BulkDataPort::TransferContext&  A2300::BulkDataPort::WaitForWriteTransferEvent(int msecTimeout)
 {
 	//Make sure we are initialized properly
 	//and have the next transfer context.
@@ -214,7 +214,7 @@ A2300::BulkDataPort::TransferContext&  A2300::BulkDataPort::WaitForWriteTransfer
 	//Finish the transfer accordingly.
 	TransferContext& ctxt = *(*m_iterNextWrite);
 
-	ctxt.bCompleted = ctxt.WaitForTransfer( timeout);
+	ctxt.bCompleted = ctxt.WaitForTransfer( msecTimeout);
 	if(ctxt.bCompleted)
 	{
 		ctxt.FinishTransfer();
