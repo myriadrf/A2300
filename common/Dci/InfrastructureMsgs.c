@@ -1,28 +1,31 @@
-// Name: InfrastructureMsgs.c
-//
-// Copyright(c) 2013 Loctronix Corporation
-// http://www.loctronix.com
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
+/** Name: InfrastructureMsgs.c
+*
+* Copyright(c) 2013 Loctronix Corporation
+* http://www.loctronix.com
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*/
 
-#include "InfrastructureMsgs.h"
-#include "string.h"
+#include "Dci/InfrastructureMsgs.h"
+#include <string.h>
 
-#define min( a,b) (((a) < (b)) ? (a) : (b))
+#ifndef min
+#define min(a,b) (((a) < (b)) ? (a) : (b))
+#endif
 
 /*
 * IdleMsg (0x0100)
 */
-int Dci_IdleMsg_Init( void* buff ) 
-{ 
+int Dci_IdleMsg_Init( void* buff )
+{
 	return Dci_Hdr_Init( buff, 0x01, 0x00);
 }
 
@@ -30,7 +33,7 @@ int Dci_IdleMsg_Init( void* buff )
 * IdentifyDeviceQuery (0x0280)
 */
 int Dci_IdentifyDeviceQuery_Init( void* buff )
-{ 
+{
 	return Dci_Hdr_Init( buff, 0x02, 0x80);
 }
 /**
@@ -73,7 +76,7 @@ int Dci_MessageError_Init1( void* buff, Dci_Hdr *pBadMsg)
 * Initializes the debug message (05,01).  Be sure to provide a buffer large enough to accomodate
 * the length of the string message.  Returns the total size of the message.
 */
-int Dci_DebugMsg_Init( void* buff, uint16 sizeBuff, byte status, 
+int Dci_DebugMsg_Init( void* buff, uint16 sizeBuff, byte status,
 						 uint16 src, pcstr szMessage)
 {
 	Dci_DebugMsg* pmsg = (Dci_DebugMsg*) buff;
@@ -91,6 +94,6 @@ pcstr Dci_DebugMsg_Message( Dci_DebugMsg* pmsg)
 {
 	pstr szMsg = (((char*) &(pmsg->len)) + sizeof(uint16));
 	szMsg[ pmsg->len] = '\0';
-	 
+
 	return szMsg;
 }

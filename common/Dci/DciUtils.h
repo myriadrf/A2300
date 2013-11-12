@@ -1,43 +1,42 @@
-// Name: DciUtils.h
-//
-// Copyright(c) 2013 Loctronix Corporation
-// http://www.loctronix.com
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
+/** Name: DciUtils.h
+*
+* Copyright(c) 2013 Loctronix Corporation
+* http://www.loctronix.com
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*/
 
 #ifndef DciUtils_h
 #define DciUtils_h
 
 #include "../System/DataTypes.h"
 
-
 #ifdef  __cplusplus
 extern "C" {
 #endif
 
-// Forward declare basic structures.
+/* Forward declare basic structures. */
 struct Dci_Hdr;
 struct Dci_Conversation;
 
-
-//*****************************************************************************
-// DCI Message Map Framework.
-//*****************************************************************************
+/*****************************************************************************
+* DCI Message Map Framework.
+*****************************************************************************/
 /*
 	DCI message map framework provides filtered message handlers that efficiently
 	processes supplied messages and routes them to the appropriate handler.  Use of this
 	framework significantly reduces the code overhead to validate and determine if a particular message
-	is to be processed.  This replaces the use of switch/case structures and is significantly faster at the 
+	is to be processed.  This replaces the use of switch/case structures and is significantly faster at the
 	expense of 16 bytes per message handler defined.  For an application of 30 handlers, this constitutes a memory penalty
-	about 480 bytes, which is likely offset by reduced code space requirements, eliminating lots of redundant code. 
+	about 480 bytes, which is likely offset by reduced code space requirements, eliminating lots of redundant code.
 
 	To use you must implement two items:  1) a Message Map binding handlers to messages and 2) a message map Manager.  Both examples are
 	shown below.
@@ -61,14 +60,14 @@ struct Dci_Conversation;
 	DCI_END_MSGMAP
 
 	//Multiple message maps can be defined and then added to a message map manager.
-	
-	2) Message Map Manager.  In one source file, handling the initial DCI message processing implement a message map manager and add all 
+
+	2) Message Map Manager.  In one source file, handling the initial DCI message processing implement a message map manager and add all
 							 defined messages maps to it.  Once completed, you can then use the map to handle message processing.
 
 	 Create a Message Map Manager instance on the heap and then initialize during application initialization.
 
 	 Dci_MapMgr s_mapmgr;
-	 
+
 	 void Init()
 	 {
 		 Dci_MapMgr_Init(&mapmgr);		//Initializes  the mapmgr instance.
@@ -89,12 +88,12 @@ struct Dci_Conversation;
 */
 typedef struct Dci_Context
 {
-	uint16					idMessage;			// 16 bit version of the message ID.
-	byte					idComponent;		// 0xFF if undefined.
-	struct Dci_Hdr			*pMsg;				// pointer to message header 
-	int						lenMsg;				// length of message
-	struct Dci_Conversation	*pConv;				// pointer to conversation
-	bool					bHandled;			// indicator of whether the message is handled
+	uint16					idMessage;			/* 16 bit version of the message ID. */
+	byte					idComponent;		/* 0xFF if undefined. */
+	struct Dci_Hdr			*pMsg;				/* pointer to message header */
+	int						lenMsg;				/* length of message */
+	struct Dci_Conversation	*pConv;				/* pointer to conversation */
+	bool					bHandled;			/* indicator of whether the message is handled */
 } Dci_Context;
 
 /**
@@ -106,16 +105,16 @@ typedef void (*Dci_MsgHandler)( Dci_Context* pctxt);
 /**
 * Structure defines a message map entry. Used by the message map macroxs below.
 */
-typedef struct Dci_MapEntry 
+typedef struct Dci_MapEntry
 {
 	struct Dci_MapEntry* pNextCategory;
 	struct Dci_MapEntry* pNextType;
 	struct Dci_MapEntry* pNextHandler;
 	Dci_MsgHandler fncHandler;
-	byte idCategory, idType, idComponent, idPropStart, idPropEnd, idHandlerType; 
+	byte idCategory, idType, idComponent, idPropStart, idPropEnd, idHandlerType;
 } Dci_MapEntry;
 
-//Define macros for building message maps.
+/* Define macros for building message maps. */
 
 /**
 * Macro is used to denote the start of a message map.
@@ -176,12 +175,12 @@ typedef struct Dci_MapMgr
 /**
 * Function initializes a DCI Map Manager structure to a known state.
 */
-void Dci_MapMgr_Init(Dci_MapMgr* pmgr);		
+void Dci_MapMgr_Init(Dci_MapMgr* pmgr);
 
 /**
 * Function adds a handler to the Map manager.
 */
-void Dci_MapMgr_Add( Dci_MapMgr* pmgr,  Dci_MapEntry* pentry);  
+void Dci_MapMgr_Add( Dci_MapMgr* pmgr,  Dci_MapEntry* pentry);
 
 /**
 * Function processes a DCI message context with the specified map manager.

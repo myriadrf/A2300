@@ -1,22 +1,23 @@
-// Name: StandardMsgs.h
-//
-// Copyright(c) 2013 Loctronix Corporation
-// http://www.loctronix.com
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
+/** Name: StandardMsgs.h
+*
+* Copyright(c) 2013 Loctronix Corporation
+* http://www.loctronix.com
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*/
 
 #ifndef StandardMsgs_h
 #define StandardMsgs_h
 
-#include "DciMsg.h"
+#include "Dci/DciMsg.h"
 
 #if defined( WIN32) || defined(LINUX) || defined(APPLE)
 	#pragma pack(push, 1)
@@ -26,8 +27,7 @@
 extern "C" {
 #endif
 
-
-//Standard DCI Messages defined
+/* Standard DCI Messages defined */
 #define Dci_DeviceInfo_Id				0x0200
 #define Dci_DeviceInfoQuery_Id			0x0280
 
@@ -39,11 +39,11 @@ extern "C" {
 #define Dci_TypedDataRecord_Id			0x2013
 #define Dci_TypedDataRecordQuery_Id		0x2093
 
-//Time sync messages not currently implemented.
+/* Time sync messages not currently implemented. */
 
 /**
 * Reset a Device (20,01)
-*/	
+*/
 int Dci_Reset_Init( void* buff);
 
 
@@ -66,13 +66,14 @@ int Dci_VersionInfo_Init( void* buff, byte vMajor, byte vMinor, byte vMaint, uin
 
 /**
 * Queries for Version Information (20,82)
-*/	
+*/
 int Dci_VersionInfoQuery_Init( void* buff);
 
 
-/// <summary>
-/// DCI Message for Setting and getting string converted properties (20,05)
-/// </summary>
+/** <summary>
+* DCI Message for Setting and getting string converted properties (20,05)
+* </summary>
+*/
 typedef struct Dci_StringProperties
 {
 	Dci_Hdr  hdr;
@@ -97,10 +98,11 @@ pcstr Dci_StringProperties_GetProperties( Dci_StringProperties* pmsg);
 int Dci_StringPropertiesQuery_Init( void* buff );
 
 
-/// <summary>
-/// Message reports typed binary data (20,13).  TypeId provides means to determine the binary encoding scheme 
-/// used.   This is a generic message to provide easy transport of various types of data.
-/// </summary>
+/** <summary>
+* Message reports typed binary data (20,13).  TypeId provides means to determine the binary encoding scheme
+* used.   This is a generic message to provide easy transport of various types of data.
+* </summary>
+*/
 typedef struct Dci_TypedDataRecord
 {
 	Dci_Hdr hdr;
@@ -117,7 +119,7 @@ typedef struct Dci_TypedDataRecord
 * Initializes the TypedDataRecord (20,13) message.  Be sure to provide a buffer large enough to accommodate
 * the length of the data.  Returns the total size of the message.
 */
-int Dci_TypedDataRecord_Init( void* buff, uint16 sizeBuff, 
+int Dci_TypedDataRecord_Init( void* buff, uint16 sizeBuff,
 		uint16 week, double sec,
 		uint32 timecode,  uint16 idtype,
 		uint16 flags, uint16 lenData, void* pdata);
@@ -129,18 +131,18 @@ byte* Dci_TypedDataRecord_GetData( Dci_TypedDataRecord* pmsg);
 
 /**
 * Queries for the specified TypedDataRecord(20,93)
-*/	
+*/
 typedef struct Dci_TypedDataRecordQuery
 {
 	Dci_Hdr hdr;
-	uint16 idtype; 
+	uint16 idtype;
 	uint16 flags;
 } Dci_TypedDataRecordQuery;
 
 /**
 * Queries for the specified TypedDataRecord(20,93)
-*/	
-int Dci_TypedDataRecordQuery_Init( void* buff, uint16 idtype, uint16 flags); 
+*/
+int Dci_TypedDataRecordQuery_Init( void* buff, uint16 idtype, uint16 flags);
 
 #ifdef __cplusplus
 }

@@ -1,22 +1,23 @@
-// Name: WcaMsgs.h
-//
-// Copyright(c) 2013 Loctronix Corporation
-// http://www.loctronix.com
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
+/** Name: WcaMsgs.h
+*
+* Copyright(c) 2013 Loctronix Corporation
+* http://www.loctronix.com
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*/
 
 #ifndef WcaMsgs_h
 #define WcaMsgs_h
 
-#include "DciMsg.h"
+#include "Dci/DciMsg.h"
 
 #if defined( WIN32) || defined(LINUX) || defined(APPLE)
 	#pragma pack(push, 1)
@@ -26,8 +27,7 @@
 extern "C" {
 #endif
 
-
-// WCA messages supported.
+/* WCA messages supported. */
 #define Dci_WcaCategoryId 				0x21
 #define Dci_TypedProperties_Id			0x01
 #define Dci_TypedPropertiesQuery_Id		0x81
@@ -38,8 +38,8 @@ extern "C" {
 #define Dci_HalEventNotification_Id		0x05
 #define Dci_BinaryImageTransferStatus_Id 0x06
 
-//*****************************************************************************
-//*****************************************************************************
+/*****************************************************************************/
+/*****************************************************************************/
 /**
 * Structure defines a typed property used in the TypedProperties message (21,01).
 */
@@ -55,8 +55,10 @@ typedef struct Dci_Property
 		int32	vInt32;
 		float	vFloat;
 		double	vDouble;
-//		uint64	vUint64;
-//		int64	vInt64;
+#if 0
+		uint64	vUint64;
+		int64	vInt64;
+#endif
 		byte    data[8];
 	} value;
 } Dci_Property;
@@ -64,7 +66,7 @@ typedef struct Dci_Property
 /**
 * Defines the acceptable property types
 */
-enum Dci_PropertyTypeEnum 
+enum Dci_PropertyTypeEnum
 {
 	PT_BYTE = 0,
 	PT_UINT16 = 1,
@@ -88,7 +90,7 @@ enum Dci_PropertyQueryFlags
 /**
 * Structure for typed properties (21,01) messages.
 */
-typedef struct Dci_TypedProperties 
+typedef struct Dci_TypedProperties
 {
 	Dci_Hdr	hdr;
 	byte		idComponent;
@@ -100,26 +102,26 @@ typedef struct Dci_TypedProperties
 * Initializes the TypedProperties(21,01) message.  Be sure to provide a buffer large enough to accommodate
 * the length of the data.  Returns the total size of the message.
 */
-int Dci_TypedProperties_Init( void* buff, uint16 sizeBuff, 
+int Dci_TypedProperties_Init( void* buff, uint16 sizeBuff,
 		byte idComponent, byte ctProperties, Dci_Property* pProps );
 
 /**
 * Function calculates the length of the TypedProperties message from
 * internal configuration.
 */
-int Dci_TypedProperties_MsgLength( Dci_TypedProperties* pmsg);
+uint32 Dci_TypedProperties_MsgLength( Dci_TypedProperties* pmsg);
 
 /**
 * Returns the Dci_Property array.
 */
 Dci_Property* Dci_TypedProperties_GetProperties( Dci_TypedProperties* pmsg);
 
-//*****************************************************************************
-//*****************************************************************************
+/*****************************************************************************/
+/*****************************************************************************/
 
 /**
 * Queries for the specified TypedProperties (21,81).
-*/	
+*/
 typedef struct Dci_TypedPropertiesQuery
 {
 	Dci_Hdr	hdr;
@@ -136,7 +138,7 @@ typedef struct Dci_TypedPropertiesQuery
 * by default. The caller must specify the length of data and type ids.
 * Returns the total size of the message.
 */
-int Dci_TypedPropertiesQuery_Init( void* buff, uint16 sizeBuff, 
+int Dci_TypedPropertiesQuery_Init( void* buff, uint16 sizeBuff,
 		byte idComponent, byte ctProperties, const byte* aPropIds, const byte* aTypeIds);
 
 /**
@@ -150,12 +152,12 @@ byte* Dci_TypedPropertiesQuery_GetPropIds( Dci_TypedPropertiesQuery* pmsg);
 */
 byte* Dci_TypedPropertiesQuery_GetTypeIds( Dci_TypedPropertiesQuery* pmsg);
 
-//*****************************************************************************
-//*****************************************************************************
+/*****************************************************************************/
+/*****************************************************************************/
 
 /**
 * Queries for the specified ExecuteAction (21,02).
-*/	
+*/
 typedef struct Dci_ExecuteAction
 {
 	Dci_Hdr	hdr;
@@ -168,7 +170,7 @@ typedef struct Dci_ExecuteAction
 * Initializes the ExecuteAction message (21,02).  Be sure to provide a buffer large enough to accomodate
 * the length of the data.  Returns the total size of the message.
 */
-int Dci_ExecuteAction_Init( void* buff, uint16 sizeBuff, 
+int Dci_ExecuteAction_Init( void* buff, uint16 sizeBuff,
 		byte idComponent, byte idAction, byte lenData, byte* pdata);
 
 /**
@@ -176,8 +178,8 @@ int Dci_ExecuteAction_Init( void* buff, uint16 sizeBuff,
 */
 byte* Dci_ExecuteAction_GetData( Dci_ExecuteAction* pmsg);
 
-//*****************************************************************************
-//*****************************************************************************
+/*****************************************************************************/
+/*****************************************************************************/
 
 /**
 * The message specifies (21,03) binary image transfer information, which is sent prior to uploading or
@@ -200,16 +202,16 @@ typedef struct Dci_BinaryImageTransfer
 /**
 * Initializes the BinaryImageTransfer (21,03) message.
 */
-int Dci_BinaryImageTransfer_Init( void* buff, 
+int Dci_BinaryImageTransfer_Init( void* buff,
 			 byte idComponent,    byte flags,   pcstr  szName,
 			 pcstr szDescription, uint32  sizeImg, uint16 sizeFrame,
 			 uint32 ctFrames, byte idTransfer );
 
 /**
 * Base class message for Binary Image Transfer Frames (21,04)
-* This message is a frame of a binary image transfer. A series 
-* of these frames are sent to transfer a  binary image of data 
-* from the source to the target. A transfer id is provided to 
+* This message is a frame of a binary image transfer. A series
+* of these frames are sent to transfer a  binary image of data
+* from the source to the target. A transfer id is provided to
 * uniquely identify the transfer operation.
 */
 typedef struct Dci_BinaryImageTransferFrame
@@ -234,13 +236,13 @@ int Dci_BinaryImageTransferFrame_Init( void* buff, byte idComponent,
 */
 byte* Dci_BinaryImageTransferFrame_GetData( Dci_BinaryImageTransferFrame* pmsg);
 
-//*****************************************************************************
-//*****************************************************************************
+/*****************************************************************************/
+/*****************************************************************************/
 
 /**
 * BIT status identifiers.
 */
-enum Dci_BitStatusEnum 
+enum Dci_BitStatusEnum
 {
     BSE_InitiatingTransfer = 0,
     BSE_TransferComplete = 1,
@@ -264,17 +266,15 @@ typedef struct Dci_BinaryImageTransferStatus
 	byte 	  	idStatus;
 } Dci_BinaryImageTransferStatus;
 
-/** 
+/**
 * Initializes the Dci_BinaryImageTransferQuery (21,06)
 */
-int Dci_BinaryImageTransferStatus_Init( void* buff, 
+int Dci_BinaryImageTransferStatus_Init( void* buff,
 		byte idComponent, byte idTransfer, uint16 idFrame,
 		uint32 ctTransferred, byte idStatus);
 
-
-
-//*****************************************************************************
-//*****************************************************************************
+/*****************************************************************************/
+/*****************************************************************************/
 
 /**
 * Requested device responds with a Binary Image Transfer Information (21,03) and Binary Image
@@ -288,14 +288,14 @@ typedef struct Dci_BinaryImageTransferQuery
 	byte		flags;
 } Dci_BinaryImageTransferQuery;
 
-/** 
+/**
 * Initializes the Dci_BinaryImageTransferQuery (21,83)
 */
-int Dci_BinaryImageTransferQuery_Init( void* buff, 
+int Dci_BinaryImageTransferQuery_Init( void* buff,
 		byte idComponent, byte idTransfer, byte flags);
 
-//*****************************************************************************
-//*****************************************************************************
+/*****************************************************************************/
+/*****************************************************************************/
 
 /**
 * Asynchronous event notification of a WCA HAL triggered event (21,05).
@@ -310,10 +310,10 @@ typedef struct Dci_HalEventNotification
 } Dci_HalEventNotification;
 
 
-/** 
+/**
 * Initializes the Dci_HalEventNotification message (21,05)
 */
-int Dci_HalEventNotification_Init( void* buff, 
+int Dci_HalEventNotification_Init( void* buff,
 		byte idComponent, byte idEvent, uint16 flags, uint32 info);
 
 #ifdef __cplusplus

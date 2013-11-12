@@ -1,17 +1,18 @@
-// Name: DataTypes.h
-//
-// Copyright(c) 2013 Loctronix Corporation
-// http://www.loctronix.com
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
+/** Name: DataTypes.h
+*
+* Copyright(c) 2013 Loctronix Corporation
+* http://www.loctronix.com
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*/
 
 #ifndef DATATYPES_H
 #define DATATYPES_H
@@ -22,7 +23,6 @@ typedef short				int16;
 typedef unsigned short		uint16;
 typedef long				int32;
 typedef unsigned long		uint32;
-
 
 typedef unsigned char		byte;
 typedef unsigned short		ushort;
@@ -55,4 +55,3 @@ extern "C" {
 #endif
 
 #endif  /* DATATYPES_H */
-

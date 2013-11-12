@@ -1,22 +1,23 @@
-// Name: InfrastructureMsgs.h
-//
-// Copyright(c) 2013 Loctronix Corporation
-// http://www.loctronix.com
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
+/** Name: InfrastructureMsgs.h
+*
+* Copyright(c) 2013 Loctronix Corporation
+* http://www.loctronix.com
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*/
 
 #ifndef InfrastructureMsgs_h
 #define InfrastructureMsgs_h
 
-#include "DciMsg.h"
+#include "Dci/DciMsg.h"
 
 #if defined( WIN32) || defined(LINUX) || defined(APPLE)
 	#pragma pack(push, 1)
@@ -26,14 +27,16 @@
 extern "C" {
 #endif
 
-//Infrastructure messages defined.
-//#define Dci_IdleMsg_Id 		0x0100 //Defined in DciMsg.h
-//#define Dci_DebugMsg_Id 		0x0501 //Dfeined in DciMsg.h
+/* Infrastructure messages defined. */
+#if 0
+/* Defined in DciMsg.h */
+#define Dci_IdleMsg_Id 		0x0100
+#define Dci_DebugMsg_Id 	0x0501
+#endif
+
 #define Dci_IdentifyDeviceQuery_Id	0x0280
 #define Dci_IdentifyDevice_Id		0x0200
 #define Dci_MessageError_Id			0x0301
-
-
 
 /*
 * IdleMsg (0x0100)
@@ -59,7 +62,7 @@ typedef struct Dci_IdentifyDevice
 /**
 * Initializes the Identify Device Message.
 */
-int Dci_IdentifyDevice_Init( void* buff, pcstr szDeviceId, 
+int Dci_IdentifyDevice_Init( void* buff, pcstr szDeviceId,
 								pcstr szSerialNumber, pcstr szModel);
 
 /**
@@ -94,7 +97,7 @@ typedef struct Dci_DebugMsg
 * Initializes the debug message.  Be sure to provide a buffer large enough to accomodate
 * the length of the string message.  Returns the total size of the message.
 */
-int Dci_DebugMsg_Init( void* buff, uint16 sizeBuff, byte status, 
+int Dci_DebugMsg_Init( void* buff, uint16 sizeBuff, byte status,
 						 uint16 src, pcstr szMessage);
 /**
 * Returns the string message contained within the DCI debug message.

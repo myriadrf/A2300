@@ -1,38 +1,37 @@
-// Name: BinaryStreamFormatter.h
-//
-// Copyright(c) 2013 Loctronix Corporation
-// http://www.loctronix.com
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
+/** Name: BinaryStreamFormatter.h
+*
+* Copyright(c) 2013 Loctronix Corporation
+* http://www.loctronix.com
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*/
 
 #ifndef BINARY_STREAM_FORMATTER_H
 #define BINARY_STREAM_FORMATTER_H
 
-#include "DciMsg.h"
-
-
+#include "Dci/DciMsg.h"
 
 #ifdef  __cplusplus
 extern "C" {
 #endif
 
 enum Dci_FormatterModeEnum
-{ 
-	FME_FrameSynch, 
-	FME_ReadingLength, 
-	FME_ReadingHeader, 
-	FME_ReadingPayload, 
-	FME_ReadingChecksum, 
-	FME_EndSeq, 
-	FME_MsgReady 
+{
+	FME_FrameSynch,
+	FME_ReadingLength,
+	FME_ReadingHeader,
+	FME_ReadingPayload,
+	FME_ReadingChecksum,
+	FME_EndSeq,
+	FME_MsgReady
 };
 
 /**
@@ -77,9 +76,14 @@ void Dci_Bsf_Init( Dci_Bsf *pfmttr, byte* pBuff, int sizeBuff);
  * Encodes payload and calculates the checksum. Returns the checksum value.
  * </summary>
  */
-short Dci_Bsf_EncodePayloadType1( 
-	//byte* pOut, short* pLenOutput, const byte* pDciMsg, byte lenMsg);
-	byte* pOut, short* pLenOutput, const byte* pDciMsg, short lenMsg);
+short Dci_Bsf_EncodePayloadType1(
+	byte* pOut, short* pLenOutput, const byte* pDciMsg,
+#if 0
+	byte lenMsg
+#else
+	short lenMsg
+#endif
+);
 
 /**
  * <summary>
@@ -91,23 +95,28 @@ short Dci_Bsf_DecodePayloadType1( byte* pOut, int* pLenOutput, byte* pHdr, byte*
 /**
  *<summary>
  * Formats a DCI Message in accordance to Binary Serial Stream Transport requirements.
- *</summary>	
+ *</summary>
  */
-int Dci_Bsf_FormatMessage( 
-	//byte* pOutBuff, int nMaxBuffLen, const byte* pDciMsg, byte lenMsg);
-	byte* pOutBuff, int nMaxBuffLen, const byte* pDciMsg, short lenMsg);
+int Dci_Bsf_FormatMessage(
+	byte* pOutBuff, int nMaxBuffLen, const byte* pDciMsg,
+#if 0
+	byte lenMsg
+#else
+	short lenMsg
+#endif
+);
 
 /**
  *<summary>
  * Calculates the checksum for a payload and header.
- *</summary>	
+ *</summary>
  */
 short Dci_Bsf_CalcChecksum( const byte* pDciMsg, short nLen );
 
 /**
  * <summary>
- * Call this to get Received Message when state is MessageReady.  
- * This only works once, so it is a good idea to copy the message 
+ * Call this to get Received Message when state is MessageReady.
+ * This only works once, so it is a good idea to copy the message
  * if needed for long-term. as Buffers will be overriden in next
  * processing.
  *
@@ -136,7 +145,7 @@ bool Dci_Bsf_HaveSynch(Dci_Bsf *pfmttr);
 
 /**
  * <summary>
- * Method called to process received data from a provider.  Returns the total number of 
+ * Method called to process received data from a provider.  Returns the total number of
  * bytes processed, if less than ctBytes, means a message is ready or an error occurred.
  * </summary>
  */
@@ -146,11 +155,9 @@ int Dci_Bsf_ProcessReceivedData( Dci_Bsf *pfmttr, byte* pbuff, int ctBytes );
  * Helper method used to reset the formatter for the next message.
  */
 void Dci_Bsf_Reset(Dci_Bsf *pfmttr );
-	
+
 #ifdef __cplusplus
 }
 #endif
 
-
 #endif /* BINARY_STREAM_FORMATTER_H */
-
