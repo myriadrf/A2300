@@ -1,25 +1,19 @@
-// Name:  dciproc.h
-//
-// Copyright(c) 2013 Loctronix Corporation
-// http://www.loctronix.com
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-
+/************************************************************************
+ * Name:  dciproc.h
+ * 
+ * This module is the proprietary property of Loctronix Corporation
+ * Copyright (C) 2007 - 2013 Loctronix Corporation
+ * All Rights Reserved
+ * 
+ ***************************************************************************/
 #ifndef _DCIPROC_H_
 #define _DCIPROC_H_
 
 #include<Comm/Dci/DciUtils.h>
 
-
-#define MAX_MSG_SIZE 320
+#ifndef MAX_MSG_SIZE
+	#define MAX_MSG_SIZE 320
+#endif
 #define MIN_MSG_SIZE 12
 
 struct Dci_Property;
@@ -54,6 +48,11 @@ int Dciproc_SendMessage1(  byte* pmsg, int len, bool bAckRequired, Dci_Context* 
 * Validates the Property id within specified range. Returns true if valid.
 */
 bool Dciproc_ValidatePropRange( byte idComponent, byte idProp, byte idRangeStart, byte idRangeEnd, Dci_Context* pCtxt);
+
+/**
+* Function regsters a Bit client the DCI Processor.
+*/
+void Dciproc_BitRegisterClient( Dci_BitClient* pclient);
 
 
 #endif

@@ -1,18 +1,11 @@
-// Name:  dciproc.c
-//
-// Copyright(c) 2013 Loctronix Corporation
-// http://www.loctronix.com
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-
+/************************************************************************
+ * Name:  dciproc.c
+ * 
+ * This module is the proprietary property of Loctronix Corporation
+ * Copyright (C) 2007 - 2013 Loctronix Corporation
+ * All Rights Reserved
+ * 
+ ***************************************************************************/
 
 #include <string.h>
 #include <stdio.h>
@@ -38,6 +31,9 @@ static Dci_Conversation s_conv2;
 static Dci_Conversation s_conv3;
 static Dci_Conversation *s_pConv[] = {&s_conv0, &s_conv1, &s_conv2, &s_conv3};
 static int s_numConvs = 4; // number of conversation
+
+//Create a single bit operations manager to handle all BIT conversations.
+static Dci_BitOperationMgr s_bitmgr;
 
 static byte			s_fmtBuffer1[ MAX_MSG_SIZE];// Formatter Processing Buffer.
 static byte			s_fmtBuffer2[ MAX_MSG_SIZE];// Formatter Processing Buffer.
@@ -75,8 +71,10 @@ void Dciproc_Init( )
 
 	Dci_Bsf_Init( &s_u1Fmt, s_fmtBuffer1, sizeof(s_fmtBuffer1));
 	Dci_Bsf_Init( &s_u2Fmt, s_fmtBuffer2, sizeof(s_fmtBuffer2));
+	
+	//Initialize the bit operation manager and set the DCI send message callback
+	Dci_BitOperationMgrInit( &s_bitmgr, &Dciproc_SendMessage1);
 }
-
 
 /**
  * Handles received DCI messages 
@@ -161,8 +159,8 @@ void ReadFromUart( Uart_Config *pUart)
 					dciContext.idComponent = ((byte*)pMsg)[WCA_COMPONENT_INDEX];
 
 				//Finally let anyone process the message who wants to.
-				//if it is not an idle message
-				if( !Dci_Hdr_IsIdleMsg(pMsg))
+				//if it is not an idle message or a BIT message.
+				if( !Dci_Hdr_IsIdleMsg(pMsg) && !Dci_BitProcessDciMsg( &s_bitmgr, &dciContext) )
 					Main_OnDciMessageReceived(&dciContext);
 	
 				//If ack was not provided and sent previously
@@ -238,11 +236,20 @@ bool Dciproc_ValidatePropRange( byte idComponent, byte idProp, byte idRangeStart
 	bool bValid = (bool)( idRangeStart <= idProp && idProp <= idRangeEnd);
 	if( !bValid)
 	{
-		char buff[24];
-		sprintf(buff, "Prop ID: %d", idProp);
-		main_LogMsg( LOG_ERR, idComponent, buff, pctxt);
+		//char buff[24];
+		//sprintf(buff, "Prop ID: %d", idProp);
+		main_LogMsg( LOG_ERR, idComponent, "Invalid Property Range", pctxt);
 	}
 	return bValid;
+}
+
+
+/**
+* Function regsters a Bit client the DCI Processor.
+*/
+void Dciproc_BitRegisterClient( Dci_BitClient* pclient)
+{
+	Dci_BitRegisterClient( &s_bitmgr, pclient);
 }
 
 
