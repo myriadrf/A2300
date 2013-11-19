@@ -13,13 +13,14 @@
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU General Public License for more details.
 */
-#include "../System/DataTypes.h"
-#include "DciUtils.h"
-#include "StandardMsgs.h"
+
+#include "Dci/DciUtils.h"
+#include "Dci/StandardMsgs.h"
 #include <string.h>
-//*****************************************************************************
-// Forward declarations and static declarations.
-//*****************************************************************************
+
+/*****************************************************************************
+* Forward declarations and static declarations.
+*****************************************************************************/
 
 #define min( a,b) (((a) < (b)) ? (a) : (b))
 #define WCA_COMPONENT_INDEX 4

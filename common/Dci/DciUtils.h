@@ -18,7 +18,7 @@
 #define DciUtils_h
 
 #include "../System/DataTypes.h"
-#include "WcaMsgs.h" 
+#include "Dci/WcaMsgs.h"
 
 #ifdef  __cplusplus
 extern "C" {
@@ -325,4 +325,3 @@ bool Dci_BitProcessDciMsg( Dci_BitOperationMgr* pmgr, Dci_Context* pctxt);
 #endif
 
 #endif /* DciUtils_h */
-
