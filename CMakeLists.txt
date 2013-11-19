@@ -108,12 +108,26 @@ ENDIF()
 ADD_OPTIONAL_COMPILER_FLAG(ALL -Wall)
 ADD_OPTIONAL_COMPILER_FLAG(ALL -Wextra)
 ADD_OPTIONAL_COMPILER_FLAG(ALL -Wsign-compare)
-#ADD_OPTIONAL_COMPILER_FLAG(ALL -Wconversion)
+ADD_OPTIONAL_COMPILER_FLAG(ALL -Wconversion)
 #ADD_OPTIONAL_COMPILER_FLAG(ALL -pedantic)
 #ADD_OPTIONAL_COMPILER_FLAG(ALL -ansi)
 
 ADD_OPTIONAL_COMPILER_FLAG(ALL -fmessage-length=0)
 ADD_OPTIONAL_COMPILER_FLAG(ALL -fPIC)
+
+##############################################################
+# Get sizeof int and long, to make sure common/System/DataTypes.h
+# gets them correct.
+##############################################################
+
+INCLUDE (CheckTypeSize)
+CHECK_TYPE_SIZE("int" SIZEOF_INT)
+CHECK_TYPE_SIZE("long" SIZEOF_LONG)
+
+ADD_DEFINITIONS(
+    -DSIZEOF_INT=${SIZEOF_INT}
+    -DSIZEOF_LONG=${SIZEOF_LONG}
+)
 
 ##############################################################
 # Setup common include paths within this build

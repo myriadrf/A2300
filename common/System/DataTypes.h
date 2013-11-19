@@ -21,8 +21,16 @@ typedef char				int8;
 typedef unsigned char		uint8;
 typedef short				int16;
 typedef unsigned short		uint16;
+
+#if defined(SIZEOF_INT) && (SIZEOF_INT==4)
+typedef int				int32;
+typedef unsigned int		uint32;
+#elif defined(SIZEOF_LONG) && (SIZEOF_LONG==4)
 typedef long				int32;
 typedef unsigned long		uint32;
+#else
+#error "SIZEOF_LONG and SIZEOF_INT are not defined; please run cmake"
+#endif
 
 typedef unsigned char		byte;
 typedef unsigned short		ushort;
