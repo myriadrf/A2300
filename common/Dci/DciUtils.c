@@ -13,11 +13,10 @@
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU General Public License for more details.
 */
-
-#include "Dci/DciUtils.h"
-#include "Dci/StandardMsgs.h"
+#include "../System/DataTypes.h"
+#include "DciUtils.h"
+#include "StandardMsgs.h"
 #include <string.h>
-
 /*****************************************************************************
 * Forward declarations and static declarations.
 *****************************************************************************/
@@ -423,24 +422,27 @@ bool Dci_BitProcessDciMsg( Dci_BitOperationMgr* pmgr, Dci_Context* pctxt)
 		case Dci_BinaryImageTransferQuery_Id:
 		{
 			int ec;
+			bool bResetState = false;
 			Dci_BinaryImageTransferQuery* pbitq = (Dci_BinaryImageTransferQuery*)pctxt->pMsg;	
 			
 			//Look up requested operation and make sure it is inactive
 			//and Client supports the type of operation.
 			idStatus = BSE_OperationNotAvailable; //Set default status.
 			idTransfer = pbitq->idTransfer;
+			pbop 	   = pmgr->aBitOps + idTransfer; //don't use until validated.
+						
 			if(    ( idTransfer < DCI_BITMAXOPS) 
 				&& (pmgr->aBitOps[ idTransfer].state == DCI_BOS_IDLE) 
 				&& (pClient->fncInitiateSourceTransfer != NULL)	)
 			{	
 				//Initialize the BIT Transfer information
 				Dci_BinaryImageTransfer* pbit = &(pbop->bitinfo);
-				pbit->idComponent 	= pbitq->idComponent;
-				pbit->idTransfer 	= idTransfer;
-				pbit->flags 		= pbitq->flags;
+				Dci_BinaryImageTransfer_Init( pbit, pbitq->idComponent,
+					pbitq->flags, NULL,	NULL, 0, 256, 0, idTransfer);
 				
 				//Request Client fill out the rest of the information.
 				idStatus = (*(pClient->fncInitiateSourceTransfer))( pbop);
+				bResetState = true;
 			}
 			
 			//If we are able to initiate, send BIT info message to 
@@ -454,7 +456,7 @@ bool Dci_BitProcessDciMsg( Dci_BitOperationMgr* pmgr, Dci_Context* pctxt)
 					
 				//Mark this operation as in use.
 				pbop->idFrame = 0;		
-				pbop->state = DCI_BOS_TARGET_TRANSFER;
+				pbop->state = DCI_BOS_SOURCE_TRANSFER;
 			}
 			else //Report error
 			{
@@ -466,7 +468,8 @@ bool Dci_BitProcessDciMsg( Dci_BitOperationMgr* pmgr, Dci_Context* pctxt)
 				(*(pmgr->fncSendDciMessage))(buff, lenMsg, false, pctxt);	
 				
 				//Make sure we reset the operation.
-				pbop->state = DCI_BOS_IDLE;
+				if(bResetState)
+					pbop->state = DCI_BOS_IDLE;
 			}
 		}
 		break;
