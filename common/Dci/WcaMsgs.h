@@ -109,7 +109,7 @@ int Dci_TypedProperties_Init( void* buff, uint16 sizeBuff,
 * Function calculates the length of the TypedProperties message from
 * internal configuration.
 */
-uint32 Dci_TypedProperties_MsgLength( Dci_TypedProperties* pmsg);
+int Dci_TypedProperties_MsgLength( Dci_TypedProperties* pmsg);
 
 /**
 * Returns the Dci_Property array.
@@ -267,7 +267,7 @@ typedef struct Dci_BinaryImageTransferStatus
 } Dci_BinaryImageTransferStatus;
 
 /**
-* Initializes the Dci_BinaryImageTransferQuery (21,06)
+* Initializes the Dci_BinaryImageTransferStatus structure
 */
 int Dci_BinaryImageTransferStatus_Init( void* buff,
 		byte idComponent, byte idTransfer, uint16 idFrame,
