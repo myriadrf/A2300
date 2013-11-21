@@ -315,10 +315,15 @@ void Dci_BitRegisterClient( Dci_BitOperationMgr* pmgr, Dci_BitClient* pclient);
 */
 bool Dci_BitProcessDciMsg( Dci_BitOperationMgr* pmgr, Dci_Context* pctxt);
 
-// TODO Define function to initiate BIT Transfers: source and target.
+/**
+* Functions initiates transfer from source to target.  By calling this funtion, the caller is designating themselves the source of the operation.
+*/
+byte Dci_BitInitiateTargetTransfer( Dci_BitOperationMgr* pmgr, Dci_BitClient* pClient, byte idComponentTarget, byte flags, byte idTransfer, Dci_Context* pctxt);
 
-
-
+/**
+* Functions requests peer to initiate a transfer.  By calling this funtion, the caller is designating themselves the target of the operation.
+*/
+bool Dci_BitRequestSourceTransfer( Dci_BitOperationMgr* pmgr, Dci_BitClient* pClient, byte idComponentSource, byte flags, byte idTransfer, Dci_Context* pctxt);
 
 #ifdef __cplusplus
 }

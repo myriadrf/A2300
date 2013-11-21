@@ -626,6 +626,74 @@ bool Dci_BitProcessDciMsg( Dci_BitOperationMgr* pmgr, Dci_Context* pctxt)
 	
 }
 
-// TODO Define function to initiate BIT Transfers: source and target.
+/**
+* Functions initiates transfer from source to target.  By calling this funtion, the caller is designating themselves the source of the operation.
+*/
+byte Dci_BitInitiateTargetTransfer( Dci_BitOperationMgr* pmgr, Dci_BitClient* pClient, byte idComponentTarget, byte flags, byte idTransfer, Dci_Context* pctxt)
+{
+  Dci_BitOperation* pbop = NULL;
+  byte idStatus  = 0;
 
+  //Set up the operation.
+  pbop = pmgr->aBitOps + idTransfer;
 
+  //Look up requested operation and make sure it is inactive
+  //and Client supports the type of operation.
+  idStatus = BSE_OperationNotAvailable; //Set default status.
+  if(    ( idTransfer < DCI_BITMAXOPS) 
+	 && (pmgr->aBitOps[ idTransfer].state == DCI_BOS_IDLE) 
+	 && (pClient->fncInitiateSourceTransfer != NULL)	)
+    {
+      //Initialize the BIT Transfer information
+
+      Dci_BinaryImageTransfer_Init( &(pbop->bitinfo),
+				    idComponentTarget, flags, "",
+				    "", 0, 256, 0, idTransfer);
+
+      //Request Client fill out the rest of the information.
+      idStatus = (*(pClient->fncInitiateSourceTransfer))( pbop);
+    }
+
+  if( idStatus == BSE_InitiatingTransfer)
+    {
+      //Send a BIT Transfer Message telling target we are going to
+      //send data.
+      (*(pmgr->fncSendDciMessage))( (byte*) &(pbop->bitinfo), 
+				    sizeof( Dci_BinaryImageTransfer), false, pctxt);
+
+      //Mark this operation as in use.
+      pbop->idFrame = 0;
+      pbop->state = DCI_BOS_SOURCE_TRANSFER;
+    }
+  return( idStatus);
+}
+
+/**
+* Functions requests peer to initiate a transfer.  By calling this funtion, the caller is designating themselves the target of the operation.
+*/
+bool Dci_BitRequestSourceTransfer( Dci_BitOperationMgr* pmgr, Dci_BitClient* pClient, byte idComponentSource, byte flags, byte idTransfer, Dci_Context* pctxt)
+{
+
+  Dci_BitOperation* pbop = NULL;
+  byte idStatus  = 0;
+  byte buff[MAX_MSG_SIZE];
+
+  //Set up the operation.
+  pbop = pmgr->aBitOps + idTransfer;
+
+  //Look up requested operation and make sure it is inactive
+  //and Client supports the type of operation.
+
+  if(    ( idTransfer < DCI_BITMAXOPS)
+	 && (pmgr->aBitOps[ idTransfer].state == DCI_BOS_IDLE))
+    {
+      int msgLen = Dci_BinaryImageTransferQuery_Init(buff, idComponentSource, idTransfer, flags);
+
+      //Send request to initiate a BIT Transfer
+      (*(pmgr->fncSendDciMessage))( buff, msgLen, false, pctxt);
+
+      return (true);
+    }
+
+  return( false);
+}
