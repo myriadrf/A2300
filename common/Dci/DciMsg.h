@@ -63,7 +63,6 @@ int Dci_Hdr_Init( void* buff, byte idCategory, byte idType);
  */
 bool Dci_Hdr_ValidateNonIdleMsg( Dci_Hdr* phdr);
 
-
 uint16  Dci_Hdr_MessageId( Dci_Hdr* phdr);
 byte Dci_Hdr_CategoryId( Dci_Hdr* phdr);
 byte Dci_Hdr_TypeId( Dci_Hdr* phdr);

@@ -13,17 +13,18 @@
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU General Public License for more details.
 */
-#include "WcaMsgs.h"
-#include "string.h"
+
+#include "Dci/WcaMsgs.h"
+#include <string.h>
 
 /**
 * Initializes the TypedProperties(21,01) message.  Be sure to provide a buffer large enough to accomodate
 * the length of the data.  Returns the total size of the message.
 */
-int Dci_TypedProperties_Init( void* buff, uint16 sizeBuff, 
+int Dci_TypedProperties_Init( void* buff, uint16 sizeBuff,
 		byte idComponent, byte ctProperties, Dci_Property* pProps)
 {
-	Dci_TypedProperties* pmsg;	
+	Dci_TypedProperties* pmsg;
 	int lenData;
 	int lenHdr;
 	int lenMsg;
@@ -38,11 +39,11 @@ int Dci_TypedProperties_Init( void* buff, uint16 sizeBuff,
 		// Make sure it will fit in the output buffer.
 		if( lenMsg <= sizeBuff )
 		{
-			pmsg = (Dci_TypedProperties*) buff;	
+			pmsg = (Dci_TypedProperties*) buff;
 			Dci_Hdr_Init( buff, 0x21, 0x01);
 			pmsg->idComponent  = idComponent;
 			pmsg->ctProperties = ctProperties;
-			
+
 			//Copy if properties specified, otherwise, skip.
 			if(pProps != NULL)
 				memcpy((byte*)buff+lenHdr, pProps, lenData);
@@ -62,7 +63,6 @@ int Dci_TypedProperties_MsgLength( Dci_TypedProperties* pmsg)
 	return sizeof( Dci_TypedProperties ) + lenData;
 }
 
-
 /**
 * Returns the Dci_Property array.
 */
@@ -72,8 +72,6 @@ Dci_Property* Dci_TypedProperties_GetProperties( Dci_TypedProperties* pmsg)
 	byte *pData = (byte*)pmsg + sizeof(Dci_TypedProperties);
 	return (Dci_Property *)pData;
 }
-
-
 
 //*****************************************************************************
 //*****************************************************************************
@@ -120,7 +118,6 @@ int Dci_TypedPropertiesQuery_Init( void* buff, uint16 sizeBuff,
 	return (lenMsg < sizeBuff) ? lenMsg : -1;
 }
 
-
 /**
 * Returns the property ids specified in the TypedPropertiesQuery.
 */
@@ -134,7 +131,7 @@ byte* Dci_TypedPropertiesQuery_GetPropIds( Dci_TypedPropertiesQuery* pmsg)
 * returns NULL.
 */
 byte* Dci_TypedPropertiesQuery_GetTypeIds( Dci_TypedPropertiesQuery* pmsg)
-{	
+{
 	byte *ptr = NULL;
 	if( (pmsg->flags & PQF_TYPEIDS_VALID) == PQF_TYPEIDS_VALID)
 	{
@@ -150,14 +147,14 @@ byte* Dci_TypedPropertiesQuery_GetTypeIds( Dci_TypedPropertiesQuery* pmsg)
 * Initializes the ExecuteAction message (21,02).  Be sure to provide a buffer large enough to accomodate
 * the length of the data.  Returns the total size of the message.
 */
-int Dci_ExecuteAction_Init( void* buff, uint16 sizeBuff, 
+int Dci_ExecuteAction_Init( void* buff, uint16 sizeBuff,
 		byte idComponent, byte idAction, byte lenData, byte* pdata)
 {
 	Dci_ExecuteAction* pmsg = (Dci_ExecuteAction*) buff;
 	int lenHdr = sizeof(Dci_ExecuteAction);
 	int lenMsg;
 	lenMsg = lenHdr + lenData;
-	
+
 	if( lenMsg <= sizeBuff )
 	{
 		Dci_Hdr_Init( buff, 0x21, 0x02);
@@ -185,14 +182,14 @@ byte* Dci_ExecuteAction_GetData( Dci_ExecuteAction* pmsg)
 /**
 * Initializes the BinaryImageTransfer (21,03) message.
 */
-int Dci_BinaryImageTransfer_Init( void* buff, 
+int Dci_BinaryImageTransfer_Init( void* buff,
 			 byte idComponent,    byte flags,   pcstr  szName,
 			 pcstr szDescription, uint32  sizeImg, uint16 sizeFrame,
 			 uint32 ctFrames, byte idTransfer )
 {
-	Dci_BinaryImageTransfer* pmsg;	
+	Dci_BinaryImageTransfer* pmsg;
 	pmsg	 = (Dci_BinaryImageTransfer*) buff;
-	
+
 	Dci_Hdr_Init( buff, 0x21, 0x03);
 
 	pmsg->idComponent			= idComponent;
@@ -206,7 +203,6 @@ int Dci_BinaryImageTransfer_Init( void* buff,
 	return sizeof( Dci_BinaryImageTransfer);
 }
 
-
 /**
 * Initializes the BinaryImageTransfer (21,04) message. Returns the size
 * of the message in bytes.
@@ -217,7 +213,6 @@ int Dci_BinaryImageTransferFrame_Init( void* buff, byte idComponent,
 {
 	Dci_BinaryImageTransferFrame* pmsg = (Dci_BinaryImageTransferFrame*) buff;
 	int lenHdr = sizeof(Dci_BinaryImageTransferFrame);
-	
 
 	Dci_Hdr_Init( buff, 0x21, 0x04);
 	pmsg->idTransfer  = idTransfer;
@@ -233,7 +228,6 @@ int Dci_BinaryImageTransferFrame_Init( void* buff, byte idComponent,
 	return (lenHdr + ctBytes);
 }
 
-
 /**
 * Returns the action data specified in the ExecuteAction message.
 */
@@ -246,18 +240,18 @@ byte* Dci_BinaryImageTransferFrame_GetData( Dci_BinaryImageTransferFrame* pmsg)
 //*****************************************************************************
 //*****************************************************************************
 
-/** 
+/**
 * Initializes the Dci_BinaryImageTransferQuery (21,06)
 */
-int Dci_BinaryImageTransferStatus_Init( void* buff, 
+int Dci_BinaryImageTransferStatus_Init( void* buff,
 		byte idComponent, byte idTransfer, uint16 idFrame,
 		uint32 ctTransferred, byte idStatus)
 {
-	Dci_BinaryImageTransferStatus* pmsg;	
+	Dci_BinaryImageTransferStatus* pmsg;
 	Dci_Hdr_Init( buff, 0x21, 0x06);
 
 	pmsg	 = (Dci_BinaryImageTransferStatus*) buff;
-	
+
 	pmsg->idComponent			= idComponent;
 	pmsg->idTransfer			= idTransfer;
 	pmsg->idFrame				= idFrame;
@@ -267,19 +261,18 @@ int Dci_BinaryImageTransferStatus_Init( void* buff,
 
 }
 
-
 //*****************************************************************************
 //*****************************************************************************
 
-/** 
+/**
 * Initializes the Dci_BinaryImageTransferQuery (21,83)
 */
-int Dci_BinaryImageTransferQuery_Init( void* buff, 
+int Dci_BinaryImageTransferQuery_Init( void* buff,
 		byte idComponent, byte idTransfer, byte flags)
 {
-	Dci_BinaryImageTransferQuery* pmsg;	
+	Dci_BinaryImageTransferQuery* pmsg;
 	pmsg	 = (Dci_BinaryImageTransferQuery*) buff;
-	
+
 	Dci_Hdr_Init( buff, 0x21, 0x83);
 
 	pmsg->idComponent			= idComponent;
@@ -291,15 +284,15 @@ int Dci_BinaryImageTransferQuery_Init( void* buff,
 //*****************************************************************************
 //*****************************************************************************
 
-/** 
+/**
 * Initializes the Dci_HalEventNotification message (21,05)
 */
-int Dci_HalEventNotification_Init( void* buff, 
+int Dci_HalEventNotification_Init( void* buff,
 		byte idComponent, byte idEvent, uint16 flags, uint32 info)
 {
-	Dci_HalEventNotification* pmsg;	
+	Dci_HalEventNotification* pmsg;
 	pmsg	 = (Dci_HalEventNotification*) buff;
-	
+
 	Dci_Hdr_Init( buff, 0x21, 0x05);
 
 	pmsg->idComponent			= idComponent;
@@ -308,6 +301,3 @@ int Dci_HalEventNotification_Init( void* buff,
 	pmsg->info					= info;
 	return sizeof( Dci_BinaryImageTransfer);
 }
-
-
-

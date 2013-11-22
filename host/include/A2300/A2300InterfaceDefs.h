@@ -1,17 +1,17 @@
 /************************************************************************
  * Name:  A2300InterfaceDefs.h
- * 
+ *
  * This module is the proprietary property of Loctronix Corporation
  * Copyright (C) 2013 Loctronix Corporation
  * All Rights Reserved
- * 
+ *
  ***************************************************************************/
 #ifndef A2300InterfaceDefs_H_
 #define A2300InterfaceDefs_H_
 //*******************************************************
 // WCA COMPONENT Idetifiers
-//******************************************************* 
- 
+//*******************************************************
+
 #define WCACOMP_HALDEFAULT 	0x00	//Default WCA FPGA HAL Component
 #define WCACOMP_MICRO	 	0x80	//Microcontroller General Configuration
 #define WCACOMP_RF0			0x81	//Lime #1 transceiver interface
@@ -36,7 +36,7 @@
 
 //*******************************************************
 // WCA FLASH Component(0x88) Interface Spec.
-//******************************************************* 
+//*******************************************************
 
 //FLASH Supports WCA Binary Image Transfer messages
 //to program flash.
@@ -48,7 +48,7 @@
 
 //*******************************************************
 // RF Component (WCACOMP_RF0 and WCACOMP_RF1)
-//******************************************************* 
+//*******************************************************
 // These properties are kept in sequential order for Lime Table access.
 #define RFPROP_RFCTRL			0x00
 #define RFPROP_SAMPLING			0x01
@@ -73,7 +73,7 @@
 
 //*******************************************************
 // FPGA Component(0xB0) Interface Spec.
-//******************************************************* 
+//*******************************************************
 #define FPGA_LSDP_CONTROL	0x00	//Port Control WCA Property (Byte Write only)
 #define FPGA_LSDP_STATUS	0x01	//Port Status  WCA Property  (Byte Read only)
 
@@ -89,8 +89,6 @@
 
 #define LSDP_WCAEVENT_ALMOSTEMPTY 		0x0  //WCA Event notification fired when TX buff is almost empty.
 #define LSDP_WCAEVENT_ALMOSTFULL		0x1
-
-
 
 //*******************************************************************
 // 4CH TX/RX Register definitions.
@@ -126,11 +124,5 @@
 // rate for down/up sampling sampling the 32 MHz sampling rate.  Valid
 // range is 2 to 4096 equivalent to 8 MHz to  3906.25 KHz.
 #define DSP_DDUC_SAMPRATE 0x02
-
-
-
-
-
-
 
 #endif /* A2300InterfaceDefs_H_ */

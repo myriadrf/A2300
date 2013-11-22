@@ -359,7 +359,7 @@ static void Run()
 
       //If WCA Message grab the component ID to help WCA
       // based message processing.
-      
+
       if( pMsg->idCategory == 0x21)
 	ctxt.idComponent = ((byte*)pMsg)[WCA_COMPONENT_INDEX];
 

@@ -15,8 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-
 #include <A2300/TransportDci.h>
 #include <string.h>
 
@@ -67,7 +65,6 @@ void A2300::TransportDci::Term()
 	//Nothing todo currently.
 }
 
-
 /**
  * Send a DCI Message
  */
@@ -99,7 +96,6 @@ int A2300::TransportDci::ReceiveMsg( byte* pmsg, size_t lenMax, double timeout)
 	return ctRead;
 
 }
-
 
 int A2300::TransportDci::GetProperty( int idComponent, Dci_Property& prop, double timeout)
 {
@@ -151,7 +147,6 @@ int A2300::TransportDci::SetProperty( int idComponent, Dci_Property& prop, doubl
 	return (ctRead > 0 ) ? wresult : -1;
 
 }
-
 
 template <> int A2300::TransportDci::GetProperty( int idComponent,  int idProp, byte& value)
 {
@@ -226,7 +221,6 @@ template <> int A2300::TransportDci::GetProperty( int idComponent,  int idProp, 
 }
 */
 
-
 template <> int A2300::TransportDci::SetProperty( int idComponent,  int idProp, byte value)
 {
 	Dci_Property prop;	prop.idtype = PT_BYTE;
@@ -242,7 +236,6 @@ template <> int A2300::TransportDci::SetProperty( int idComponent,  int idProp, 
 	prop.value.vUint16 = value;
 	return SetProperty( idComponent, prop, m_timeout );
 }
-
 
 template <> int A2300::TransportDci::SetProperty( int idComponent,  int idProp, int16 value)
 {
@@ -260,7 +253,6 @@ template <> int A2300::TransportDci::SetProperty( int idComponent,  int idProp, 
 	return SetProperty( idComponent, prop, m_timeout );
 }
 
-
 template <> int A2300::TransportDci::SetProperty( int idComponent,  int idProp, int32 value)
 {
 	Dci_Property prop;	prop.idtype = PT_INT32;
@@ -277,7 +269,6 @@ template <> int A2300::TransportDci::SetProperty( int idComponent,  int idProp, 
 	return SetProperty( idComponent, prop, m_timeout );
 }
 
-
 template <> int A2300::TransportDci::SetProperty( int idComponent,  int idProp, double value)
 {
 	Dci_Property prop;	prop.idtype = PT_DOUBLE;
@@ -285,7 +276,9 @@ template <> int A2300::TransportDci::SetProperty( int idComponent,  int idProp, 
 	prop.value.vDouble= value;
 	return SetProperty( idComponent, prop, m_timeout );
 }
-/*
+
+#if 0
+
 template <> int A2300::TransportDci::SetProperty( int idComponent,  int idProp, uint64 value)
 {
 	Dci_Property prop;	prop.idtype = PT_UINT64;
@@ -301,5 +294,5 @@ template <> int A2300::TransportDci::SetProperty( int idComponent,  int idProp, 
 	prop.value.vInt64 = value;
 	return SetProperty( idComponent, prop, m_timeout );
 }
-*/
 
+#endif

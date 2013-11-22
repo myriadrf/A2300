@@ -97,7 +97,6 @@ typedef struct Dci_TypedProperties
 	byte		ctProperties;
 } Dci_TypedProperties;
 
-
 /**
 * Initializes the TypedProperties(21,01) message.  Be sure to provide a buffer large enough to accommodate
 * the length of the data.  Returns the total size of the message.
@@ -308,7 +307,6 @@ typedef struct Dci_HalEventNotification
 	uint16 flags;
 	uint32 info;
 } Dci_HalEventNotification;
-
 
 /**
 * Initializes the Dci_HalEventNotification message (21,05)

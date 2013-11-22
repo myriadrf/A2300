@@ -78,7 +78,6 @@ typedef struct Dci_MessageError
 int Dci_MessageError_Init( void* buff, byte idCategory, byte idType );
 int Dci_MessageError_Init1( void* buff, Dci_Hdr *pBadMsg);
 
-
 /*************************************
 * Standard Debug Text Message Class (0x0501)
 ************************************/
@@ -92,13 +91,13 @@ typedef struct Dci_DebugMsg
 	uint16 len;
 } Dci_DebugMsg;
 
-
 /**
 * Initializes the debug message.  Be sure to provide a buffer large enough to accomodate
 * the length of the string message.  Returns the total size of the message.
 */
 int Dci_DebugMsg_Init( void* buff, uint16 sizeBuff, byte status,
 						 uint16 src, pcstr szMessage);
+
 /**
 * Returns the string message contained within the DCI debug message.
 */

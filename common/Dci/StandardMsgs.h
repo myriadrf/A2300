@@ -46,7 +46,6 @@ extern "C" {
 */
 int Dci_Reset_Init( void* buff);
 
-
 /**
 * Report Version Information (20,02)
 */
@@ -68,7 +67,6 @@ int Dci_VersionInfo_Init( void* buff, byte vMajor, byte vMinor, byte vMaint, uin
 * Queries for Version Information (20,82)
 */
 int Dci_VersionInfoQuery_Init( void* buff);
-
 
 /** <summary>
 * DCI Message for Setting and getting string converted properties (20,05)
@@ -96,7 +94,6 @@ pcstr Dci_StringProperties_GetProperties( Dci_StringProperties* pmsg);
 * QueryStringProperties (20,85)
 */
 int Dci_StringPropertiesQuery_Init( void* buff );
-
 
 /** <summary>
 * Message reports typed binary data (20,13).  TypeId provides means to determine the binary encoding scheme

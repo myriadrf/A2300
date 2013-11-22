@@ -18,13 +18,14 @@
 #ifndef TransportDci_H_
 #define TransportDci_H_
 
-
 #include <Dci/DciMsg.h>
 #include <Dci/DciConversation.h>
 #include <Dci/InfrastructureMsgs.h>
 #include <Dci/WcaMsgs.h>
 #include <Dci/StandardMsgs.h>
+
 #include <A2300/BulkDataPort.h>
+
 #include <stdexcept>
 
 namespace A2300
@@ -56,7 +57,6 @@ namespace A2300
 		 */
 		int ReceiveMsg( byte* pmsg, size_t lenMax, double timeout = USE_DEFAULT_TIMEOUT);
 
-
 		template< typename T> int GetProperty( int idComponent,  int idProp, T& value)
 		{
 			throw std::runtime_error("DCI Property type not supported");
@@ -69,7 +69,6 @@ namespace A2300
 
 		int GetProperty( int idComponent, Dci_Property& prop, double timeout);
 		int SetProperty( int idComponent, Dci_Property& prop, double timeout);
-
 
 		Dci_Conversation* Conversation() { return m_pConv;}
 		BulkDataPort*    Port() { return m_pPort;}
@@ -109,4 +108,5 @@ namespace A2300
 	template <> int TransportDci::SetProperty( int idComponent,  int idProp, int64 value);
 	*/
 }
+
 #endif /* TransportDci_H_ */
