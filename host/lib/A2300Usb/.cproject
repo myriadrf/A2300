@@ -30,12 +30,15 @@
 								<option id="gnu.cpp.compiler.so.debug.option.optimization.level.2058956117" name="Optimization Level" superClass="gnu.cpp.compiler.so.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.so.debug.option.debugging.level.643749788" name="Debug Level" superClass="gnu.cpp.compiler.so.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.1509331891" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Common}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/common}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.512855642" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="LINUX=1"/>
 									<listOptionValue builtIn="false" value="HAVE_LIBUSB=1"/>
+									<listOptionValue builtIn="false" value="SIZEOF_INT=4"/>
+									<listOptionValue builtIn="false" value="SIZEOF_LONG=4"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.other.pic.1151142818" name="Position Independent Code (-fPIC)" superClass="gnu.cpp.compiler.option.other.pic" value="true" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1878256132" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -45,12 +48,14 @@
 								<option id="gnu.c.compiler.so.debug.option.debugging.level.1089842418" name="Debug Level" superClass="gnu.c.compiler.so.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.misc.pic.148135224" name="Position Independent Code (-fPIC)" superClass="gnu.c.compiler.option.misc.pic" value="true" valueType="boolean"/>
 								<option id="gnu.c.compiler.option.include.paths.1559823134" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/common}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/common}&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.114397469" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="LINUX=2"/>
 									<listOptionValue builtIn="false" value="HAVE_LIBUSB=1"/>
+									<listOptionValue builtIn="false" value="SIZEOF_INT=4"/>
+									<listOptionValue builtIn="false" value="SIZEOF_LONG=4"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.903060425" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
@@ -73,7 +78,6 @@
 							<tool id="cdt.managedbuild.tool.gnu.assembler.so.debug.406032375" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.so.debug">
 								<option id="gnu.both.asm.option.include.paths.724683252" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Common}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/common}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1377853219" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -153,6 +157,8 @@
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1635901929" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="LINUX=2"/>
 									<listOptionValue builtIn="false" value="HAVE_LIBUSB=1"/>
+									<listOptionValue builtIn="false" value="SIZEOF_INT=4"/>
+									<listOptionValue builtIn="false" value="SIZEOF_LONG=4"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1269521657" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>

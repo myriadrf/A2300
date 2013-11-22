@@ -24,12 +24,14 @@
 								<option id="gnu.cpp.compiler.exe.debug.option.optimization.level.776611796" name="Optimization Level" superClass="gnu.cpp.compiler.exe.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.exe.debug.option.debugging.level.521985650" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.1505916601" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/A2300Usb}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/common}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/A2300Usb}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1330279585" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="LINUX=1"/>
+									<listOptionValue builtIn="false" value="SIZEOF_INT=4"/>
+									<listOptionValue builtIn="false" value="SIZEOF_LONG=4"/>
 									<listOptionValue builtIn="false" value="HAVE_LIBUSB=1"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.148456300" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -45,6 +47,8 @@
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1362830819" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="LINUX=1"/>
 									<listOptionValue builtIn="false" value="HAVE_LIBUSB=1"/>
+									<listOptionValue builtIn="false" value="SIZEOF_INT=4"/>
+									<listOptionValue builtIn="false" value="SIZEOF_LONG=4"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.911849489" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
@@ -66,8 +70,8 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.exe.debug.1101306625" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.exe.debug">
 								<option id="gnu.both.asm.option.include.paths.663921023" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Common}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/A2300Usb}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/common}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.159565198" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
@@ -121,11 +125,14 @@
 								<option id="gnu.cpp.compiler.exe.release.option.debugging.level.1724811220" name="Debug Level" superClass="gnu.cpp.compiler.exe.release.option.debugging.level" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1181202738" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="LINUX=1"/>
+									<listOptionValue builtIn="false" value="SIZEOF_INT=4"/>
+									<listOptionValue builtIn="false" value="SIZEOF_LONG=4"/>
 									<listOptionValue builtIn="false" value="HAVE_LIBUSB=1"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.include.paths.2022703987" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Common}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/common}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/A2300Usb}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1273176749" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -135,6 +142,8 @@
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1168724636" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="LINUX=1"/>
 									<listOptionValue builtIn="false" value="HAVE_LIBUSB=1"/>
+									<listOptionValue builtIn="false" value="SIZEOF_INT=4"/>
+									<listOptionValue builtIn="false" value="SIZEOF_LONG=4"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.481274128" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
@@ -161,21 +170,6 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="A2300Identify.cdt.managedbuild.target.gnu.exe.1609792187" name="Executable" projectType="cdt.managedbuild.target.gnu.exe"/>
 	</storageModule>
-	<storageModule moduleId="scannerConfiguration">
-		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.1750833454;cdt.managedbuild.config.gnu.exe.debug.1750833454.;cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.1962706706;cdt.managedbuild.tool.gnu.cpp.compiler.input.148456300">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.59086222;cdt.managedbuild.config.gnu.exe.release.59086222.;cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.1521926889;cdt.managedbuild.tool.gnu.cpp.compiler.input.1273176749">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.59086222;cdt.managedbuild.config.gnu.exe.release.59086222.;cdt.managedbuild.tool.gnu.c.compiler.exe.release.1611642912;cdt.managedbuild.tool.gnu.c.compiler.input.481274128">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.1750833454;cdt.managedbuild.config.gnu.exe.debug.1750833454.;cdt.managedbuild.tool.gnu.c.compiler.exe.debug.511670577;cdt.managedbuild.tool.gnu.c.compiler.input.911849489">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Release">
@@ -189,4 +183,19 @@
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.1750833454;cdt.managedbuild.config.gnu.exe.debug.1750833454.;cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.1962706706;cdt.managedbuild.tool.gnu.cpp.compiler.input.148456300">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.59086222;cdt.managedbuild.config.gnu.exe.release.59086222.;cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.1521926889;cdt.managedbuild.tool.gnu.cpp.compiler.input.1273176749">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.1750833454;cdt.managedbuild.config.gnu.exe.debug.1750833454.;cdt.managedbuild.tool.gnu.c.compiler.exe.debug.511670577;cdt.managedbuild.tool.gnu.c.compiler.input.911849489">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.59086222;cdt.managedbuild.config.gnu.exe.release.59086222.;cdt.managedbuild.tool.gnu.c.compiler.exe.release.1611642912;cdt.managedbuild.tool.gnu.c.compiler.input.481274128">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+	</storageModule>
 </cproject>
