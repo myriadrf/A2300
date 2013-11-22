@@ -16,6 +16,7 @@
 #include <errno.h>
 #include <math.h>
 #include <stdio.h>
+#include <string.h>
 #include <time.h>
 
 #include <stdexcept>
@@ -31,13 +32,19 @@ using namespace A2300;
  *****************************************************************/
 
 #ifndef WCA_COMPONENT_INDEX
+// temporarily, until it is defined elsewhere
 #define WCA_COMPONENT_INDEX ((byte)4)
 #warning "WCA_COMPONENT_INDEX not yet defined."
+#else
+#warning "WCA_COMPONENT_INDEX has been defined elsewhere; please remove this warning secion."
 #endif
 
 #ifndef MICRO_UPDATE_FIRMWARE
+// temporarily, until it is defined elsewhere
 #define MICRO_UPDATE_FIRMWARE ((byte)0)
 #warning "MICRO_UPDATE_FIRMWARE not yet defined."
+#else
+#warning "MICRO_UPDATE_FIRMWARE has been defined elsewhere; please remove this warning secion."
 #endif
 
 typedef enum _rwType {
@@ -48,7 +55,7 @@ typedef enum _rwType {
 
 typedef enum _targetType {
   e_Firmware = WCACOMP_FLASH,
-  e_RFProfile = -1,
+  e_RFProfile = -1, // temporarily, until it is defined elsewhere
   e_FPGADirect = WCACOMP_FPGA,
   e_tt_invalid = -1
 } targetType;
@@ -283,13 +290,14 @@ static void Run()
 
   s_ptd = &(s_config.Dci0Transport());
 
-  // FPGA and Flash, not profile: erase the flash,
-  // then wait 10 seconds
+  // FPGA and Flash, not profile: erase the flash, then wait 20
+  // seconds; FIXME: hopefully this will be changed into an ACK (or
+  // equivalent) in the near future; just sleep for now.
 
   if ((s_targetType == e_Firmware) || (s_targetType == e_FPGADirect)) {
     printf ("Erasing Flash ... ");
     fflush (stdout);
-    bzero (buff, sizeof(buff));
+    memset (buff, 0, sizeof(buff));
     inLen = Dci_ExecuteAction_Init (buff, sizeof(buff), WCACOMP_FLASH, FLASH_ActionErase, 0, NULL);
     outLen = s_ptd->SendMsg (buff, (size_t) inLen, false);
     if (outLen == inLen) {
@@ -297,14 +305,14 @@ static void Run()
     } else {
       printf ("error; proceeding anyway.\n");
     }
-    printf ("Sleeping for 10 seconds ... ");
+    printf ("Sleeping for 20 seconds ... ");
     fflush (stdout);
-    sleep (10);
+    sleep (20);
     printf ("done.\n");
   }
 
   Dci_Context ctxt;
-  bzero(&ctxt, sizeof(ctxt));
+  memset (&ctxt, 0, sizeof(ctxt));
   ctxt.pConv = s_ptd->Conversation();
 
   byte idStatus = BSE_OperationNotAvailable;
@@ -332,7 +340,7 @@ static void Run()
   int cntLoop = 0;
 
   while(cntLoop < 2) {
-    bzero(buff, sizeof(buff));
+    memset (buff, 0, sizeof(buff));
     nread = s_ptd->ReceiveMsg( buff, MAX_MSG_SIZE);
     if (nread > 0) {
 
@@ -340,7 +348,7 @@ static void Run()
 
       // Prepare the context and send received message off for
       // processing.
-      bzero(&ctxt, sizeof(ctxt));
+      memset (&ctxt, 0, sizeof(ctxt));
       ctxt.pMsg = pMsg;
       ctxt.lenMsg = nread;
       ctxt.pConv = s_ptd->Conversation();
@@ -378,14 +386,16 @@ static void Run()
 	    errno, s_fileName);
   }
 
-  // if firmware, need to send action message to upgrade the
-  // firmware, then sleep 10 seconds waiting for that to be
-  // processed.
+  // if firmware, need to send action message to upgrade the firmware,
+  // then sleep 20 seconds waiting for that to be processed.  FIXME:
+  // hopefully this will be changed into an ACK (or equivalent) in the
+  // near future; just sleep for now.
+
   if (s_targetType == e_Firmware) {
     printf ("Updating Firmware ... ");
     fflush (stdout);
 
-    bzero(buff, sizeof(buff));
+    memset (buff, 0, sizeof(buff));
     inLen = Dci_ExecuteAction_Init (buff, sizeof(buff), WCACOMP_MICRO, MICRO_UPDATE_FIRMWARE,  0, NULL);
     outLen = s_ptd->SendMsg(buff, (size_t) inLen, false);
 
@@ -394,9 +404,9 @@ static void Run()
     } else {
       printf("error; proceeding anyway.\n");
     }
-    printf ("Sleeping for 10 seconds ... ");
+    printf ("Sleeping for 20 seconds ... ");
     fflush (stdout);
-    sleep(10);
+    sleep(20);
     printf ("done.\n");
 
   }
