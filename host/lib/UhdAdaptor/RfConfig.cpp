@@ -218,33 +218,33 @@ void   RfConfig::SetPathProfile( const std::string& sPathId)
     {
     	if( m_bIsTx )
     	{
-    		idPath = (sPathId[0] == 'W')? 1 : 0;
+    		idPath = (sPathId[0] == 'W')? TX0DPE_Wideband : TX0DPE_Disabled;
     	}
     	else
     	{
-    		if( sPathId == "L1GpsInt")		idPath = 1;
-    		else if( sPathId == "L1GpsExt")	idPath = 2;
-    		else if( sPathId == "PcsExt")	idPath = 3;
-    		else if( sPathId == "Wideband")	idPath = 4;
-    		else /*disabled*/				idPath = 0;
+    		if( sPathId == "L1GpsInt")		idPath = RX0DPE_GpsL1Int;
+    		else if( sPathId == "L1GpsExt")	idPath = RX0DPE_GpsL1Ext;
+    		else if( sPathId == "PcsExt")	idPath = RX0DPE_PcsExt;
+    		else if( sPathId == "Wideband")	idPath = RX0DPE_Wideband;
+    		else /*disabled*/				idPath = RX0DPE_Disabled;
     	}
     }
     else //Assume its WCACOMP_RF1
     {
     	if( m_bIsTx )
     	{
-    		if( sPathId == "IsmInt")		idPath = 1;
-    		else if( sPathId == "IsmExt")	idPath = 2;
-    		else if( sPathId == "Wideband")	idPath = 3;
-    		else /*disabled*/				idPath = 0;
+    		if( sPathId == "IsmInt")		idPath = TX1DPE_IsmInt;
+    		else if( sPathId == "IsmExt")	idPath = TX1DPE_IsmExt;
+    		else if( sPathId == "Wideband")	idPath = TX1DPE_Wideband;
+    		else /*disabled*/				idPath = TX1DPE_Disabled;
     	}
     	else
     	{
-    		if( sPathId == "UhfExt")		idPath = 1;
-    		else if( sPathId == "IsmInt")	idPath = 2;
-    		else if( sPathId == "IsmExt")	idPath = 3;
-    		else if( sPathId == "Wideband")	idPath = 4;
-    		else /*disabled*/				idPath = 0;
+    		if( sPathId == "UhfExt")		idPath = RX1DPE_UhfExt;
+    		else if( sPathId == "IsmInt")	idPath = RX1DPE_IsmInt;
+    		else if( sPathId == "IsmExt")	idPath = RX1DPE_IsmExt;
+    		else if( sPathId == "Wideband")	idPath = RX1DPE_Wideband;
+    		else /*disabled*/				idPath = RX1DPE_Disabled;
     	}
     }
 

@@ -145,7 +145,7 @@ int RxPortToFile::DoRxPortToFile(
 	printf("RX Frequency:  %0.3f MHz\n", rxFreq/1000.0F);
 	printf("RX Bandwidth:  -- MHz (id=%02Xh)\n", rxBandwidth);
 	printf("Host Rate:     %0.3f MHz\n", fSampFreq/1.0e6f);
-	printf("Duration:      %lf (%lu frames)\n", dt, totalFrames);
+	printf("Duration:      %0.02lf sec (%lu frames)\n", dt, totalFrames);
 
 	// 1) Bind the Bulk Data Port to the specified endpoint.
 	BulkDataPort portData(epRx, PortBase::EP_UNDEF);

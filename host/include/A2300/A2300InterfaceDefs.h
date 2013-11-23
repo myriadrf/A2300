@@ -96,15 +96,33 @@
 #define RFACTION_RESETTXCALIB  	0x89  //Resets the TX calibration of the RF component.
 
 
+//Enum defines the default TX pathes for the RF0 component.  Depending on which RF profiles are loaded into the
+//device, these definitions may not be valied.
+enum Tx0DefaultProfilesEnum
+{
+	TX0DPE_Disabled = 0x00,
+	TX0DPE_Wideband = 0x01,
+};
+
 //Enum defines the default RX pathes for the RF0 component.  Depending on which RF profiles are loaded into the
 //device, these definitions may not be valied.
 enum Rx0DefaultProfilesEnum
 {
 	RX0DPE_Disabled = 0x40,
-	RX0DPE_GpsL1Int=0x41,
-	RX0DPE_GpsL1Ext =0x42,
-	RX0DPE_PcsExt =0x43,
-	RX0DPE_Wideband=0x44
+	RX0DPE_GpsL1Int = 0x41,
+	RX0DPE_GpsL1Ext = 0x42,
+	RX0DPE_PcsExt   = 0x43,
+	RX0DPE_Wideband = 0x44
+};
+
+//Enum defines the default TX pathes for the RF1 component.  Depending on which RF profiles are loaded into the
+//device, these definitions may not be valied.
+enum Tx1DefaultProfilesEnum
+{
+	TX1DPE_Disabled = 0x80,
+	TX1DPE_IsmInt 	= 0x81,
+	TX1DPE_IsmExt 	= 0x82,
+	TX1DPE_Wideband = 0x83,
 };
 
 //Enum defines the default RX pathes for the RF1 component.  Depending on which RF Profiles are loaded
@@ -112,11 +130,12 @@ enum Rx0DefaultProfilesEnum
 enum Rx1DefaultProfilesEnum
 {
 	RX1DPE_Disabled = 0xC0,
-	RX1DPE_UhfExt=0xC1,
-	RX1DPE_IsmInt =0xC2,
-	RX1DPE_IsmExt =0x43,
-	RX1DPE_Wideband=0x44
+	RX1DPE_UhfExt   = 0xC1,
+	RX1DPE_IsmInt   = 0xC2,
+	RX1DPE_IsmExt   = 0x43,
+	RX1DPE_Wideband = 0x44
 };
+
 
 
 //*******************************************************
