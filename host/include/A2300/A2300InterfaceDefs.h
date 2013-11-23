@@ -1,11 +1,18 @@
-/************************************************************************
- * Name:  A2300InterfaceDefs.h
- *
- * This module is the proprietary property of Loctronix Corporation
- * Copyright (C) 2013 Loctronix Corporation
- * All Rights Reserved
- *
- ***************************************************************************/
+// Name: A2300InterfaceDefs.h
+//
+// Copyright(c) 2013 Loctronix Corporation
+// http://www.loctronix.com
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
 #ifndef A2300InterfaceDefs_H_
 #define A2300InterfaceDefs_H_
 //*******************************************************
@@ -29,10 +36,19 @@
 #define WCACOMP_LSDP1		0x91	//Low speed data port 1 (output, Receive)
 #define WCACOMP_LSDP2		0x92	//Low speed data port 2 (input, Transmit)
 #define WCACOMP_LSDP3		0x93	//Low speed data port 3 (output, Receive)
+#define WCACOMP_RFPROFILES  0x94    //RF Profiles component.
 #define WCACOMP_FPGA		0xB0	//FPGA WCA HAL configurtion and control
 
-#define RFCH_RX	1
-#define RFCH_TX 0
+
+//*******************************************************
+// WCA WCACOMP_MICRO Component(0x80) Interface Spec.
+//*******************************************************
+#define MICRO_UpdateFirmware	0x00 //Action updates firmware from flash memory
+#define MICRO_ResetRF0If		0x10 //Action issues reset on RF0 FPGA interface.
+#define MICRO_ResetRF1If		0x11 //Action issues Reset on RF1 FPGA interfcae.
+#define MICRO_ResetContainer	0x12 //Action issues reset on FPGA WCA container.
+#define MICRO_ResetUsbIf		0x13 //Action issues reset on FPGA USB Interface.
+#define MICRO_ResetMask			0x03 //Mask of actions to generate reset register bits.
 
 //*******************************************************
 // WCA FLASH Component(0x88) Interface Spec.
@@ -66,11 +82,50 @@
 #define RFPROP_RXPATH			0x0D
 #define RFPROP_TXPATH			0x0E
 
-#define RFACTION_RXTUNEVCO		0x80
-#define RFACTION_TXTUNEVCO		0x81
-#define RFACTION_RXCALIBRATE	0x82
-#define RFACTION_TXCALIBRATE	0x83
+#define RFACTION_RXTUNEVCO		0x80  //Tune the RX PLL VCO
+#define RFACTION_TXTUNEVCO		0x81  //Tune the TX PLL VCO
+#define RFACTION_RXCALIBRATE	0x82  //Calibrate the receiver using the current configuration
+#define RFACTION_TXCALIBRATE	0x83  //Calibrate the transmitter configuration using the current configuration.
+#define RFACTION_TOPCALIBRATE   0x84  //Calibrate Top Level.
+#define RFACTION_SAVERXPROFILE	0x85  //Updates the stored RX profile with calibration data
+									  //Must be in cached mode to actually save the data.
+#define RFACTION_SAVETXPROFILE	0x86  //Updates the stored TX profile with calibration data
+									  //Must be in cached mode to actually save the data.
+#define RFACTION_RESETTOPCALIB  0x87  //Resets the top level calibration of the RF Component
+#define RFACTION_RESETRXCALIB  	0x88  //Resets the RX calibration of the RF component.
+#define RFACTION_RESETTXCALIB  	0x89  //Resets the TX calibration of the RF component.
 
+
+//Enum defines the default RX pathes for the RF0 component.  Depending on which RF profiles are loaded into the
+//device, these definitions may not be valied.
+enum Rx0DefaultProfilesEnum
+{
+	RX0DPE_Disabled = 0x40,
+	RX0DPE_GpsL1Int=0x41,
+	RX0DPE_GpsL1Ext =0x42,
+	RX0DPE_PcsExt =0x43,
+	RX0DPE_Wideband=0x44
+};
+
+//Enum defines the default RX pathes for the RF1 component.  Depending on which RF Profiles are loaded
+//into the device, these definititons may not be valid.
+enum Rx1DefaultProfilesEnum
+{
+	RX1DPE_Disabled = 0xC0,
+	RX1DPE_UhfExt=0xC1,
+	RX1DPE_IsmInt =0xC2,
+	RX1DPE_IsmExt =0x43,
+	RX1DPE_Wideband=0x44
+};
+
+
+//*******************************************************
+// RF Profiles Component (0x94) Interface Spec.
+//*******************************************************
+#define RFP_ACTION_CACHEDATA    	0x00	//Enter Cache mode of RF Profiles (use for calibration editing)
+#define RFP_ACTION_DISCARDCHANGES 	0x01	//Exits Cache mode and discards changes
+#define RFP_ACTION_SAVECHANGES		0x02	//Exits Cache mode and saves Profile changes to NVM.
+											//Rolls the revision number.
 //*******************************************************
 // FPGA Component(0xB0) Interface Spec.
 //*******************************************************
@@ -107,10 +162,33 @@
 //register address is the sum of the DSP component ID and the register index below.
 
 // DSP_DDUC_CTRL (WcaWriteByteRegister)
-// DDC / DUC component Control register. Enables and disables component
-// functions
-// No values currently defined.
-#define DSP_DDUC_CTRL	  	0x00
+// DDC / DUC component Control register.  Bit flags 2 through 5 are
+// only availble if the waveform was compiled with dynamic configuration
+// enabling bypass of internal functions.  To achieve maximum 32 MHz sampling
+// rate bypass CIC decimation, CIC strobe, and half band filters (0x39, 57 dec.).  To achieve
+// 16 MHz sampling rate,  bypass CIC functions  (0x19, 25 dec.).  To directly sample front-end
+// with decimation sampling rate, bypass decimation, but use sampling strobe (0x29, 45 dec. )
+//
+// bit#  |  Description
+// -------|----------------------------------------------------------
+//  0	   (1)Enable / (0)Disable Component USB port streaming.
+//  1	   Reset FIFOS.
+//  2	   Bypass Cordic rotation (DYNAMIC_CONFIG only)
+//  3	   Bypass CIC Decimation  (DYNAMIC_CONFIG only)
+//  4	   Bypass CIC Decimation strobe (DYNAMIC_CONFIG only)
+// 	       When enabled, the decimation strobe is bypassed, and the original
+// 	       sampling strobe is used to drive down stream.
+//  5      Bypass Half band filter (DYNAMIC_CONFIG only).
+//
+#define DSP_DDUC_CTRL	  				0x00
+#define DSP_DDUC_CTRL_DISABLED			0x00
+#define DSP_DDUC_CTRL_ENABLED			0x01
+#define DSP_DDUC_CTRL_RESET 			0x02
+#define DSP_DDUC_CTRL_BYPASSCORDIC		0x04
+#define DSP_DDUC_CTRL_BYPASSCIC			0x08
+#define DSP_DDUC_CTRL_BYPASSCICSTROBE	0x10
+#define DSP_DDUC_CTRL_BYPASSHALFBAND	0x20
+
 
 // DSP_DDUC_PHASERATE(WcaWriteDwordRegister)
 // Frequency Translation rate.  This is the phase rotation to apply

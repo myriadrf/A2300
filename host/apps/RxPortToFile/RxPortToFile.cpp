@@ -39,15 +39,18 @@ class RxPortToFile
 public:
 	RxPortToFile() : m_ctPackets(0), m_ctData(0), m_bRunning(false) {}
 	int Run();
-	int DoRxPortToFile( );
+	int DoRxPortToFile(
+			byte idComponent, byte rxProfile,
+			byte rxGain, uint32 rxFreq,
+			byte rxBandwidth, uint16 hostSampRate  );
 	void OnFrameReady( BulkDataPort::TransferContext* pctxt);
 
 
 private:
-	ConfigDevice  m_config;
-	unsigned int  m_ctPackets;
-	unsigned int  m_ctData;
-	bool 		  m_bRunning;
+	ConfigDevice  	m_config;
+	ulong  			m_ctPackets;
+	ulong  			m_ctData;
+	bool 		 	m_bRunning;
 };
 
 void WriteHeader( );
@@ -99,8 +102,9 @@ int RxPortToFile::Run()
 	printf( "FW Ver:      %s\n", sVer.c_str());
 	printf( "FPGA ID-Ver: %04X-%02X.%02X\n\n", idFpga, iVer, iRev);
 
-	//Execute the bulk data transfer program.
-	int retval = DoRxPortToFile( );
+	//Execute the bulk data transfer program (default to PCS Band, 9 dB Gain, 1950 MHz, 2.5 MHz bandwidth, 2 MHz sampling).
+	//TODO make configurable from command line.
+	int retval = DoRxPortToFile(WCACOMP_RF0, RX0DPE_PcsExt, 3, 1950000, 13, 8 );
 
 	m_config.Detach();
 
@@ -108,91 +112,92 @@ int RxPortToFile::Run()
 }
 
 /**
- *
+ * Function configures the ASR-2300 to receive a specified frequency and then streams the data to the host
+ * via BulkDataPort interface.
  */
-int RxPortToFile::DoRxPortToFile( )
+int RxPortToFile::DoRxPortToFile(
+		byte idComponent, byte rxProfile,
+		byte rxGain, uint32 rxFreq,
+		byte rxBandwidth, uint16 hostSampRate  )
 {
-	// Find the list of addresses at the specified VID/PID.
+	const static char* s_rx0_pathsDefault[] = {"Disabled", "GPS L1 Int.", "GPS L1 Ext.", "PCS Band Ext.", "Wideband"};
+	const static char* s_rx1_pathsDefault[] = {"Disabled", "UHF Ext.", "ISM Int.", "ISM Ext.", "Wideband"};
+
+	//Select endpoints, components, and path definitions based on which RF front-end was specified.
+	bool  bIsRf0   = (idComponent == WCACOMP_RF0);
+	byte  epRx     = (bIsRf0) ? 0x88 : 0x98;
+	byte  idDdc    = (bIsRf0) ? WCACOMP_DSP_DDC0 : WCACOMP_DSP_DDC1;
+	pcstr* szPaths = (bIsRf0) ? s_rx0_pathsDefault : s_rx1_pathsDefault;
+	float fSampFreq = 32.0e6f / hostSampRate/2;
+	double dt = 10.0;
+	double framesPerSecond = fSampFreq*4 / s_sizeFrame; //4 bytes per sample
+	ulong totalFrames = (ulong)ceil(framesPerSecond*dt);
+
+	TransportDci& td = m_config.Dci0Transport();  //Get the dci interface so we can send messages directly.
+
+	//Display some interesting information about the configuration.
 	printf("\n");
-	printf (" Opening Data Port...\n");
-	printf ("--------------------------------------\n");
+	printf(" Opening Data Port...\n");
+	printf("--------------------------------------\n");
+	printf("RF Component:  %s (id=%02Xh, ep=%02Xh)\n", (bIsRf0)? "RF0" : "RF1", idComponent, epRx);
+	printf("RX Profile:    %s (id=%02Xh)\n", szPaths[rxProfile & 0xF], rxProfile);
+	printf("RX Gain:       %d dB\n", rxGain*3);
+	printf("RX Frequency:  %0.3f MHz\n", rxFreq/1000.0F);
+	printf("RX Bandwidth:  -- MHz (id=%02Xh)\n", rxBandwidth);
+	printf("Host Rate:     %0.3f MHz\n", fSampFreq/1.0e6f);
+	printf("Duration:      %lf (%lu frames)\n", dt, totalFrames);
 
-	BulkDataPort portData(0x88, PortBase::EP_UNDEF);
-
+	// 1) Bind the Bulk Data Port to the specified endpoint.
+	BulkDataPort portData(epRx, PortBase::EP_UNDEF);
 	UsbDevice& device  = m_config.Device();
-
-	// Bind the USB driver to a portDci.
 	if( device.BindPort( &portData) != 0)
 	{
 		printf("Error Binding to Wca Ports.");
 		return -5;
 	}
 
-	TransportDci& td = m_config.Dci0Transport();
+	//2) Reset the DDC Component so no data is in cache.
+	td.SetProperty<byte>(idDdc, DSP_DDUC_CTRL, DSP_DDUC_CTRL_RESET);
+	td.SetProperty<byte>(idDdc, DSP_DDUC_CTRL, DSP_DDUC_CTRL_DISABLED);
 
-	//3) Path Profile
+	//3) Configure the RF Front-end profile, gain, frequency, and Bandwidth.
+    //   NOTE: this will get moved to the ConfigRf object soon.  This is the
+	//         brute force way of doing it.
+	td.SetProperty<byte>(idComponent,   RFPROP_RXPATH, rxProfile );
+	td.SetProperty<byte>(idComponent,   RFPROP_RXGAIN, rxGain);
+	td.SetProperty<uint32>(idComponent, RFPROP_RXFREQ, rxFreq);
+	td.SetProperty<uint32>(idComponent, RFPROP_RXBANDWIDTH, rxBandwidth);
 
-	//TODO REMOVE
-//	td.SetProperty<byte>(WCACOMP_RF0, 6, 4);
-//	td.SetProperty<byte>(WCACOMP_RF0, 9, 0);
-//	td.SetProperty<uint32>(WCACOMP_RF0, 7, 2400000);
-	td.SetProperty<byte>(WCACOMP_RF0, 14,0);
-	td.SetProperty<byte>(WCACOMP_RF0, 2,4);
-	td.SetProperty<byte>(WCACOMP_RF0, 5,0);
-//	td.SetProperty<uint32>(WCACOMP_RF0, 3,2400000);
-
-
-	td.SetProperty<byte>(WCACOMP_RF0, 0x0D, 0x01);
-
-	byte profile;
-	td.GetProperty<byte>(WCACOMP_RF0, 0x0D, profile);
-	printf("Profile: %02X\n", profile);
-
-
-	//Initialize the properties:
-
-	//1) Host Data Rate
-	td.SetProperty<uint16>(WCACOMP_DSP_DDC0, DSP_DDUC_SAMPRATE, 2);
-
-	//2) If Frequency
-
-	//3) RF Frequency and Gain.
-	td.SetProperty<byte>(WCACOMP_DSP_DDC0, RFPROP_RXGAIN, 0x05);
-	td.SetProperty<uint32>(WCACOMP_DSP_DDC0, RFPROP_RXFREQ, 1575420);
-
-
-	//4) Open the port and prepare it for reading.
+	//4) Open the port, attach callback function to receive data as it comes in.
 	portData.Open();
-
-	//Attach read callback
 	portData.ReadTransfer() = BulkDataPort::TransferEvent( static_cast<void*>(this),
 			&Delegate<void, RxPortToFile, BulkDataPort::TransferContext*, &RxPortToFile::OnFrameReady>);
 
-	//Initialize the buffers and queue for processing.
+	//5) Initialize the buffers and queue for processing.
 	m_bRunning = true;
 	BulkDataPort::TransferContextList listContext;
 	for( size_t i = 0; i < s_ctFrames; i++)
 	{
 		BulkDataPort::TransferContext* pctxt = portData.CreateReadTransferContext(
 				s_Frames + i*s_sizeFrame, s_sizeFrame);
-
 		pctxt->Submit();
-
 		listContext.push_back( pctxt);
 	}
 
-	//5) Turn on the DDUC Port to pump data.
-	td.SetProperty<byte>(WCACOMP_DSP_DDC0, DSP_DDUC_CTRL, 1);
+	//6) Configure the DDC and Enable bulk data transfer on the device.
+	//   NOTE:  DDC functionality will move to the ConfigDDUC class at some point.
+	td.SetProperty<uint16>(idDdc, DSP_DDUC_SAMPRATE, hostSampRate);
+	//TODO CONFIGURE IF Frequency.
+	td.SetProperty<byte>(idDdc, DSP_DDUC_CTRL, DSP_DDUC_CTRL_ENABLED);
 
 
-	//6) Process for 10 seconds.
-	printf("Starting Run\n");
+	//7) Process for 10 seconds.
+
+	printf("--> Starting Run\n");
+
+
 	int retval = 0;
-	time_t ttCur, ttEnd;
-	time(&ttCur);
-	ttEnd = ttCur + 10;
-
-	while( retval == 0 && ttCur < ttEnd)
+	while( retval == 0 && m_ctPackets < totalFrames)
 	{
 #if defined(HAVE_LIBUSB)
 		retval= device.PollAsynchronousEvents();
@@ -202,22 +207,20 @@ int RxPortToFile::DoRxPortToFile( )
 		BulkDataPort::TransferContext& ctxt = portData.WaitForReadTransferEvent( 1000);
 		retval = ctxt.status;
 #endif
-		time(&ttCur);
 	}
 
 	if( retval != 0) printf("USB error occurred transfer stopped.\n");
 
-	//8) Turn off the DDC Port and reset
-	td.SetProperty<byte>(WCACOMP_DSP_DDC0, DSP_DDUC_CTRL, 0x2);
-	td.SetProperty<byte>(WCACOMP_DSP_DDC0, DSP_DDUC_CTRL, 0x0);
+	//8) Reset the DDC Port
+	td.SetProperty<byte>(idDdc, DSP_DDUC_CTRL, DSP_DDUC_CTRL_RESET);
+	td.SetProperty<byte>(idDdc, DSP_DDUC_CTRL, DSP_DDUC_CTRL_DISABLED);
 
 	//9) Set Path Profile to Disabled.
-	printf("\n\nCompleted Run:  Packets = %d, Bytes = %d\n", m_ctPackets, m_ctData);
+	printf("\n\n--> Completed Run:  Packets = %ld, Bytes = %ld\n", m_ctPackets, m_ctData);
 	fflush(stdout);
 
 	//10) Disable the RF Communications
-	td.SetProperty<uint16>(WCACOMP_RF0, 0x0D, 0x00);
-
+	td.SetProperty<byte>(idComponent,  RFPROP_RXPATH, bIsRf0 ? (byte)RX0DPE_Disabled : (byte)RX1DPE_Disabled );
 
 	//11) Cancel all transfer operations.
 	BulkDataPort::TransferContextList::iterator iter;
@@ -225,6 +228,7 @@ int RxPortToFile::DoRxPortToFile( )
 		(*iter)->Cancel();
 
 	//Wait for the transfer cancellations to complete.
+	time_t ttCur, ttEnd;
 	time(&ttCur);
 	ttEnd = ttCur + 2;
 
