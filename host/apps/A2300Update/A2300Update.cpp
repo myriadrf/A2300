@@ -37,52 +37,93 @@ using namespace A2300;
 #define WCA_COMPONENT_INDEX ((byte)4)
 #warning "WCA_COMPONENT_INDEX not yet defined."
 #else
-#warning "WCA_COMPONENT_INDEX has been defined elsewhere; please remove this warning secion."
+#warning "WCA_COMPONENT_INDEX has been defined elsewhere; please remove this warning section."
 #endif
 
-#ifndef MICRO_UPDATE_FIRMWARE
-// temporarily, until it is defined elsewhere
-#define MICRO_UPDATE_FIRMWARE ((byte)0)
-#warning "MICRO_UPDATE_FIRMWARE not yet defined."
-#else
-#warning "MICRO_UPDATE_FIRMWARE has been defined elsewhere; please remove this warning secion."
-#endif
 
-typedef enum _rwType {
-  e_doingWriteToDevice,
-  e_doingReadFromDevice,
-  e_rw_invalid
-} rwType;
 
-typedef enum _targetType {
-  e_Firmware = WCACOMP_FLASH,
-  e_RFProfile = -1, // temporarily, until it is defined elsewhere
-  e_FPGADirect = WCACOMP_FPGA,
-  e_tt_invalid = -1
-} targetType;
+/******************************************************************
+ * Type Declarations.
+ *****************************************************************/
 
-static ConfigDevice s_config;
-static Dci_BitClient s_BITClient;
-static Dci_BitOperationMgr s_bitmgr;
+typedef enum _opType {
+	e_UpdateFirmware,
+	e_DownloadToFlash,
+	e_DownloadToFpga,
+	e_DownloadToRfProfiles,
+	e_UploadFromFlash,
+	e_UploadFromRfProfiles
+} opType;
 
-static rwType s_rwType = e_rw_invalid;
-static targetType s_targetType = e_tt_invalid;
-static char* s_fileName = NULL;
-static FILE* s_fileStream = NULL;
-static TransportDci* s_ptd = NULL;
+typedef enum _transferDir {
+	e_Download,
+	e_Upload
+} transferDir;
+/**
+* Handler called when component is to initiate transfer.
+*/
+typedef int (*OpHandlerFnc)();
+
+typedef struct _opConfig {
+	opType op;
+	transferDir dir;
+	pcstr szName;
+	byte idTargetComponent;
+	OpHandlerFnc  fncOpHandler;
+	pcstr szDescriptionFormat;
+} opConfig;
+
+
 
 /******************************************************************
  * Forward Declarations.
  *****************************************************************/
 
+static int Run();
+
+//Operational control functions.
+static int DoUpdateFirmware();
+static int DoBitTransferFlash();
+static int DoBitTransfer();
+
+//Program configuration routines
+static void WriteHeader();
+static void PrintUsage();
+static int ParseOptions(int argc, char** argv);
+static bool IsArgumentName( pcstr arg, pcstr szName, size_t minChars);
+static void DumpDeviceInformation();
+
+//BitUtil support functions.
 static byte OnBitInitiateSourceTransfer(Dci_BitOperation* pbop);
 static byte OnBitInitiateTargetTransfer(Dci_BitOperation* pbop);
-static int  OnBitGetFrameData(Dci_BitOperation* pbop, byte* buff, uint16 ctBytes);
-static int  OnBitSetFrameData(Dci_BitOperation* pbop, byte* buff, uint16 ctBytes);
+static int OnBitGetFrameData(Dci_BitOperation* pbop, byte* buff, uint16 ctBytes);
+static int OnBitSetFrameData(Dci_BitOperation* pbop, byte* buff, uint16 ctBytes);
 static void OnBitTransferComplete(Dci_BitOperation* pbop, byte idStatus);
-static void Run();
-static void WriteHeader();
-static void ParseOptions(int argc, char** argv);
+static int OnSendMessage(byte* pmsg, int len, bool bAckRequired,	Dci_Context* pctxt );
+/******************************************************************
+ * Static Data
+ *****************************************************************/
+
+//Define supported operations.
+static const opConfig s_aops[] = {
+		{e_UpdateFirmware, 			e_Download, "firmware", WCACOMP_FLASH,		DoUpdateFirmware, 	"Updating ASR-2300 firmware with file %s\n"},
+		{e_DownloadToFlash, 		e_Download, "flash", 	WCACOMP_FLASH,		DoBitTransferFlash, "Downloading %s to ASR-2300 flash\n"},
+		{e_DownloadToFpga, 			e_Download, "fpga", 	WCACOMP_FPGA,		DoBitTransfer, 		"Downloading %s to ASR-2300 FPGA\n"},
+		{e_DownloadToRfProfiles, 	e_Download, "profiles", WCACOMP_RFPROFILES, DoBitTransfer,		"Downloading %s to ASR-2300 RF Profiles NVM\n"},
+		{e_UploadFromFlash, 		e_Upload, 	"flash", 	WCACOMP_FLASH, 		DoBitTransfer,		"Uploading ASR-2300 Flash to %s\n" },
+		{e_UploadFromRfProfiles, 	e_Upload, 	"profiles", WCACOMP_RFPROFILES, DoBitTransfer,		"Uploading ASR-2300 RF Profiles to %s\n" }
+};
+#define COUNT_OPS  6
+
+static ConfigDevice s_config;
+static Dci_BitClient s_BITClient;
+static Dci_BitOperationMgr s_bitmgr;
+
+static const opConfig* s_pOp = NULL;
+static char* s_fileName = NULL;
+static FILE* s_fileStream = NULL;
+static TransportDci* s_ptd = NULL;
+
 
 /******************************************************************
  * Functions.
@@ -94,12 +135,248 @@ static void ParseOptions(int argc, char** argv);
  * </summary>
  */
 
-int main(int argc, char** argv)
+int main(int argc, char** argv) {
+	int retval = 0;
+	WriteHeader();
+	retval = ParseOptions(argc, argv);
+	if( retval == 0)
+	{
+		//Open the specified file for writing or reading.
+		if( s_pOp->dir == e_Upload)	{
+			s_fileStream = fopen(s_fileName, "w");
+			if (!s_fileStream) {
+				printf("\nError: Provided filename ('%s') cannot be "
+						"accessed or created.\n", s_fileName);
+				PrintUsage();
+				return -3;
+			}
+		} else { //Download
+			s_fileStream = fopen(s_fileName, "r");
+			if (!s_fileStream) {
+				printf("\nError: Provided filename ('%s') cannot be "
+						"accessed for reading.\n", s_fileName);
+				PrintUsage();
+				return -4;
+			}
+		}
+
+
+		//Now run the Update operation.
+		retval = Run();
+
+		//close the file -- note this was opened in ParseOptions,
+		if (fclose(s_fileStream) != 0) {
+			printf("\nError %d closing the BIT file '%s'.\n", errno, s_fileName);
+		}
+	}
+	return retval;
+}
+
+
+
+/**
+ * <summary>
+ * Primary entry point for running this executable.
+ * </summary>
+ */
+
+static int Run() {
+
+	int retval = 0;
+
+	try {
+		// Find the list of addresses at the specified VID/PID.
+		printf("\n"
+				"Enumerating ASR-2300 devices...\n"
+				"--------------------------------------\n");
+
+		int addr = s_config.Attach();
+
+		printf("Attached to ASR-2300 at address = %d\n", addr);
+
+	} catch (std::runtime_error& re) {
+		printf("Error:  %s\n", re.what());
+		return -8;
+	}
+
+	//Dump the device information and grab the
+	//DCI transport interface.
+	DumpDeviceInformation();
+	s_ptd = &(s_config.Dci0Transport());
+
+
+	//1) Tell the user what we are doing
+	printf("--------------------------------------\n");
+	printf( s_pOp->szDescriptionFormat, s_fileName);
+	printf("--------------------------------------\n");
+
+	//2) set up the BIT operations manager
+	Dci_BitOperationMgrInit(&s_bitmgr, &OnSendMessage);
+
+	//3) set up the BIT client and its callbacks.
+
+	//NOTE: Make our component ID the same as the target component, so it knows
+	//how to send the data back.  This worksaround a design issue with the BIT
+	//structure.
+	Dci_BitClient_Init(&s_BITClient, s_pOp->idTargetComponent);
+	s_BITClient.fncInitiateSourceTransfer = &OnBitInitiateSourceTransfer;
+	s_BITClient.fncInitiateTargetTransfer = &OnBitInitiateTargetTransfer;
+	s_BITClient.fncGetFrameData = &OnBitGetFrameData;
+	s_BITClient.fncSetFrameData = &OnBitSetFrameData;
+	s_BITClient.fncTransferComplete = &OnBitTransferComplete;
+
+	//4) Register the Client with the BIT operations manager.
+	Dci_BitRegisterClient(&s_bitmgr, &s_BITClient);
+
+	// Do the specified operation
+	retval = (*(s_pOp->fncOpHandler))();
+
+	s_config.Detach();
+	return retval;
+}
+
+//*******************************************************
+// Main Operation Handlers
+//*******************************************************
+
+static int DoUpdateFirmware()
 {
-  WriteHeader();
-  ParseOptions(argc, argv);
-  Run();
-  return 0;
+	byte buff[MAX_MSG_SIZE];
+	int outLen, inLen;
+	int retval = 0;
+
+	//1) Erase Flash and Download. NOTE, the name firmware will be
+	//   added to the BIT info on target initiation.
+	retval = DoBitTransferFlash();
+
+	// 2) Tell device to update firmware.
+	if( retval == 0) {
+		printf("Updating firmware, device will reboot when complete...\n");
+		fflush (stdout);
+
+		memset(buff, 0, sizeof(buff));
+		inLen = Dci_ExecuteAction_Init(buff, sizeof(buff), WCACOMP_MICRO,
+				MICRO_UpdateFirmware, 0, NULL);
+		outLen = s_ptd->SendMsg(buff, (size_t) inLen, false);
+
+		if (outLen == inLen) {
+			printf("done.\n");
+		} else {
+			printf("error; proceeding anyway.\n");
+			retval = -7;
+		}
+	}
+	return retval;
+}
+static int DoBitTransferFlash()
+{
+	byte buff[MAX_MSG_SIZE];
+	int outLen, inLen;
+
+	// Erase the flash, then wait 20
+	// seconds; FIXME: hopefully this will be changed into an ACK (or
+	// equivalent) in the near future; just sleep for now.
+	printf("Erasing Flash ... ");
+	fflush (stdout);
+	memset(buff, 0, sizeof(buff));
+	inLen = Dci_ExecuteAction_Init(buff, sizeof(buff), WCACOMP_FLASH,
+			FLASH_ActionErase, 0, NULL);
+	outLen = s_ptd->SendMsg(buff, (size_t) inLen, false);
+	if (outLen == inLen) {
+		printf("done.\n");
+	} else {
+		printf("error; proceeding anyway.\n");
+	}
+	printf("Sleeping for 20 seconds ... ");
+	fflush(stdout);
+	sleep(20);
+	printf("done.\n");
+
+	//Proceed with standard Bit Transfer.
+	return DoBitTransfer();
+
+}
+
+/**
+ * Operation Handler function implements message processing performing the specified BIT Transfer operation.
+ */
+int DoBitTransfer()
+{
+	byte buff[MAX_MSG_SIZE];
+
+	Dci_Context ctxt;
+	memset(&ctxt, 0, sizeof(ctxt));
+	ctxt.pConv = s_ptd->Conversation();
+
+	byte idStatus = BSE_OperationNotAvailable;
+
+	if (s_pOp->dir == e_Download) {
+		idStatus = Dci_BitInitiateTargetTransfer(&s_bitmgr, &s_BITClient,
+				s_pOp->idTargetComponent, 1, 0, &ctxt);
+		// flags: 1 == save; 0 means don't save
+
+		if (idStatus != BSE_InitiatingTransfer) {
+			printf("Error initiating target transfer:\n");
+			if (idStatus == BSE_OperationNotAvailable) {
+				printf("  Operation not available.\n");
+				return -5;
+			} else {
+				printf("  Read error.\n");
+				return -6;
+			}
+		}
+	} else {
+		Dci_BitRequestSourceTransfer(&s_bitmgr, &s_BITClient,
+				s_pOp->idTargetComponent, 0, 0, &ctxt);
+	}
+
+	// enter while loop to process messages while BIT operation complates
+	int nread = 0;
+	int cntLoop = 0;
+
+	while (cntLoop < 2) {
+		memset(buff, 0, sizeof(buff));
+		nread = s_ptd->ReceiveMsg(buff, MAX_MSG_SIZE);
+		if (nread > 0) {
+
+			Dci_Hdr* pMsg = (Dci_Hdr*) buff;
+
+			// Prepare the context and send received message off for
+			// processing.
+			memset(&ctxt, 0, sizeof(ctxt));
+			ctxt.pMsg = pMsg;
+			ctxt.lenMsg = nread;
+			ctxt.pConv = s_ptd->Conversation();
+			ctxt.bHandled = false;
+			ctxt.idMessage = Dci_Hdr_MessageId(pMsg);
+			ctxt.idComponent = 0xFF;
+
+			//If WCA Message grab the component ID to help WCA
+			// based message processing.
+
+			if (pMsg->idCategory == 0x21)
+				ctxt.idComponent = ((byte*) pMsg)[WCA_COMPONENT_INDEX ];
+
+			if (!Dci_BitProcessDciMsg(&s_bitmgr, &ctxt)) {
+				printf("Unhandled Dci message: %04X.\n", ctxt.idMessage);
+			}
+
+			// should go idle when finished
+			if (s_bitmgr.aBitOps[0].state == DCI_BOS_IDLE) {
+				break;
+			}
+
+			// got something; reset loop counter
+			cntLoop = 0;
+
+		} else {
+			// got nothing; increment loop counter towards failure
+			++cntLoop;
+		}
+	}
+
+
+	return 0;
 }
 
 /**
@@ -108,14 +385,14 @@ int main(int argc, char** argv)
  * </summary>
  */
 
-static void WriteHeader()
-{
-  printf("*********************************************************************\n"
-	 "* ASR-2300 Update\n"
-	 "*********************************************************************\n"
-	 "* This software example provided by Loctronix Corporation (2013) \n"
-	 "* www.loctronix.com\n"
-	 "*********************************************************************\n");
+static void WriteHeader() {
+	printf(
+			"*********************************************************************\n"
+					"* ASR-2300 Update\n"
+					"*********************************************************************\n"
+					"* This software example provided by Loctronix Corporation (2013) \n"
+					"* www.loctronix.com\n"
+					"*********************************************************************\n");
 }
 
 /**
@@ -123,20 +400,18 @@ static void WriteHeader()
  * Prints usage of this program, on command line parsing error.
  * </summary>
  */
-
-static void PrintUsage()
-{
-  printf("\nUsage for A2300Update:\n\n"
-	 "  A2300Update w[rite] [fi[rmware]|p[rofile]|fl[ash]] file\n"
-	 "    write file to [firmware|RF profile|FPGA flash]\n\n"
-	 "  A2300Update r[ead] [fi[rmware]|p[rofile]|fl[ash]] file\n"
-	 "    read from [firmware|RF profile|FPGA flash] to file\n\n"
-	 "NOTE: Distinct sub-words are allowed; for example:\n"
-	 "    A2300Update w p file\n"
-	 "  means the same as\n"
-	 "    A2300Update write profile file\n\n"
-	 "NOTE: Text is case sensitive; just use lowercase.\n");
-  exit(-1);
+static void PrintUsage() {
+	printf("\nUsage for A2300Update:\n\n"
+			"  A2300Update w[rite] [fi[rmware]|p[rofile]|fl[ash]|f[pga]] file\n"
+			"    write (download) file to firmware, RF profiles, flash, or directly to FPGA.\n\n"
+			"  A2300Update r[ead] p[rofile]|fl[ash]] data\n"
+			"    read (upload) Rf profile or flash data from device to file.\n\n"
+			"NOTE: Distinct sub-words are allowed; for example:\n"
+			"    A2300Update w p file\n"
+			"  means the same as\n"
+			"    A2300Update write profile file\n\n"
+			"WRITING firmware will cause the device to reprogram.  Be sure you do this operation carefully, it can brick the device\n\n"
+			"NOTE: Text is case sensitive; just use lowercase. \n");
 }
 
 /**
@@ -145,333 +420,153 @@ static void PrintUsage()
  * </summary>
  */
 
-static void ParseOptions(int argc, char** argv)
-{
-  if (argc < 4) {
-    printf("\nError: Too few arguments: Got %d, expecting 4.\n", argc);
-    PrintUsage();
-  }
+static int ParseOptions(int argc, char** argv) {
+int i;
 
-  s_rwType = e_rw_invalid;
-  if ((strlen(argv[1]) <= strlen("write")) &&
-      (strncmp (argv[1], "write", strlen(argv[1])) == 0)) {
-    s_rwType = e_doingWriteToDevice;
-  } else if ((strlen(argv[1]) <= strlen("read")) &&
-	     (strncmp (argv[1], "read", strlen(argv[1])) == 0)) {
-    s_rwType = e_doingReadFromDevice;
-  } else {
-    printf("\nError: Unknown second argument: '%s'\n", argv[1]);
-    printf("  Must be either 'read' or 'write'.\n");
-    PrintUsage();
-  }
+	if (argc < 4) {
+		printf("\nError: Too few arguments: Got %d, expecting 4.\n", argc);
+		PrintUsage();
+	}
 
-  s_targetType = e_tt_invalid;
-  if ((strlen(argv[2]) <= strlen("firmware")) &&
-      (strncmp (argv[2], "firmware", strlen(argv[2])) == 0)) {
-    s_targetType = e_Firmware;
-  } else if ((strlen(argv[2]) <= strlen("profile")) &&
-	     (strncmp (argv[2], "profile", strlen(argv[2])) == 0)) {
-    s_targetType = e_RFProfile;
-  } else if ((strlen(argv[2]) <= strlen("flash")) &&
-	     (strncmp (argv[2], "flash", strlen(argv[2])) == 0)) {
-    s_targetType = e_FPGADirect;
-  } else {
-    printf("\nError: Unknown third argument: '%s'\n", argv[2]);
-    printf("	Must be one of 'firmware', 'profile', or 'flash'.\n");
-    PrintUsage();
-  }
+	//Parse the Transfer direction.
+	transferDir dir;
+	if 	( IsArgumentName( argv[1], "write", 1)) {
+		dir = e_Download;
+	}	else if ( IsArgumentName( argv[1], "read", 1))  {
+		dir = e_Upload;
+	}	else    {
+		printf("\nError: Unknown second argument: '%s'\n", argv[1]);
+		printf("  Must be either 'read' or 'write'.\n");
+		PrintUsage();
+		return -1;
+	}
 
-  s_fileName = argv[3];
+	//Parse the Operation Mode.
+	for( i = 0; i < COUNT_OPS; i++) {
+		if( dir == s_aops[i].dir && IsArgumentName( argv[2], s_aops[i].szName, 2) )
+		{
+			s_pOp = s_aops + i;
+			break; // we found it.
+		}
+	}
 
-  // try to open argv[3] for read or write
-  if (s_rwType == e_doingReadFromDevice) {
-    s_fileStream = fopen(s_fileName, "w");
-    if (!s_fileStream) {
-      printf("\nError: Provided filename ('%s') cannot be "
-	     "accessed or created.\n", s_fileName);
-      PrintUsage();
-    }
-  } else {
-    s_fileStream = fopen(s_fileName, "r");
-    if (!s_fileStream) {
-      printf("\nError: Provided filename ('%s') cannot be "
-	     "accessed for reading.\n", s_fileName);
-      PrintUsage();
-    }
-  }
+	if( s_pOp == NULL)	{
+		printf("\nError: Unknown third argument: '%s'\n", argv[2]);
+		printf("	Must be one of 'firmware', 'profile', or 'flash'.\n");
+		PrintUsage();
+		return -2;
+	}
+
+
+	//Open the file for the operation.
+	s_fileName = argv[3];
+
+	return 0;
 }
 
 /**
-* Sends a DCI message using the current message conversation context.
-*/
-
-static int opManagerSendMessage(  byte* pmsg, int len, bool bAckRequired, Dci_Context* /* pctxt */)
-{
-  return (s_ptd->SendMsg(pmsg, (size_t) len, bAckRequired));
-}
-
-/**
- * <summary>
- * Primary entry point for running this executable.
- * </summary>
+ * Helper function makes argument matching more readable.
  */
-
-static void Run()
+bool IsArgumentName( pcstr arg, pcstr szName, size_t minChars)
 {
-  try {
-    // Find the list of addresses at the specified VID/PID.
-    printf("\n"
-	   "Enumerating ASR-2300 devices...\n"
-	   "--------------------------------------\n");
+	size_t lenArg = strlen(arg);
+	size_t lenName = strlen(szName);
+	return lenArg >= minChars && lenArg <= lenName
+			&& (strncmp( arg, szName, lenArg) == 0);
+}
 
-    int addr = s_config.Attach();
 
-    printf("Attached to ASR-2300 at address = %d\n", addr);
 
-  } catch( std::runtime_error& re) {
-    printf("Error:  %s\n", re.what() );
-    exit(-1);
-  }
+static void DumpDeviceInformation()
+{
+	//Print out Device information
 
-  //Print out Device information
+	std::string sId = s_config.IdentifyDevice();
+	std::string sVer = s_config.FirmwareVersion(0);
+	uint16 idFpga = s_config.FpgaId();
+	uint16 verFpga = s_config.FpgaVersion();
+	int iVer = (verFpga >> 8);
+	int iRev = (verFpga & 0x00ff);
 
-  std::string sId 		= s_config.IdentifyDevice();
-  std::string sVer 		= s_config.FirmwareVersion(0);
-  uint16	    idFpga 		= s_config.FpgaId();
-  uint16 		verFpga 	= s_config.FpgaVersion();
-  int  		iVer = (verFpga>>8);
-  int	 		iRev = (verFpga& 0x00ff);
+	printf("\n");
+	printf("Identity:    %s\n", sId.c_str());
+	printf("FW Ver:      %s\n", sVer.c_str());
+	printf("FPGA ID-Ver: %04X-%02X.%02X\n\n", idFpga, iVer, iRev);
 
-  printf("\n");
-  printf( "Identity:    %s\n", sId.c_str());
-  printf( "FW Ver:      %s\n", sVer.c_str());
-  printf( "FPGA ID-Ver: %04X-%02X.%02X\n\n", idFpga, iVer, iRev);
-
-  printf("--------------------------------------\n");
-  printf("Starting transfer ");
-  if (s_rwType == e_doingWriteToDevice) {
-    printf("from file '%s' to device ", s_fileName);
-  } else {
-    printf("from device ");
-  }
-  if (s_targetType == e_Firmware) {
-    printf("firmware");
-  } else if (s_targetType == e_RFProfile) {
-    printf("RF profile");
-  } else {
-    printf("FPGA flash");
-  }
-
-  if (s_rwType == e_doingReadFromDevice) {
-    printf (" to file '%s'", s_fileName);
-  }
-  printf (".\n");
-  printf ("--------------------------------------\n");
-
-  //set up the BIT operations manager
-
-  Dci_BitOperationMgrInit (&s_bitmgr, &opManagerSendMessage);
-
-  //set up the BIT client and its callbacks
-
-  Dci_BitClient_Init (&s_BITClient, WCACOMP_FLASH);
-  s_BITClient.fncInitiateSourceTransfer 	= &OnBitInitiateSourceTransfer;
-  s_BITClient.fncInitiateTargetTransfer 	= &OnBitInitiateTargetTransfer;
-  s_BITClient.fncGetFrameData 				= &OnBitGetFrameData;
-  s_BITClient.fncSetFrameData 				= &OnBitSetFrameData;
-  s_BITClient.fncTransferComplete 			= &OnBitTransferComplete;
-
-  Dci_BitRegisterClient (&s_bitmgr, &s_BITClient);
-
-  // initiate BIT operation
-
-  byte buff[MAX_MSG_SIZE];
-  int outLen, inLen;
-  // initiate target transfer
-
-  s_ptd = &(s_config.Dci0Transport ());
-
-  // FPGA and Flash, not profile: erase the flash, then wait 20
-  // seconds; FIXME: hopefully this will be changed into an ACK (or
-  // equivalent) in the near future; just sleep for now.
-
-  if ((s_rwType == e_doingWriteToDevice) &&
-      ((s_targetType == e_Firmware) ||
-       (s_targetType == e_FPGADirect))) {
-    printf ("Erasing Flash ... ");
-    fflush (stdout);
-    memset (buff, 0, sizeof (buff));
-    inLen = Dci_ExecuteAction_Init (buff, sizeof (buff), WCACOMP_FLASH, FLASH_ActionErase, 0, NULL);
-    outLen = s_ptd->SendMsg (buff, (size_t) inLen, false);
-    if (outLen == inLen) {
-      printf ("done.\n");
-    } else {
-      printf ("error; proceeding anyway.\n");
-    }
-    printf ("Sleeping for 20 seconds ... ");
-    fflush (stdout);
-    sleep (20);
-    printf ("done.\n");
-  }
-
-  Dci_Context ctxt;
-  memset (&ctxt, 0, sizeof (ctxt));
-  ctxt.pConv = s_ptd->Conversation ();
-
-  byte idStatus = BSE_OperationNotAvailable;
-
-  if (s_rwType == e_doingWriteToDevice) {
-    idStatus = Dci_BitInitiateTargetTransfer (&s_bitmgr, &s_BITClient, (byte) s_targetType, 1, 0, &ctxt);
-    // flags: 1 == save; 0 means don't save
-
-    if (idStatus != BSE_InitiatingTransfer) {
-      printf ("Error initiating target transfer:\n");
-      if (idStatus == BSE_OperationNotAvailable) {
-	printf ("  Operation not available.\n");
-      } else {
-	printf ("  Read error.\n");
-      }
-    }
-  } else {
-    s_BITClient.idComponent = (byte) s_targetType;
-    Dci_BitRequestSourceTransfer(&s_bitmgr, &s_BITClient, (byte) s_targetType, 0, 0, &ctxt);
-  }
-
-  // enter while loop to process messages while BIT operation complates
-
-  int nread = 0;
-  int cntLoop = 0;
-
-  while (cntLoop < 2) {
-    memset (buff, 0, sizeof (buff));
-    nread = s_ptd->ReceiveMsg (buff, MAX_MSG_SIZE);
-    if (nread > 0) {
-
-      Dci_Hdr* pMsg = (Dci_Hdr*) buff;
-
-      // Prepare the context and send received message off for
-      // processing.
-      memset (&ctxt, 0, sizeof (ctxt));
-      ctxt.pMsg = pMsg;
-      ctxt.lenMsg = nread;
-      ctxt.pConv = s_ptd->Conversation ();
-      ctxt.bHandled = false;
-      ctxt.idMessage = Dci_Hdr_MessageId (pMsg);
-      ctxt.idComponent = 0xFF;
-
-      //If WCA Message grab the component ID to help WCA
-      // based message processing.
-
-      if( pMsg->idCategory == 0x21)
-	ctxt.idComponent = ((byte*)pMsg)[WCA_COMPONENT_INDEX];
-
-      if (!Dci_BitProcessDciMsg (&s_bitmgr, &ctxt)) {
-	printf("Unhandled Dci message: %04X.\n", ctxt.idMessage);
-      }
-
-      // should go idle when finished
-      if (s_bitmgr.aBitOps[0].state == DCI_BOS_IDLE) {
-	break;
-      }
-
-      // got something; reset loop counter
-      cntLoop = 0;
-
-    } else {
-      // got nothing; increment loop counter towards failure
-      ++cntLoop;
-    }
-  }
-
-  //close the file
-  if (fclose (s_fileStream) != 0) {
-    printf( "\nError %d closing the BIT file '%s'.\n",
-	    errno, s_fileName);
-  }
-
-  // if firmware, need to send action message to upgrade the firmware,
-  // then sleep 20 seconds waiting for that to be processed.  FIXME:
-  // hopefully this will be changed into an ACK (or equivalent) in the
-  // near future; just sleep for now.
-
-  if ((s_rwType == e_doingWriteToDevice) &&
-      (s_targetType == e_Firmware)) {
-    printf ("Updating Firmware ... ");
-    fflush (stdout);
-
-    memset (buff, 0, sizeof(buff));
-    inLen = Dci_ExecuteAction_Init (buff, sizeof (buff), WCACOMP_MICRO, MICRO_UPDATE_FIRMWARE,  0, NULL);
-    outLen = s_ptd->SendMsg (buff, (size_t) inLen, false);
-
-    if (outLen == inLen) {
-      printf ("done.\n");
-    } else {
-      printf ("error; proceeding anyway.\n");
-    }
-    printf ("Sleeping for 20 seconds ... ");
-    fflush (stdout);
-    sleep (20);
-    printf ("done.\n");
-
-  }
-
-  s_config.Detach ();
 }
 
 //*******************************************************
-// BIT Operation handlers
+// BIT Util Operation handlers
 //*******************************************************
 
-static byte OnBitInitiateSourceTransfer(Dci_BitOperation* pbop)
-{
-  fseek(s_fileStream, 0, SEEK_END);
-  long fLen = ftell(s_fileStream);
-  rewind(s_fileStream);
+static byte OnBitInitiateSourceTransfer(Dci_BitOperation* pbop) {
 
-  Dci_BinaryImageTransfer* pbiti = &(pbop->bitinfo);
+	Dci_BinaryImageTransfer* pbiti = &(pbop->bitinfo);
 
-  // already initialized to empty string, so copy only if needed
-  if (s_targetType == e_Firmware) {
-    memcpy( pbiti->szName, "firmware", 32);
-  } else if (s_targetType == e_RFProfile) {
-    memcpy( pbiti->szName, s_fileName, 32);
-  }
+	//Get the length of the file to send.
+	fseek(s_fileStream, 0, SEEK_END);
+	long fLen = ftell(s_fileStream);
+	rewind(s_fileStream);
 
-  // already initialized to empty string, so copy only if needed
-  // memcpy( pbiti->szDescription, s_szDescription, 32);
 
-  pbiti->sizeImg   = (uint32) fLen;
-  pbiti->sizeFrame = 256;
-  pbiti->ctFrames  = (((uint32) fLen) + 255) / 256;
+	// If updating firmware mark the biti with the "firmware"
+	// name so it can be recognized in device as firmware.
+	if (s_pOp->op == e_UpdateFirmware) {
+		memcpy(pbiti->szName, "firmware", 32);
+	}
 
-  return BSE_InitiatingTransfer;
+	//Update size, number of frames, etc.
+	pbiti->sizeImg = (uint32) fLen;
+	pbiti->sizeFrame = 256;
+	pbiti->ctFrames = (((uint32) fLen) + 255) / 256;
+
+	//ready to go.
+	return BSE_InitiatingTransfer;
 }
 
-static byte OnBitInitiateTargetTransfer(Dci_BitOperation* /* pbop */)
-{
-  //Nothing todo we are ready to go.
-  return BSE_InitiatingTransfer;
+static byte OnBitInitiateTargetTransfer(Dci_BitOperation* /* pbop */) {
+	//Nothing todo we are ready to go.
+	return BSE_InitiatingTransfer;
 }
 
-static int OnBitGetFrameData(Dci_BitOperation* /* pbop */, byte* buff, uint16 ctBytes  )
-{
-  // read ctBytes bytes from file and push into buffer
-  size_t nread = fread(buff, 1, (size_t) ctBytes, s_fileStream);
-  return ((int) nread);
+static int OnBitGetFrameData(Dci_BitOperation*  pbop, byte* buff,
+		uint16 ctBytes) {
+	// read ctBytes bytes from file and push into buffer
+	size_t nread = fread(buff, 1, (size_t) ctBytes, s_fileStream);
+
+	if( (pbop->idFrame %100) == 0) {
+		printf(".");
+		fflush(stdout);
+	}
+
+	return ((int) nread);
 }
 
-static int OnBitSetFrameData(Dci_BitOperation* /* pbop */, byte* buff, uint16 ctBytes )
-{
-  // write ctBytes bytes to file from buffer
-  size_t nwritten = fwrite(buff, 1, (size_t) ctBytes, s_fileStream);
-  return ((int) nwritten);
+static int OnBitSetFrameData(Dci_BitOperation* pbop, byte* buff,
+		uint16 ctBytes) {
+	// write ctBytes bytes to file from buffer
+	size_t nwritten = fwrite(buff, 1, (size_t) ctBytes, s_fileStream);
+
+	if( (pbop->idFrame %100) == 0) {
+		printf(".");
+		fflush(stdout);
+	}
+
+	return ((int) nwritten);
 }
 
-static void OnBitTransferComplete(Dci_BitOperation* /* pbop */, byte idStatus)
-{
-  if( idStatus == BSE_TransferComplete ) {
-    printf ("Transfer complete.");
-  } else {
-    printf ("Transfer failed: status is %d.", idStatus);
-  }
+static void OnBitTransferComplete(Dci_BitOperation* /* pbop */, byte idStatus) {
+	if (idStatus == BSE_TransferComplete) {
+		printf("\nTransfer complete.");
+	} else {
+		printf("\nTransfer failed: status is %d.", idStatus);
+	}
+}
+
+/**
+ * Sends a DCI message using the current message conversation context.
+ */
+static int OnSendMessage(byte* pmsg, int len, bool bAckRequired,
+		Dci_Context* /* pctxt */) {
+	return (s_ptd->SendMsg(pmsg, (size_t) len, bAckRequired));
 }
