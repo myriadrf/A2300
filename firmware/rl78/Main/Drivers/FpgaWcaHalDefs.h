@@ -14,6 +14,13 @@
 // GNU General Public License for more details.
 
 
+
+
+#define  WCAHAL_PROP_MIN_USER			0x00
+#define  WCAHAL_PROP_MAX_USER			0x7F
+#define  WCAHAL_PROP_HAL_COMPID			0xB0
+
+
 //NOTE:  THIS FILE SHOULD BE SYNCHRONIZED WITH THE DEFS FILE IN THE HDL LIBRARY.
 
 //*******************************************************************
@@ -31,6 +38,7 @@
 //	0		ResetRf0 - Performs a reset on RF0.
 //	1		ResetRf1 - Performs a reset on RF1.
 //	2		ResetHalContainer - Performs a reset on HalContainer functions.
+//	3		ResetUsbIf - Resets the USB Interface.
 #define WCAHAL_MSTR_CTRL   0xB0 
 
 // Interrupt Control Registers.
@@ -81,14 +89,14 @@
 // -------|----------------------------------------------------------
 //  0-1     RX Input Mode
 //           0 = tx_iq loopback 
-//           1 = rf_rxdata input.
-//	     2 = Fixed Test Pattern  i = 256, q = 256; 
-//	     3 = Fixed Test Pattern  i = 0, q = 0;
-//  2-3     TX Ouput Mode
+//           1 = rf_rxdata input (dc bias removed).
+//           2 = rf_rxdata input.
+//           3 = Fixed Test Pattern  i = 256, q = 256; 
+/  2-3     TX Ouput Mode
 //           0 = rf_rxdata loopback 
 //           1 = rf_txdata input.
-//	     2 = Fixed Test Pattern  i = 256, q = 256; 
-//	     3 = Fixed Test Pattern  i = 0, q = 0;
+//           2 = Fixed Test Pattern  i = 256, q = 256; 
+//           3 = Fixed Test Pattern  i = 0, q = 0;
 //  4       "rf_rxen" output line - set to 1 to enable, 0 to disable. Enables disables the 
 //          Lime chip #1 receive ADC function. 
 //
@@ -132,15 +140,15 @@
 // bit#  |  Description
 // -------|----------------------------------------------------------
 //  0-1     RX Input Mode
-//          0 = tx_iq loopback 
-//          1 = rf_rxdata input.
-//	        2 = Fixed Test Pattern  i = 256, q = 256; 
-//			3 = Fixed Test Pattern  i = 0, q = 0;
+//           0 = tx_iq loopback 
+//           1 = rf_rxdata input (dc bias removed).
+//           2 = rf_rxdata input.
+//           3 = Fixed Test Pattern  i = 256, q = 256; 
 //  2-3     TX Ouput Mode
 //          0 = rf_rxdata loopback 
 //          1 = rf_txdata input.
-//	        2 = Fixed Test Pattern  i = 256, q = 256; 
-//			3 = Fixed Test Pattern  i = 0, q = 0;
+//          2 = Fixed Test Pattern  i = 256, q = 256; 
+//          3 = Fixed Test Pattern  i = 0, q = 0;
 //  4       "rf_rxen" output line - set to 1 to enable, 0 to disable. Enables disables the 
 //          Lime chip #1 receive ADC function. 
 //
@@ -223,7 +231,6 @@
 //  3	 	Turns on (1) and off (0) Led_3
 #define WCAHAL_LED		0x5
 
-#define WCAHAL_DEFAULTCOMP_MAX	0xAF
 //*******************************************************************
 //*******************************************************************
 //DIRECT CONVERSION HAL COMPONENT REGISTERS		 
