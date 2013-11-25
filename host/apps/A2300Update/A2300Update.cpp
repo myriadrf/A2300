@@ -49,8 +49,8 @@ using namespace A2300;
 #endif
 
 typedef enum _rwType {
-  e_doingWrite,
-  e_doingRead,
+  e_doingWriteToDevice,
+  e_doingReadFromDevice,
   e_rw_invalid
 } rwType;
 
@@ -155,10 +155,10 @@ static void ParseOptions(int argc, char** argv)
   s_rwType = e_rw_invalid;
   if ((strlen(argv[1]) <= strlen("write")) &&
       (strncmp (argv[1], "write", strlen(argv[1])) == 0)) {
-    s_rwType = e_doingWrite;
+    s_rwType = e_doingWriteToDevice;
   } else if ((strlen(argv[1]) <= strlen("read")) &&
 	     (strncmp (argv[1], "read", strlen(argv[1])) == 0)) {
-    s_rwType = e_doingRead;
+    s_rwType = e_doingReadFromDevice;
   } else {
     printf("\nError: Unknown second argument: '%s'\n", argv[1]);
     printf("  Must be either 'read' or 'write'.\n");
@@ -184,7 +184,7 @@ static void ParseOptions(int argc, char** argv)
   s_fileName = argv[3];
 
   // try to open argv[3] for read or write
-  if (s_rwType == e_doingRead) {
+  if (s_rwType == e_doingReadFromDevice) {
     s_fileStream = fopen(s_fileName, "w");
     if (!s_fileStream) {
       printf("\nError: Provided filename ('%s') cannot be "
@@ -249,7 +249,7 @@ static void Run()
 
   printf("--------------------------------------\n");
   printf("Starting transfer ");
-  if (s_rwType == e_doingWrite) {
+  if (s_rwType == e_doingWriteToDevice) {
     printf("from file '%s' to device ", s_fileName);
   } else {
     printf("from device ");
@@ -262,26 +262,26 @@ static void Run()
     printf("FPGA flash");
   }
 
-  if (s_rwType == e_doingRead) {
-    printf(" to file '%s'", s_fileName);
+  if (s_rwType == e_doingReadFromDevice) {
+    printf (" to file '%s'", s_fileName);
   }
-  printf(".\n");
-  printf("--------------------------------------\n");
+  printf (".\n");
+  printf ("--------------------------------------\n");
 
   //set up the BIT operations manager
 
-  Dci_BitOperationMgrInit( &s_bitmgr, &opManagerSendMessage);
+  Dci_BitOperationMgrInit (&s_bitmgr, &opManagerSendMessage);
 
   //set up the BIT client and its callbacks
 
-  Dci_BitClient_Init( &s_BITClient, WCACOMP_FLASH);
+  Dci_BitClient_Init (&s_BITClient, WCACOMP_FLASH);
   s_BITClient.fncInitiateSourceTransfer 	= &OnBitInitiateSourceTransfer;
   s_BITClient.fncInitiateTargetTransfer 	= &OnBitInitiateTargetTransfer;
   s_BITClient.fncGetFrameData 				= &OnBitGetFrameData;
   s_BITClient.fncSetFrameData 				= &OnBitSetFrameData;
   s_BITClient.fncTransferComplete 			= &OnBitTransferComplete;
 
-  Dci_BitRegisterClient( &s_bitmgr, &s_BITClient);
+  Dci_BitRegisterClient (&s_bitmgr, &s_BITClient);
 
   // initiate BIT operation
 
@@ -289,17 +289,19 @@ static void Run()
   int outLen, inLen;
   // initiate target transfer
 
-  s_ptd = &(s_config.Dci0Transport());
+  s_ptd = &(s_config.Dci0Transport ());
 
   // FPGA and Flash, not profile: erase the flash, then wait 20
   // seconds; FIXME: hopefully this will be changed into an ACK (or
   // equivalent) in the near future; just sleep for now.
 
-  if ((s_targetType == e_Firmware) || (s_targetType == e_FPGADirect)) {
+  if ((s_rwType == e_doingWriteToDevice) &&
+      ((s_targetType == e_Firmware) ||
+       (s_targetType == e_FPGADirect))) {
     printf ("Erasing Flash ... ");
     fflush (stdout);
-    memset (buff, 0, sizeof(buff));
-    inLen = Dci_ExecuteAction_Init (buff, sizeof(buff), WCACOMP_FLASH, FLASH_ActionErase, 0, NULL);
+    memset (buff, 0, sizeof (buff));
+    inLen = Dci_ExecuteAction_Init (buff, sizeof (buff), WCACOMP_FLASH, FLASH_ActionErase, 0, NULL);
     outLen = s_ptd->SendMsg (buff, (size_t) inLen, false);
     if (outLen == inLen) {
       printf ("done.\n");
@@ -313,21 +315,21 @@ static void Run()
   }
 
   Dci_Context ctxt;
-  memset (&ctxt, 0, sizeof(ctxt));
-  ctxt.pConv = s_ptd->Conversation();
+  memset (&ctxt, 0, sizeof (ctxt));
+  ctxt.pConv = s_ptd->Conversation ();
 
   byte idStatus = BSE_OperationNotAvailable;
 
-  if (s_rwType == e_doingWrite) {
+  if (s_rwType == e_doingWriteToDevice) {
     idStatus = Dci_BitInitiateTargetTransfer (&s_bitmgr, &s_BITClient, (byte) s_targetType, 1, 0, &ctxt);
     // flags: 1 == save; 0 means don't save
 
     if (idStatus != BSE_InitiatingTransfer) {
-      printf("Error initiating target transfer:\n");
+      printf ("Error initiating target transfer:\n");
       if (idStatus == BSE_OperationNotAvailable) {
-	printf("  Operation not available.\n");
+	printf ("  Operation not available.\n");
       } else {
-	printf("  Read error.\n");
+	printf ("  Read error.\n");
       }
     }
   } else {
@@ -340,21 +342,21 @@ static void Run()
   int nread = 0;
   int cntLoop = 0;
 
-  while(cntLoop < 2) {
-    memset (buff, 0, sizeof(buff));
-    nread = s_ptd->ReceiveMsg( buff, MAX_MSG_SIZE);
+  while (cntLoop < 2) {
+    memset (buff, 0, sizeof (buff));
+    nread = s_ptd->ReceiveMsg (buff, MAX_MSG_SIZE);
     if (nread > 0) {
 
       Dci_Hdr* pMsg = (Dci_Hdr*) buff;
 
       // Prepare the context and send received message off for
       // processing.
-      memset (&ctxt, 0, sizeof(ctxt));
+      memset (&ctxt, 0, sizeof (ctxt));
       ctxt.pMsg = pMsg;
       ctxt.lenMsg = nread;
-      ctxt.pConv = s_ptd->Conversation();
+      ctxt.pConv = s_ptd->Conversation ();
       ctxt.bHandled = false;
-      ctxt.idMessage = Dci_Hdr_MessageId( pMsg);
+      ctxt.idMessage = Dci_Hdr_MessageId (pMsg);
       ctxt.idComponent = 0xFF;
 
       //If WCA Message grab the component ID to help WCA
@@ -363,7 +365,7 @@ static void Run()
       if( pMsg->idCategory == 0x21)
 	ctxt.idComponent = ((byte*)pMsg)[WCA_COMPONENT_INDEX];
 
-      if (!Dci_BitProcessDciMsg(&s_bitmgr, &ctxt)) {
+      if (!Dci_BitProcessDciMsg (&s_bitmgr, &ctxt)) {
 	printf("Unhandled Dci message: %04X.\n", ctxt.idMessage);
       }
 
@@ -382,7 +384,7 @@ static void Run()
   }
 
   //close the file
-  if (fclose(s_fileStream) != 0) {
+  if (fclose (s_fileStream) != 0) {
     printf( "\nError %d closing the BIT file '%s'.\n",
 	    errno, s_fileName);
   }
@@ -392,27 +394,28 @@ static void Run()
   // hopefully this will be changed into an ACK (or equivalent) in the
   // near future; just sleep for now.
 
-  if (s_targetType == e_Firmware) {
+  if ((s_rwType == e_doingWriteToDevice) &&
+      (s_targetType == e_Firmware)) {
     printf ("Updating Firmware ... ");
     fflush (stdout);
 
     memset (buff, 0, sizeof(buff));
-    inLen = Dci_ExecuteAction_Init (buff, sizeof(buff), WCACOMP_MICRO, MICRO_UPDATE_FIRMWARE,  0, NULL);
-    outLen = s_ptd->SendMsg(buff, (size_t) inLen, false);
+    inLen = Dci_ExecuteAction_Init (buff, sizeof (buff), WCACOMP_MICRO, MICRO_UPDATE_FIRMWARE,  0, NULL);
+    outLen = s_ptd->SendMsg (buff, (size_t) inLen, false);
 
     if (outLen == inLen) {
-      printf("done.\n");
+      printf ("done.\n");
     } else {
-      printf("error; proceeding anyway.\n");
+      printf ("error; proceeding anyway.\n");
     }
     printf ("Sleeping for 20 seconds ... ");
     fflush (stdout);
-    sleep(20);
+    sleep (20);
     printf ("done.\n");
 
   }
 
-  s_config.Detach();
+  s_config.Detach ();
 }
 
 //*******************************************************
