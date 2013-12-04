@@ -36,7 +36,7 @@ IF(ENABLE_A2300_IDENTIFY_APP)
 # Create executables
 ##############################################################
 
-    ADD_EXECUTABLE(A2300Identify main.cpp)
+    ADD_EXECUTABLE(A2300Identify A2300Identify.cpp)
 
 ##############################################################
 # Conditionally embed the A2300 UHD Adapter
