@@ -101,6 +101,7 @@ static int OnBitGetFrameData(Dci_BitOperation* pbop, byte* buff, uint16 ctBytes)
 static int OnBitSetFrameData(Dci_BitOperation* pbop, byte* buff, uint16 ctBytes);
 static void OnBitTransferComplete(Dci_BitOperation* pbop, byte idStatus);
 static int OnSendMessage(byte* pmsg, int len, bool bAckRequired,	Dci_Context* pctxt );
+
 /******************************************************************
  * Static Data
  *****************************************************************/
@@ -124,7 +125,6 @@ static const opConfig* s_pOp = NULL;
 static char* s_fileName = NULL;
 static FILE* s_fileStream = NULL;
 static TransportDci* s_ptd = NULL;
-
 
 /******************************************************************
  * Functions.
@@ -165,15 +165,13 @@ int main(int argc, char** argv) {
 		//Now run the Update operation.
 		retval = Run();
 
-		//close the file -- note this was opened in ParseOptions,
+		//close the file
 		if (fclose(s_fileStream) != 0) {
 			printf("\nError %d closing the BIT file '%s'.\n", errno, s_fileName);
 		}
 	}
 	return retval;
 }
-
-
 
 /**
  * <summary>
@@ -200,11 +198,11 @@ static int Run() {
 		return -8;
 	}
 
-	//Dump the device information and grab the
-	//DCI transport interface.
+	//Dump the device information
 	DumpDeviceInformation();
-	s_ptd = &(s_config.Dci0Transport());
 
+	// grab the DCI transport interface.
+	s_ptd = &(s_config.Dci0Transport());
 
 	//1) Tell the user what we are doing
 	printf("--------------------------------------\n");
@@ -301,7 +299,7 @@ static int DoBitTransferFlash()
 /**
  * Operation Handler function implements message processing performing the specified BIT Transfer operation.
  */
-int DoBitTransfer()
+static int DoBitTransfer()
 {
 	byte buff[MAX_MSG_SIZE];
 
@@ -422,7 +420,7 @@ static void PrintUsage() {
  */
 
 static int ParseOptions(int argc, char** argv) {
-int i;
+	int i;
 
 	if (argc < 4) {
 		printf("\nError: Too few arguments: Got %d, expecting 4.\n", argc);
@@ -458,17 +456,19 @@ int i;
 		return -2;
 	}
 
-
-	//Open the file for the operation.
+	// File to open for the operation.
 	s_fileName = argv[3];
 
 	return 0;
 }
 
 /**
+ * <summary>
  * Helper function makes argument matching more readable.
+ * </summary>
  */
-bool IsArgumentName( pcstr arg, pcstr szName, size_t minChars)
+
+static bool IsArgumentName( pcstr arg, pcstr szName, size_t minChars)
 {
 	size_t lenArg = strlen(arg);
 	size_t lenName = strlen(szName);
@@ -476,12 +476,14 @@ bool IsArgumentName( pcstr arg, pcstr szName, size_t minChars)
 			&& (strncmp( arg, szName, lenArg) == 0);
 }
 
-
+/**
+ * <summary>
+ * Print out Device information.
+ * </summary>
+ */
 
 static void DumpDeviceInformation()
 {
-	//Print out Device information
-
 	std::string sId = s_config.IdentifyDevice();
 	std::string sVer = s_config.FirmwareVersion(0);
 	uint16 idFpga = s_config.FpgaId();
@@ -493,7 +495,6 @@ static void DumpDeviceInformation()
 	printf("Identity:    %s\n", sId.c_str());
 	printf("FW Ver:      %s\n", sVer.c_str());
 	printf("FPGA ID-Ver: %04X-%02X.%02X\n\n", idFpga, iVer, iRev);
-
 }
 
 //*******************************************************
