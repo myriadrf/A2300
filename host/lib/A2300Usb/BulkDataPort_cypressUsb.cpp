@@ -25,7 +25,6 @@
 //*************************************************************************
 A2300::BulkDataPort::BulkDataPort( byte epidIn, byte epidOut)
 : PortBase( epidIn, epidOut)
-    , m_timeout(10)
 	, m_pCypressDevice( NULL )
 	, m_pEndPointIn( NULL )
 	, m_pEndPointOut( NULL )

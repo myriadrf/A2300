@@ -20,7 +20,7 @@
 #define COUNT_MAX_MESSAGES 	(5)
 #define SIZE_MSGBUFF (COUNT_MAX_MESSAGES*DCI_MAX_MSGSIZE)
 
-#define TO_MSEC( A) ((int)((A)*1000))
+#define TO_MSEC(A) ((int)((A)*((double)1000.0)))
 
 const double A2300::TransportDci::DEFAULT_TIMEOUT_VALUE = 0.1;
 const int A2300::TransportDci::USE_DEFAULT_TIMEOUT = -1;

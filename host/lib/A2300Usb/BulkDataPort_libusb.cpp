@@ -25,7 +25,7 @@
 //*************************************************************************
 A2300::BulkDataPort::BulkDataPort( byte epidIn, byte epidOut)
 : PortBase( epidIn, epidOut),
-  m_timeout(10)	, m_pDevHandle(NULL)
+  m_pDevHandle(NULL)
 {
 }
 
@@ -69,7 +69,7 @@ void A2300::BulkDataPort::LibusbAsyncReadCallback(libusb_transfer *lut)
     TransferContext *ptc = (TransferContext*)lut->user_data;
     ptc->bCompleted = true;
     ptc->status = lut->status;
-    ptc->nActualLength = lut->actual_length;
+    ptc->nActualLength = (size_t) lut->actual_length;
 
     ptc->pSrc->m_evtRead( ptc);
 }
@@ -80,7 +80,7 @@ void A2300::BulkDataPort::LibusbAsyncWriteCallback(libusb_transfer *lut)
     TransferContext *ptc = (TransferContext*)lut->user_data;
     ptc->bCompleted = true;
     ptc->status = lut->status;
-    ptc->nActualLength = lut->actual_length;
+    ptc->nActualLength = (size_t) lut->actual_length;
 
     ptc->pSrc->m_evtWrite( ptc);
 }
@@ -97,7 +97,7 @@ A2300::BulkDataPort::TransferContext*	A2300::BulkDataPort::CreateReadTransferCon
          DeviceHandle(),                                         // dev_handle
          epidIn(),                                               // endpoint
          bufFrame,      // buffer
-         sizeFrame,                                 // length
+         (int) sizeFrame,                                 // length
          &A2300::BulkDataPort::LibusbAsyncReadCallback,                // callback
          pctxt,          // user_data
          0                                                       // timeout (ms)
@@ -123,7 +123,7 @@ A2300::BulkDataPort::TransferContext*	A2300::BulkDataPort::CreateWriteTransferCo
          DeviceHandle(),                                         // dev_handle
          epidOut(),                                               // endpoint
          bufFrame,      // buffer
-         sizeFrame,                                 // length
+         (int) sizeFrame,                                 // length
          &A2300::BulkDataPort::LibusbAsyncWriteCallback,                // callback
          pctxt,          // user_data
          0                                                       // timeout (ms)
@@ -148,8 +148,8 @@ int A2300::BulkDataPort::Read( byte * pdata, int ctBytes, int msecTimeout )
 	if (DeviceHandle() == NULL || epidIn() == 0)
 		return -1;
 
-	int ctRead;
-	int retval = libusb_bulk_transfer(DeviceHandle(), (epidIn() | LIBUSB_ENDPOINT_IN), pdata, ctBytes, &ctRead, msecTimeout);
+	int ctRead = 0;
+	int retval = libusb_bulk_transfer(DeviceHandle(), (epidIn() | LIBUSB_ENDPOINT_IN), pdata, ctBytes, &ctRead, (unsigned int) msecTimeout);
 
 
 	return (retval == 0) ? ctRead: retval;
@@ -167,7 +167,7 @@ int A2300::BulkDataPort::Write(byte * pdata, int ctBytes, int msecTimeout )
 		return -1;
 
 	int ctWritten;
-	int retval = libusb_bulk_transfer(DeviceHandle(), (epidOut() | LIBUSB_ENDPOINT_OUT), pdata, ctBytes, &ctWritten, msecTimeout);
+	int retval = libusb_bulk_transfer(DeviceHandle(), (epidOut() | LIBUSB_ENDPOINT_OUT), pdata, ctBytes, &ctWritten, (unsigned int) msecTimeout);
 
 	return (retval == 0) ? ctWritten: retval;
 }

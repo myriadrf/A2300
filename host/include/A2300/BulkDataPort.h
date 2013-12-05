@@ -252,7 +252,7 @@ namespace A2300
 		int OnInit();
 
 		// reference to UsbDriver instance mostly used for logging
-		uint				m_timeout;
+
 		TransferEvent m_evtRead;
 		TransferEvent m_evtWrite;
 #ifdef HAVE_LIBUSB		

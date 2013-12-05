@@ -113,4 +113,3 @@ int A2300::UsbDevice::FindAttached(std::vector<int>& addrVect, int vid, int pid)
 {
 	return FindAttachedUsb(addrVect, vid, pid);
 }
-

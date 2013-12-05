@@ -96,7 +96,7 @@ void A2300::UsbDevice::TerminateUsb()
 int A2300::UsbDevice::OpenDevice(uint16 vid, uint16 pid, uint16 usbAddress)
 {
 	libusb_device** devList;
-	int ctDevices = libusb_get_device_list(m_pCtx, &devList);
+	int ctDevices = (int) libusb_get_device_list(m_pCtx, &devList);
 	if (ctDevices == 0) return -1; // no devices
 
 	// Get the specified device from the device list
@@ -152,14 +152,14 @@ int A2300::UsbDevice::FindAttachedUsb(std::vector<int>& addrVect, int vid, int p
 
 	// Get a list of USB devices
 	libusb_device** devList;
-	int ctDevices = libusb_get_device_list(pCtx, &devList);
+	int ctDevices = (int) libusb_get_device_list(pCtx, &devList);
 	if (ctDevices == 0) return -1; // no devices	libusb_device** devList;
 
 	// find  device count
 	int ctDeviceFound = 0;
-	for (int i = 0; i < ctDevices; i++)
+	for (int nn = 0; nn < ctDevices; ++nn)
 	{
-		libusb_device *pDevice = devList[i];
+		libusb_device *pDevice = devList[nn];
 
 		struct libusb_device_descriptor desc;
 		int retval = libusb_get_device_descriptor( pDevice, &desc );
