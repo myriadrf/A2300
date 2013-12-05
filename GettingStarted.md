@@ -10,6 +10,9 @@ Date: 12/2/2013
 
 To get started using the ASR-2300, you will need to download and install the software drivers, examples, and tools from the [A2300 Project](https://github.com/myriadrf/A2300). The host drivers are tested on Linux, Mac, and Windows.
 
+For additional information please visit the links:
+[A2300 Wiki] (http://myriadrf.org/wiki/home/projects/A2300)
+
 ##Pre-requisites  
 
 The A2300 supports UHD and GnuRadio functions if these capabilities are desired.  Please make sure you have downloaded and properly installed the packages on your system.  The A2300 cmake checks to see if they are installed and builds the adaptor libraries accordingly. 
