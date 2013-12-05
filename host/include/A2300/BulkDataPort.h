@@ -108,7 +108,7 @@ namespace A2300
 
 			inline int Submit( )
 			{
-				lut->length = nFrameSize;
+			  lut->length = (int) nFrameSize;
 				return libusb_submit_transfer(lut);
 			}
 

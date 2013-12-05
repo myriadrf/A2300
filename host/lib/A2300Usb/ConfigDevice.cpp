@@ -34,7 +34,7 @@ std::string ConfigDevice::IdentifyDevice()
 	TransportDci& dt = m_dci0.transport;
 
 	int len = Dci_IdentifyDeviceQuery_Init(buff);
-	if( dt.SendMsg( buff, len, false) > 0)
+	if( dt.SendMsg( buff, (size_t) len, false) > 0)
 	{
 		int len = dt.ReceiveMsg( buff, DCI_MAX_MSGSIZE);
 		Dci_IdentifyDevice* pid = (Dci_IdentifyDevice*) buff;
@@ -56,7 +56,7 @@ std::string ConfigDevice::FirmwareVersion( int /*idWhich*/)
 	TransportDci& dt = m_dci0.transport;
 	int len = Dci_VersionInfoQuery_Init(buff);
 
-	if( dt.SendMsg( buff, len, false) > 0)
+	if( dt.SendMsg( buff, (size_t) len, false) > 0)
 	{
 		int len = dt.ReceiveMsg( buff, DCI_MAX_MSGSIZE);
 		Dci_VersionInfo* pinfo = (Dci_VersionInfo*) buff;

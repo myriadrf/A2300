@@ -75,7 +75,7 @@ int A2300::TransportDci::SendMsg( byte* pmsg, size_t lenMsg, bool bRequestAck, d
 		timeout = m_timeout;
 
 	//Send the DCI command.
-	return m_pPort->Write(pmsg, lenMsg, TO_MSEC(timeout) );
+	return m_pPort->Write(pmsg, (int) lenMsg, TO_MSEC(timeout) );
 
 }
 /**
@@ -88,7 +88,7 @@ int A2300::TransportDci::ReceiveMsg( byte* pmsg, size_t lenMax, double timeout)
 		timeout = m_timeout;
 
 	//Process DCI Response.
-	int ctRead = m_pPort->Read(pmsg, lenMax, TO_MSEC(timeout));
+	int ctRead = m_pPort->Read(pmsg, (int) lenMax, TO_MSEC(timeout));
 
 	if( ctRead > 0)
 		Dci_Conversation_UpdateState( m_pConv, pmsg, (uint16) ctRead);
