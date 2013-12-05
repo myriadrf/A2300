@@ -56,12 +56,12 @@ namespace A2300
 		 */
 		int ReceiveMsg( byte* pmsg, size_t lenMax, double timeout = USE_DEFAULT_TIMEOUT);
 
-		template< typename T> int GetProperty( int idComponent,  int idProp, T& value)
+		template< typename T> int GetProperty( int /* idComponent */,  int /* idProp */, T& /* value */)
 		{
 			throw std::runtime_error("DCI Property type not supported");
 		}
 
-		template< typename T> int SetProperty( int idComponent,  int idProp, T value)
+		template< typename T> int SetProperty( int /* idComponent */,  int /* idProp */, T /* value */)
 		{
 			throw std::runtime_error("DCI Property type not supported");
 		}
