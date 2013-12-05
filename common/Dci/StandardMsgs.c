@@ -38,7 +38,7 @@ int Dci_VersionInfo_Init( void* buff, byte vMajor, byte vMinor, byte vMaint, uin
 	pmsg->VerMinor = vMinor;
 	pmsg->VerMaintenance = vMaint;
 	pmsg->Revision  = rev;
-	return sizeof( Dci_VersionInfo);
+	return (int) sizeof( Dci_VersionInfo);
 }
 
 /**
@@ -142,5 +142,5 @@ int Dci_TypedDataRecordQuery_Init( void* buff, uint16 idtype, uint16 flags)
 	Dci_Hdr_Init( buff, 0x20, 0x93);
 	((Dci_TypedDataRecordQuery*)buff)->idtype = idtype;
 	((Dci_TypedDataRecordQuery*)buff)->flags = flags;
-	return sizeof( Dci_TypedDataRecordQuery);
+	return (int) sizeof( Dci_TypedDataRecordQuery);
 }

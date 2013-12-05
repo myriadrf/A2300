@@ -53,8 +53,8 @@ typedef struct Dci_Hdr
 /*////////////////////// ACCESSORS //////////////////////////*/
 
 /**
-* Initializes a DCI Message header at the specifed buffer location
-* to a known state with specified message ID.
+* Initializes a DCI Message header at the specifed buffer location to
+* a known state with specified message ID. Returns the message length.
 */
 int Dci_Hdr_Init( void* buff, byte idCategory, byte idType);
 

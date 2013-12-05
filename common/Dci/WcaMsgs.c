@@ -60,7 +60,7 @@ int Dci_TypedProperties_Init( void* buff, uint16 sizeBuff,
 int Dci_TypedProperties_MsgLength( Dci_TypedProperties* pmsg)
 {
 	int lenData = pmsg->ctProperties * sizeof(Dci_Property);
-	return sizeof( Dci_TypedProperties ) + lenData;
+	return ((int)(sizeof( Dci_TypedProperties))) + lenData;
 }
 
 /**

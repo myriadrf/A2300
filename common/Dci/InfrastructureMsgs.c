@@ -17,8 +17,8 @@
 #include "Dci/InfrastructureMsgs.h"
 #include <string.h>
 
-#ifndef min
-#define min(a,b) (((a) < (b)) ? (a) : (b))
+#ifndef MIN
+#define MIN(a,b) (((a) < (b)) ? (a) : (b))
 #endif
 
 /*
@@ -47,7 +47,7 @@ int Dci_IdentifyDevice_Init( void* buff, pcstr szDeviceId, pcstr szSerialNumber,
 	strncpy( pmsg->DeviceId, szDeviceId, 32);
 	strncpy( pmsg->SerialNumber, szSerialNumber, 32);
 	strncpy( pmsg->Model, szModel, 32);
-	return sizeof( Dci_IdentifyDevice);
+	return (int) sizeof( Dci_IdentifyDevice);
 }
 
 /**
@@ -59,7 +59,7 @@ int Dci_MessageError_Init( void* buff, byte idCategory, byte idType )
 	Dci_Hdr_Init( buff, 0x03, 0x01);
 	pmsg->UnrecognizedCategoryId = idCategory;
 	pmsg->UnrecognizedTypeId = idType;
-	return sizeof( Dci_MessageError);
+	return (int) sizeof( Dci_MessageError);
 }
 
 int Dci_MessageError_Init1( void* buff, Dci_Hdr *pBadMsg)
@@ -68,9 +68,8 @@ int Dci_MessageError_Init1( void* buff, Dci_Hdr *pBadMsg)
 	Dci_Hdr_Init( buff, 0x03, 0x01);
 	pmsg->UnrecognizedCategoryId = pBadMsg->idCategory;
 	pmsg->UnrecognizedTypeId     = pBadMsg->idType;
-	return sizeof( Dci_MessageError);
+	return (int) sizeof( Dci_MessageError);
 }
-
 
 /**
 * Initializes the debug message (05,01).  Be sure to provide a buffer large enough to accomodate
@@ -83,10 +82,11 @@ int Dci_DebugMsg_Init( void* buff, uint16 sizeBuff, byte status,
 	Dci_Hdr_Init( buff, 0x05, 0x01);
 	pmsg->status = status;
 	pmsg->src    = src;
-	pmsg->len    = min( sizeBuff, (uint16)strlen( szMessage));
+	pmsg->len    = MIN( sizeBuff, (uint16)strlen( szMessage));
 	strncpy(  (((char*)&(pmsg->len))+sizeof(uint16)), szMessage, pmsg->len);
-	return sizeof( Dci_DebugMsg) + pmsg->len;
+	return (int) (sizeof( Dci_DebugMsg) + pmsg->len);
 }
+
 /**
 * Returns the string message contained within the DCI debug message.
 */

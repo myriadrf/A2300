@@ -221,7 +221,7 @@ bool OnTypedDataMsg( Dci_MapEntry* pentry, Dci_Context* pctxt)
 	//Cast to a 20,13 message.
 	Dci_TypedDataRecord* ptd = (Dci_TypedDataRecord*) pctxt->pMsg;
 
-	uint16 idtype = pentry->idComponent | (pentry->idPropStart<<8);
+	uint16 idtype = ((uint16)(pentry->idComponent)) | ((uint16)(pentry->idPropStart<<8));
 	return ptd->idtype == idtype;
 }
 
@@ -230,7 +230,7 @@ bool OnTypedDataQueryMsg( Dci_MapEntry* pentry, Dci_Context* pctxt)
 	//Cast to a 20,93 message.
 	Dci_TypedDataRecordQuery* ptdq = (Dci_TypedDataRecordQuery*) pctxt->pMsg;
 
-	uint16 idtype = pentry->idComponent | (pentry->idPropStart<<8);
+	uint16 idtype = ((uint16)(pentry->idComponent)) | ((uint16)(pentry->idPropStart<<8));
 	return ptdq->idtype == idtype;
 }
 
@@ -316,7 +316,7 @@ void Dci_BitClient_Init( Dci_BitClient* pclient, byte idComponent)
 */
 void Dci_BitOperationMgrInit( Dci_BitOperationMgr* pmgr, Dci_BitSendMessage fncSendDciMessage)
 {
-	int i;	pmgr->plistClients = NULL;
+	pmgr->plistClients = NULL;
 	pmgr->fncSendDciMessage = fncSendDciMessage;
 	memset( pmgr->aBitOps, 0, sizeof( Dci_BitOperation) * DCI_BITMAXOPS);
 }
@@ -358,7 +358,7 @@ Dci_BitClient* GetBitClient( Dci_BitOperationMgr* pmgr, byte idComponent )
 */
 bool Dci_BitProcessDciMsg( Dci_BitOperationMgr* pmgr, Dci_Context* pctxt)
 {
-	byte idTransfer = -1;
+	byte idTransfer = 0;
 	byte idStatus  = 0;
 	Dci_BitOperation* pbop = NULL;
 	Dci_BitClient* pClient = NULL;
@@ -414,7 +414,6 @@ bool Dci_BitProcessDciMsg( Dci_BitOperationMgr* pmgr, Dci_Context* pctxt)
 		////////////////////////////////////////////////////
 		case Dci_BinaryImageTransferQuery_Id:
 		{
-			int ec;
 			bool bResetState = false;
 			Dci_BinaryImageTransferQuery* pbitq = (Dci_BinaryImageTransferQuery*)pctxt->pMsg;
 
@@ -643,7 +642,6 @@ bool Dci_BitRequestSourceTransfer( Dci_BitOperationMgr* pmgr, Dci_BitClient* pCl
 {
 
   Dci_BitOperation* pbop = NULL;
-  byte idStatus  = 0;
   byte buff[MAX_MSG_SIZE];
 
   //Set up the operation.

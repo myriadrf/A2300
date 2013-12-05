@@ -28,23 +28,18 @@ extern "C" {
 #endif
 
 /* Infrastructure messages defined. */
-#if 0
-/* Defined in DciMsg.h */
-#define Dci_IdleMsg_Id 		0x0100
-#define Dci_DebugMsg_Id 	0x0501
-#endif
 
 #define Dci_IdentifyDeviceQuery_Id	0x0280
 #define Dci_IdentifyDevice_Id		0x0200
 #define Dci_MessageError_Id			0x0301
 
 /*
-* IdleMsg (0x0100)
+* IdleMsg (0x0100); defined in DciMsg.h; returns message length.
 */
 int Dci_IdleMsg_Init( void* buff );
 
 /**
-* IdentifyDeviceQuery (0x0280)
+* IdentifyDeviceQuery (0x0280); returns message length.
 */
 int Dci_IdentifyDeviceQuery_Init( void* buff );
 
@@ -60,7 +55,7 @@ typedef struct Dci_IdentifyDevice
 } Dci_IdentifyDevice;
 
 /**
-* Initializes the Identify Device Message.
+* Initializes the Identify Device Message; returns message length.
 */
 int Dci_IdentifyDevice_Init( void* buff, pcstr szDeviceId,
 								pcstr szSerialNumber, pcstr szModel);
@@ -79,7 +74,7 @@ int Dci_MessageError_Init( void* buff, byte idCategory, byte idType );
 int Dci_MessageError_Init1( void* buff, Dci_Hdr *pBadMsg);
 
 /*************************************
-* Standard Debug Text Message Class (0x0501)
+* Standard Debug Text Message Class (0x0501); defined in DciMsg.h
 ************************************/
 
 enum { Dci_ERR = 0, Dci_WARN, Dci_INFO, Dci_DEBUG   };
@@ -92,8 +87,9 @@ typedef struct Dci_DebugMsg
 } Dci_DebugMsg;
 
 /**
-* Initializes the debug message.  Be sure to provide a buffer large enough to accomodate
-* the length of the string message.  Returns the total size of the message.
+* Initializes the debug message.  Be sure to provide a buffer large
+* enough to accomodate the length of the string message.  Returns the
+* message length.
 */
 int Dci_DebugMsg_Init( void* buff, uint16 sizeBuff, byte status,
 						 uint16 src, pcstr szMessage);

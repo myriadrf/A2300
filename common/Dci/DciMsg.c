@@ -28,7 +28,7 @@ int Dci_Hdr_Init( void* buff, byte idCategory, byte idType)
 	phdr->seq = 0;
 	phdr->idCategory  =  idCategory;
 	phdr->idType     =  idType;
-	return sizeof( Dci_Hdr);
+	return (int) sizeof( Dci_Hdr);
 }
 
 /**
@@ -36,7 +36,7 @@ int Dci_Hdr_Init( void* buff, byte idCategory, byte idType)
  */
 bool Dci_Hdr_ValidateNonIdleMsg( Dci_Hdr* phdr)
 {
-	return (phdr->idCategory != 0x01 && phdr->idType != 0);
+	return ((phdr->idCategory != 0x01) && (phdr->idType != 0));
 }
 
 byte Dci_Hdr_CategoryId( Dci_Hdr* phdr) { return phdr->idCategory;}
@@ -48,7 +48,7 @@ bool Dci_Hdr_IsIdleMsg( Dci_Hdr* phdr)  {return phdr->idCategory == 0x01 && phdr
 
 bool Dci_Hdr_MatchesId(  Dci_Hdr* phdr, byte idCategory, byte idType)
 {
-	return ( phdr->idCategory == idCategory && phdr->idType == idType);
+	return ((phdr->idCategory == idCategory) && (phdr->idType == idType));
 }
 
 bool Dci_Hdr_MatchesId1( Dci_Hdr* phdr, uint16 id)
