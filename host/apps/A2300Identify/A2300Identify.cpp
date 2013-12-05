@@ -56,9 +56,9 @@ int main(int, char**)
 	try
 	{
 		// Display devices and properties.
-		for( int i = 0; i<ctDevices; i++)
+		for( int nn = 0; nn<ctDevices; ++nn)
 		{
-			int addr = addrs.at(i);
+		  int addr = addrs.at((size_t)nn);
 			if( addr >= 0 )
 			{
 				ConfigDevice config;
