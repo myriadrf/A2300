@@ -1,8 +1,8 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="RxPortToFile"
+	Name="A2300RxToFile"
 	ProjectGUID="{A2CB3134-0644-40EC-987A-D919E9ED3570}"
 	RootNamespace="A2300Identify"
 	Keyword="Win32Proj"
@@ -187,7 +187,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\RxPortToFile.cpp"
+				RelativePath=".\A2300RxToFile.cpp"
 				>
 			</File>
 		</Filter>

@@ -1,4 +1,4 @@
-/* Name: RxPortToFile.cpp
+/* Name: A2300RxToFile.cpp
 *
 * Copyright(c) 2013 Loctronix Corporation
 * http://www.loctronix.com
@@ -69,7 +69,7 @@ static bool IsArgumentName (pcstr arg, pcstr szName, size_t minChars);
 static void DumpDeviceInformation ();
 
 // Support functions
-static int DoRxPortToFile ();
+static int DoRxToFile ();
 static void OnFrameReady (void* arg, BulkDataPort::TransferContext* pctxt);
 
 /******************************************************************
@@ -137,7 +137,7 @@ static int Run() {
 	DumpDeviceInformation();
 
 	// Execute the bulk data transfer program
-	retval = DoRxPortToFile ();
+	retval = DoRxToFile ();
 
 	s_config.Detach();
 	return retval;
@@ -148,7 +148,7 @@ static int Run() {
  * and then streams the data to the host via BulkDataPort interface.
  */
 
-static int DoRxPortToFile ()
+static int DoRxToFile ()
 {
 	const static char* s_rx0_pathsDefault[] = {"Disabled", "GPS L1 Int.", "GPS L1 Ext.", "PCS Band Ext.", "Wideband"};
 	const static char* s_rx1_pathsDefault[] = {"Disabled", "UHF Ext.", "ISM Int.", "ISM Ext.", "Wideband"};
@@ -202,11 +202,6 @@ static int DoRxPortToFile ()
 	portData.Open();
 	portData.ReadTransfer() = BulkDataPort::TransferEvent
 	  (NULL, &OnFrameReady);
-
-#if 0
-	static_cast<void*>(this),
-	  &Delegate<void, RxPortToFile, BulkDataPort::TransferContext*, &RxPortToFile::OnFrameReady>);
-#endif
 
 	//5) Initialize the buffers and queue for processing.
 	s_bRunning = true;
@@ -321,7 +316,7 @@ static void OnFrameReady (void* arg, BulkDataPort::TransferContext* pctxt)
 static void WriteHeader() {
 	printf(
 		"*********************************************************************\n"
-		"* ASR-2300 RxPortToFile\n"
+		"* ASR-2300 RxToFile\n"
 		"*********************************************************************\n"
 		"* This software example provided by Loctronix Corporation (2013) \n"
 		"* www.loctronix.com\n"

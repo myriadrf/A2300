@@ -81,7 +81,7 @@
 					</folderInfo>
 					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.1750833454.1671484778" name="A2300Identify.vcproj" rcbsApplicability="disable" resourcePath="A2300Identify.vcproj" toolsToInvoke=""/>
 					<sourceEntries>
-						<entry excluding="RxPortToFile.vcproj|A2300Identify.vcproj" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="A2300RxToFile.vcproj" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -163,7 +163,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="RxPortToFile.vcproj" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="A2300RxToFile.vcproj" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

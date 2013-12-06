@@ -23,26 +23,26 @@ INCLUDE_DIRECTORIES(
 )
 
 ##############################################################
-# Register "RxPortToFile" component,
+# Register "A2300RxToFile" component,
 # dependends on A2300USB; on by default.
 ##############################################################
 
-LIBUHD_REGISTER_COMPONENT("RxPortToFile App"
-    ENABLE_RXPORTTOFILE_APP ON "ENABLE_A2300USB" OFF)
+LIBUHD_REGISTER_COMPONENT("A2300 RxToFile App"
+    ENABLE_A2300RXTOFILE_APP ON "ENABLE_A2300USB" OFF)
 
-IF(ENABLE_RXPORTTOFILE_APP)
+IF(ENABLE_A2300RXTOFILE_APP)
 
 ##############################################################
 # Create executables
 ##############################################################
 
-    ADD_EXECUTABLE(RxPortToFile RxPortToFile.cpp)
+    ADD_EXECUTABLE(A2300RxToFile A2300RxToFile.cpp)
 
 ##############################################################
-# Conditionally embed the A2300 UHD Adapter
+# Link with the A2300 USB interface
 ##############################################################
 
-    TARGET_LINK_LIBRARIES(RxPortToFile A2300Usb)
+    TARGET_LINK_LIBRARIES(A2300RxToFile A2300Usb)
 
 ##############################################################
 # On Linux, link with the real time clock
@@ -60,14 +60,14 @@ IF(ENABLE_RXPORTTOFILE_APP)
         FIND_PACKAGE_HANDLE_STANDARD_ARGS(RT DEFAULT_MSG
             RT_LIBRARIES)
         MARK_AS_ADVANCED(RT_LIBRARIES)
-        TARGET_LINK_LIBRARIES(RxPortToFile ${RT_LIBRARIES})
+        TARGET_LINK_LIBRARIES(A2300RxToFile ${RT_LIBRARIES})
     ENDIF()
 
 ##############################################################
 # Install information
 ##############################################################
 
-    UHD_INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/RxPortToFile
+    UHD_INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/A2300RxToFile
         DESTINATION ${RUNTIME_DIR} COMPONENT utilities)
 
 ENDIF()
