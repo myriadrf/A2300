@@ -30,20 +30,6 @@
 using namespace A2300;
 
 /******************************************************************
- * global variables
- *****************************************************************/
-
-#ifndef WCA_COMPONENT_INDEX
-// temporarily, until it is defined elsewhere
-#define WCA_COMPONENT_INDEX ((byte)4)
-#warning "WCA_COMPONENT_INDEX not yet defined."
-#else
-#warning "WCA_COMPONENT_INDEX has been defined elsewhere; please remove this warning section."
-#endif
-
-
-
-/******************************************************************
  * Type Declarations.
  *****************************************************************/
 
@@ -74,8 +60,6 @@ typedef struct _opConfig {
 	pcstr szDescriptionFormat;
 } opConfig;
 
-
-
 /******************************************************************
  * Forward Declarations.
  *****************************************************************/
@@ -83,11 +67,13 @@ typedef struct _opConfig {
 static int Run();
 
 //Operational control functions.
+
 static int DoUpdateFirmware();
 static int DoBitTransferFlash();
 static int DoBitTransfer();
 
 //Program configuration routines
+
 static void WriteHeader();
 static void PrintUsage();
 static int ParseOptions(int argc, char** argv);
@@ -95,6 +81,7 @@ static bool IsArgumentName( pcstr arg, pcstr szName, size_t minChars);
 static void DumpDeviceInformation();
 
 //BitUtil support functions.
+
 static byte OnBitInitiateSourceTransfer(Dci_BitOperation* pbop);
 static byte OnBitInitiateTargetTransfer(Dci_BitOperation* pbop);
 static int OnBitGetFrameData(Dci_BitOperation* pbop, byte* buff, uint16 ctBytes);
@@ -107,6 +94,7 @@ static int OnSendMessage(byte* pmsg, int len, bool bAckRequired,	Dci_Context* pc
  *****************************************************************/
 
 //Define supported operations.
+
 static const opConfig s_aops[] = {
 		{e_UpdateFirmware, 			e_Download, "firmware", WCACOMP_FLASH,		DoUpdateFirmware, 	"Updating ASR-2300 firmware with file %s\n"},
 		{e_DownloadToFlash, 		e_Download, "flash", 	WCACOMP_FLASH,		DoBitTransferFlash, "Downloading %s to ASR-2300 flash\n"},
