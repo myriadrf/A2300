@@ -35,9 +35,11 @@ using namespace A2300;
  * Static Data
  *****************************************************************/
 
-static const size_t  s_ctFrames = 16;
-static const size_t  s_sizeFrame = 8192;
-static byte s_Frames[s_ctFrames*s_sizeFrame];
+// const values
+
+const static size_t cs_BytesPerSample = 4;
+const static size_t cs_ctFrames = 16;
+const static size_t cs_sizeFrame = 8192;
 
 // default to: RF0, PCS Band, 9 dB Gain, 1950 MHz, 2.5 MHz bandwidth,
 // 2 MHz sampling, infinite # samples (0)
@@ -49,6 +51,8 @@ static uint32 s_rxFreq = 1950000;
 static byte s_rxBandwidth = 13;
 static uint16 s_hostSampRate = 8;
 static size_t s_numSamples = 0;
+static size_t s_numBytesToCollect = 0;
+static size_t s_numBytesCollected = 0;
 
 static char* s_fileName = NULL;
 static FILE* s_fileStream = NULL;
@@ -163,9 +167,10 @@ static int DoRxToFile ()
 	byte  epRx     = (bIsRf0) ? 0x88 : 0x98;
 	byte  idDdc    = (bIsRf0) ? WCACOMP_DSP_DDC0 : WCACOMP_DSP_DDC1;
 	pcstr* szPaths = (bIsRf0) ? s_rx0_pathsDefault : s_rx1_pathsDefault;
-	float fSampFreq = 32.0e6f / s_hostSampRate/2;
-	double dt = 10.0;
-	double framesPerSecond = fSampFreq*4 / s_sizeFrame; //4 bytes per sample
+	float fSampFreq = 32.0e6f / (s_hostSampRate / 2);
+
+	double dt = ((double) s_numSamples) / ((double) fSampFreq);
+	double framesPerSecond = fSampFreq*cs_BytesPerSample / cs_sizeFrame;
 	ulong totalFrames = (ulong)ceil(framesPerSecond*dt);
 
 	TransportDci& td = s_config.Dci0Transport();  //Get the dci interface so we can send messages directly.
@@ -180,7 +185,11 @@ static int DoRxToFile ()
 	printf("RX Frequency:  %0.3f MHz\n", s_rxFreq/1000.0F);
 	printf("RX Bandwidth:  ?? MHz (id=%02Xh)\n", s_rxBandwidth);
 	printf("Host Rate:     %0.3f MHz\n", fSampFreq/1.0e6f);
-	printf("Duration:      %0.02lf sec (%lu frames)\n", dt, totalFrames);
+	if (s_numSamples == 0) {
+	  printf("Duration:      infinite samples\n");
+	} else {
+	  printf("Duration:      %ld samples, %0.02lf sec, %lu frames\n", s_numSamples, dt, totalFrames);
+	}
 
 	// 1) Bind the Bulk Data Port to the specified endpoint.
 	BulkDataPort portData(epRx, PortBase::EP_UNDEF);
@@ -211,10 +220,12 @@ static int DoRxToFile ()
 	//5) Initialize the buffers and queue for processing.
 	s_bRunning = true;
 	BulkDataPort::TransferContextList listContext;
-	for( size_t i = 0; i < s_ctFrames; i++)
+
+	byte frames[cs_ctFrames*cs_sizeFrame];
+
+	for( size_t nn = 0; nn < cs_ctFrames; ++nn)
 	{
-		BulkDataPort::TransferContext* pctxt = portData.CreateReadTransferContext(
-				s_Frames + i*s_sizeFrame, s_sizeFrame);
+		BulkDataPort::TransferContext* pctxt = portData.CreateReadTransferContext(frames + (nn*cs_sizeFrame), cs_sizeFrame);
 		pctxt->Submit();
 		listContext.push_back( pctxt);
 	}
@@ -225,13 +236,15 @@ static int DoRxToFile ()
 	//TODO CONFIGURE IF Frequency.
 	td.SetProperty<byte>(idDdc, DSP_DDUC_CTRL, DSP_DDUC_CTRL_ENABLED);
 
-	//7) Process for 10 seconds.
+	//7) Process until finished
 
-	printf("--> Starting Run\n");
+	printf("\n--> Starting Run\n");
 
-
+	s_numBytesToCollect = s_numSamples * cs_BytesPerSample;
+	s_numBytesCollected = 0;
 	int retval = 0;
-	while( retval == 0 && s_ctPackets < totalFrames)
+	while ((retval == 0) &&
+	       (s_numBytesCollected < s_numBytesToCollect))
 	{
 #if defined(HAVE_LIBUSB)
 		retval= device.PollAsynchronousEvents();
@@ -243,15 +256,15 @@ static int DoRxToFile ()
 #endif
 	}
 
+	// check for USB error
 	if( retval != 0) printf("USB error occurred transfer stopped.\n");
 
 	//8) Reset the DDC Port
 	td.SetProperty<byte>(idDdc, DSP_DDUC_CTRL, DSP_DDUC_CTRL_RESET);
 	td.SetProperty<byte>(idDdc, DSP_DDUC_CTRL, DSP_DDUC_CTRL_DISABLED);
 
-	//9) Set Path Profile to Disabled.
-	printf("\n\n--> Completed Run:  Packets = %ld, Bytes = %ld\n", s_ctPackets, s_ctData);
-	fflush(stdout);
+	//9) Print results
+	printf("\n--> Completed Run: Packets = %ld, Bytes = %ld\n", s_ctPackets, s_ctData);
 
 	//10) Disable the RF Communications
 	td.SetProperty<byte>(s_idComponent,  RFPROP_RXPATH, bIsRf0 ? (byte)RX0DPE_Disabled : (byte)RX1DPE_Disabled );
@@ -295,20 +308,58 @@ static int DoRxToFile ()
 
 static void OnFrameReady (void* /* arg */, BulkDataPort::TransferContext* pctxt)
 {
-	//Save data to disk.
-	if( pctxt->status == 0)
+	// if the status is OK (0)
+	if (pctxt->status == 0)
 	{
-		s_ctPackets++;
-		s_ctData += pctxt->nActualLength;
-		if( (s_ctPackets % 488) == 0)
+	  ++s_ctPackets;
+	  if (s_numSamples == 0) {
+	    // Save data to disk
+	    size_t nWritten = fwrite (pctxt->bufFrame, 1, pctxt->nActualLength, s_fileStream);
+	    if (nWritten != pctxt->nActualLength) {
+	      printf ("\nWarning: Some data failed to write to the selected file ('%s').\n", s_fileName);
+	      printf ("  Ignoring and hoping for the best.\n");
+	    }
+
+	    // Print progress '.'
+	    if (s_numSamples == 0) {
+	      if ((s_ctPackets % 488) == 0)
 		{
-			putc('.', stdout);
-			fflush(stdout);
+		  putc('.', stdout);
+		  fflush(stdout);
 		}
+	    }
+	  } else {
 
-		//Resubmit.
-		pctxt->Submit();
+	    size_t nToWrite = s_numBytesToCollect - s_numBytesCollected;
+	    if (nToWrite > pctxt->nActualLength) {
+	      nToWrite = pctxt->nActualLength;
+	    }
 
+	    // Save data to disk
+	    size_t nWritten = fwrite (pctxt->bufFrame, 1, nToWrite, s_fileStream);
+	    if (nWritten != nToWrite) {
+	      printf ("\nWarning: Some data failed to write to the selected file ('%s').\n", s_fileName);
+	      printf ("  Ignoring and hoping for the best.\n");
+	    }
+
+	    size_t oldNumBytesCollected = s_numBytesCollected;
+	    s_numBytesCollected += nWritten;
+	    s_ctData += pctxt->nActualLength;
+
+	    // Resubmit
+	    pctxt->Submit();
+
+	    // 60 dots is complete; figure out how far along and if
+	    // another dot needs to be printed.
+
+	    float dotByteLen = ((float) s_numBytesToCollect) / ((float) 60);
+	    if ((size_t)(((float) oldNumBytesCollected) / dotByteLen) !=
+		(size_t)(((float) s_numBytesCollected) / dotByteLen))
+	      {
+		putc('.', stdout);
+		fflush(stdout);
+	      }
+	  }
 	}
 }
 
@@ -337,6 +388,7 @@ static void PrintUsage() {
 	printf( "\nUsage for A2300RxToFile:\n\n"
 		"  A2300RxToFile [options] output_filename\n\n"
 		"Options [default]:\n"
+		"    -h        This usage message.\n"
 		"    -c #      Rx component number, 0 or 1 [0].\n"
 		"    -A name   antenna name:\n"
 		"      Rx0 : GpsL1Int, GpsL1Ext, PcsExt, Wideband [PcsExt]\n"
@@ -364,9 +416,10 @@ void GetMinMax (T& /* arg */, double& MIN_VAL, double& MAX_VAL, bool isSigned)
 {
   unsigned char numBits = sizeof(T)*CHAR_BIT;
   if (isSigned) {
-    MIN_VAL = (double) -(((unsigned long long) 1) << --numBits);
-    MAX_VAL = (double) ((((unsigned long long) 1) << numBits) -
-			((unsigned long long) 1));
+    --numBits;
+    MIN_VAL = (double) (((unsigned long long) 1) << numBits);
+    MAX_VAL = MIN_VAL - ((double) 1);
+    MIN_VAL *= ((double)(-1));
   } else {
     MIN_VAL = (double) 0;
     MAX_VAL = (double) ((((unsigned long long) 1) << numBits) -
@@ -458,10 +511,10 @@ static bool GetArgumentAsDouble(int argc, const char** argv, const char* propert
 
     // convert to the number type, taking into account limits
     if (outValAsDouble > MAX_VAL) {
-      printf ("Warning: Argument %s (%g) is larger than the maximum for converting to type '%s' (%g); truncating to max.", propertyName, outValAsDouble, typeName.c_str(), MAX_VAL);
+      printf ("Warning: Argument %s (%g) is larger than the maximum for converting to type '%s' (%g); truncating to max.\n", propertyName, outValAsDouble, typeName.c_str(), MAX_VAL);
       outValAsDouble = MAX_VAL;
     } else if (outValAsDouble < MIN_VAL) {
-      printf ("Warning: Argument %s (%g) is more negative than the minimum for converting to type '%s' (%g); truncating to min.", propertyName, outValAsDouble, typeName.c_str(), MIN_VAL);
+      printf ("Warning: Argument %s (%g) is more negative than the minimum for converting to type '%s' (%g); truncating to min.\n", propertyName, outValAsDouble, typeName.c_str(), MIN_VAL);
       outValAsDouble = MIN_VAL;
     } else if (((double)((T)outValAsDouble)) != outValAsDouble) {
       printf ("Warning: Argument %s (%g) contains fractional value; truncating to integer.\n", propertyName, outValAsDouble);
@@ -562,8 +615,8 @@ static int ParseOptions(int argc, const char** argv) {
 	      if (!GetArgumentNumber(argc, argv, "bandwidth", t_arg, rxBandwidth)) {
 		return -1;
 	      }
-	      if (rxBandwidth <= 0) {
-		printf ("Error: Specified bandwidth (%d) is <= 0; must be positive.\n", rxBandwidth);
+	      if (rxBandwidth == 0) {
+		printf ("Error: Specified bandwidth (%d) is 0; must be positive.\n", rxBandwidth);
 		PrintUsage();
 		return -1;
 	      }
@@ -623,6 +676,13 @@ static int ParseOptions(int argc, const char** argv) {
 	      }
 	      s_rxGain = rxGain;
 	      printf ("selected gain: %d\n", rxGain);
+	    }
+	    break;
+
+	  case 'h':
+	    {
+	      PrintUsage();
+	      return -1;
 	    }
 	    break;
 
