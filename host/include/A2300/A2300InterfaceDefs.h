@@ -16,6 +16,7 @@
 
 #ifndef A2300InterfaceDefs_H_
 #define A2300InterfaceDefs_H_
+
 //*******************************************************
 // WCA COMPONENT Idetifiers
 //*******************************************************
@@ -106,7 +107,7 @@ enum Tx0DefaultProfilesEnum
 };
 
 //Enum defines the default RX pathes for the RF0 component.  Depending on which RF profiles are loaded into the
-//device, these definitions may not be valied.
+//device, these definitions may not be valid.
 enum Rx0DefaultProfilesEnum
 {
 	RX0DPE_Disabled = 0x40,
@@ -117,7 +118,7 @@ enum Rx0DefaultProfilesEnum
 };
 
 //Enum defines the default TX pathes for the RF1 component.  Depending on which RF profiles are loaded into the
-//device, these definitions may not be valied.
+//device, these definitions may not be valid.
 enum Tx1DefaultProfilesEnum
 {
 	TX1DPE_Disabled = 0x80,
