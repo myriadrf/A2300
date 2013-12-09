@@ -15,13 +15,16 @@
 */
 
 #include <errno.h>
+#include <limits.h>
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
 
 #include <stdexcept>
+#include <string>
 #include <vector>
 
 #include <A2300/ConfigDevice.h>
@@ -64,9 +67,11 @@ static int Run ();
 // Program configuration routines
 static void WriteHeader ();
 static void PrintUsage ();
-static int ParseOptions (int argc, char** argv);
-static bool IsArgumentName (pcstr arg, pcstr szName, size_t minChars);
+static int ParseOptions (int argc, const char** argv);
 static void DumpDeviceInformation ();
+
+template < typename T >
+static bool GetArgumentNumber(int argc, const char** argv, const char* propertyName, int& currentArgNumber, T& outVar);
 
 // Support functions
 static int DoRxToFile ();
@@ -82,7 +87,7 @@ static void OnFrameReady (void* arg, BulkDataPort::TransferContext* pctxt);
  * </summary>
  */
 
-int main(int argc, char** argv) {
+int main(int argc, const char** argv) {
 	int retval = 0;
 	WriteHeader();
 	retval = ParseOptions(argc, argv);
@@ -288,7 +293,7 @@ static int DoRxToFile ()
  * </summary>
  */
 
-static void OnFrameReady (void* arg, BulkDataPort::TransferContext* pctxt)
+static void OnFrameReady (void* /* arg */, BulkDataPort::TransferContext* pctxt)
 {
 	//Save data to disk.
 	if( pctxt->status == 0)
@@ -329,68 +334,153 @@ static void WriteHeader() {
  * </summary>
  */
 static void PrintUsage() {
-	printf("\nUsage for A2300Update:\n\n"
-			"  A2300Update w[rite] [fi[rmware]|p[rofile]|fl[ash]|f[pga]] file\n"
-			"    write (download) file to firmware, RF profiles, flash, or directly to FPGA.\n\n"
-			"  A2300Update r[ead] p[rofile]|fl[ash]] data\n"
-			"    read (upload) Rf profile or flash data from device to file.\n\n"
-			"NOTE: Distinct sub-words are allowed; for example:\n"
-			"    A2300Update w p file\n"
-			"  means the same as\n"
-			"    A2300Update write profile file\n\n"
-			"WRITING firmware will cause the device to reprogram.  Be sure you do this operation carefully, it can brick the device\n\n"
-			"NOTE: Text is case sensitive; just use lowercase. \n");
+	printf( "\nUsage for A2300RxToFile:\n\n"
+		"  A2300RxToFile [options] output_filename\n\n"
+		"Options [default]:\n"
+		"    -c #      Rx component number, 0 or 1 [0].\n"
+		"    -A name   antenna name:\n"
+		"      Rx0 : GpsL1Int, GpsL1Ext, PcsExt, Wideband [PcsExt]\n"
+		"      Rx1 : UhfExt, IsmInt, IsmExt, Wideband [Wideband]\n"
+		"    -g #      gain in dB [9]\n"
+		"    -f #      center frequency [1950 MHz]\n"
+		"    -b #      bandwidth [2.5 MHz]\n"
+		"    -s #      sample rate [2 MS/s]\n"
+		"    -N #      number of samples to collect [inf]\n");
 }
 
 /**
  * <summary>
- * Parses the privided command line string.
+ * Helper function makes argument number conversion more generic.
  * </summary>
  */
 
-static int ParseOptions(int argc, char** argv) {
-#if 0
-	int i;
-
-	if (argc < 4) {
-		printf("\nError: Too few arguments: Got %d, expecting 4.\n", argc);
-		PrintUsage();
-	}
-
-	//Parse the Transfer direction.
-	transferDir dir;
-	if 	( IsArgumentName( argv[1], "write", 1)) {
-		dir = e_Download;
-	}	else if ( IsArgumentName( argv[1], "read", 1))  {
-		dir = e_Upload;
-	}	else    {
-		printf("\nError: Unknown second argument: '%s'\n", argv[1]);
-		printf("  Must be either 'read' or 'write'.\n");
-		PrintUsage();
-		return -1;
-	}
-
-	//Parse the Operation Mode.
-	for( i = 0; i < COUNT_OPS; i++) {
-		if( dir == s_aops[i].dir && IsArgumentName( argv[2], s_aops[i].szName, 2) )
-		{
-			s_pOp = s_aops + i;
-			break; // we found it.
-		}
-	}
-
-	if( s_pOp == NULL)	{
-		printf("\nError: Unknown third argument: '%s'\n", argv[2]);
-		printf("	Must be one of 'firmware', 'profile', or 'flash'.\n");
-		PrintUsage();
-		return -2;
-	}
+// number of bits in a 'char'
+#ifndef CHAR_BIT
+#define CHAR_BIT 8
 #endif
 
-	// File name to write to.
-	s_fileName = argv[3];
+template < typename T >
+void GetMinMax (T& /* arg */, double& MIN_VAL, double& MAX_VAL, bool isSigned)
+{
+  unsigned char numBits = sizeof(T)*CHAR_BIT;
+  if (isSigned) {
+    MIN_VAL = (double) -(((unsigned long long) 1) << --numBits);
+    MAX_VAL = (double) ((((unsigned long long) 1) << numBits) -
+			((unsigned long long) 1));
+  } else {
+    MIN_VAL = (double) 0;
+    MAX_VAL = (double) ((((unsigned long long) 1) << numBits) -
+			((unsigned long long) 1));
+  }
+}
 
-	return 0;
+void GetMinMaxName (char arg, double& MIN_VAL, double& MAX_VAL, std::string& nameString)
+{
+  GetMinMax (arg, MIN_VAL, MAX_VAL, true);
+  nameString = "char";
+}
+
+void GetMinMaxName (unsigned char arg, double& MIN_VAL, double& MAX_VAL, std::string& nameString)
+{
+  GetMinMax (arg, MIN_VAL, MAX_VAL, false);
+  nameString = "unsigned char";
+}
+
+void GetMinMaxName (short arg, double& MIN_VAL, double& MAX_VAL, std::string& nameString)
+{
+  GetMinMax (arg, MIN_VAL, MAX_VAL, true);
+  nameString = "short";
+}
+
+void GetMinMaxName (unsigned short arg, double& MIN_VAL, double& MAX_VAL, std::string& nameString)
+{
+  GetMinMax (arg, MIN_VAL, MAX_VAL, false);
+  nameString = "unsigned short";
+}
+
+void GetMinMaxName (int arg, double& MIN_VAL, double& MAX_VAL, std::string& nameString)
+{
+  GetMinMax (arg, MIN_VAL, MAX_VAL, true);
+  nameString = "int";
+}
+
+void GetMinMaxName (unsigned int arg, double& MIN_VAL, double& MAX_VAL, std::string& nameString)
+{
+  GetMinMax (arg, MIN_VAL, MAX_VAL, false);
+  nameString = "unsigned int";
+}
+
+void GetMinMaxName (long arg, double& MIN_VAL, double& MAX_VAL, std::string& nameString)
+{
+  GetMinMax (arg, MIN_VAL, MAX_VAL, true);
+  nameString = "int";
+}
+
+void GetMinMaxName (unsigned long arg, double& MIN_VAL, double& MAX_VAL, std::string& nameString)
+{
+  GetMinMax (arg, MIN_VAL, MAX_VAL, false);
+  nameString = "unsigned long";
+}
+
+template < typename T >
+static bool GetArgumentAsDouble(int argc, const char** argv, const char* propertyName, int& currentArgNumber, double& outValAsDouble)
+{
+  // convert to double
+
+  // retrieve the argument string, checking to make sure there are enough
+
+  bool rv = (++currentArgNumber < argc);
+  if (rv) {
+    // convert to a double, allowing for "0x" starting and "e+" ending
+    char* endPtr = 0;
+    outValAsDouble = strtod (argv[currentArgNumber], &endPtr);
+    if (endPtr == argv[currentArgNumber]) {
+      // failed to convert
+      printf ("Error: Unable to convert the string for argument %s ('%s') into a number.\n", propertyName, argv[currentArgNumber]);
+      PrintUsage();
+      rv = false;
+    }
+  } else {
+    printf ("Error: Too few arguments to determine %s.\n", propertyName);
+    PrintUsage();
+  }
+
+  // check for MIN, MAX, and factional value
+
+  if (rv) {
+
+    // retrieve MIN, MAX, name string
+
+    T arg = (T) 0;
+    double MIN_VAL, MAX_VAL;
+    std::string typeName;
+    GetMinMaxName (arg, MIN_VAL, MAX_VAL, typeName);
+
+    // convert to the number type, taking into account limits
+    if (outValAsDouble > MAX_VAL) {
+      printf ("Warning: Argument %s (%g) is larger than the maximum for converting to type '%s' (%g); truncating to max.", propertyName, outValAsDouble, typeName.c_str(), MAX_VAL);
+      outValAsDouble = MAX_VAL;
+    } else if (outValAsDouble < MIN_VAL) {
+      printf ("Warning: Argument %s (%g) is more negative than the minimum for converting to type '%s' (%g); truncating to min.", propertyName, outValAsDouble, typeName.c_str(), MIN_VAL);
+      outValAsDouble = MIN_VAL;
+    } else if (((double)((T)outValAsDouble)) != outValAsDouble) {
+      printf ("Warning: Argument %s (%g) contains fractional value; truncating to integer.\n", propertyName, outValAsDouble);
+      outValAsDouble = (double)((T) outValAsDouble);
+    }
+  }
+
+  return rv;
+}
+
+template < typename T >
+static bool GetArgumentNumber(int argc, const char** argv, const char* propertyName, int& currentArgNumber, T& outVar)
+{
+  double outValAsDouble = (double) 0;
+  bool rv = GetArgumentAsDouble<T>(argc, argv, propertyName, currentArgNumber, outValAsDouble);
+  if (rv) {
+    outVar = (T) outValAsDouble;
+  }
+  return rv;
 }
 
 /**
@@ -405,6 +495,228 @@ static bool IsArgumentName( pcstr arg, pcstr szName, size_t minChars)
 	size_t lenName = strlen(szName);
 	return lenArg >= minChars && lenArg <= lenName
 			&& (strncmp( arg, szName, lenArg) == 0);
+}
+
+/**
+ * <summary>
+ * Parses the privided command line string.
+ * </summary>
+ */
+
+static int ParseOptions(int argc, const char** argv) {
+	if (argc < 2) {
+		printf("\nError: Too few arguments: Got %d, expecting at least 2.\n", argc);
+		PrintUsage();
+		return -1;
+	}
+
+	int t_arg = 0;
+	char* antenna_flag_entry = NULL;
+
+	while (++t_arg < argc) {
+
+	  // get this argument string
+	  const char* t_argv = argv[t_arg];
+
+	  // see if this argument starts with '-'
+	  if (t_argv[0] != '-') {
+	    // no; is it the last one?
+	    if (++t_arg == argc) {
+	      // yes; set filename
+	      s_fileName = const_cast<char*>(t_argv);
+	      break;
+	    } else {
+	      // no; print an error
+	      printf ("Error: unknown flag '%s'.\n", t_argv);
+	      PrintUsage();
+	      return -1;
+	    }
+	  }
+
+	  // make sure the string length is 2
+	  if (strlen (t_argv) != 2) {
+	    // no: print error and exit
+	    printf ("Error: unknown flag '%s'.\n", t_argv);
+	    PrintUsage();
+	    return -1;
+	  }
+
+	  // swtich on the flag letter
+	  switch (t_argv[1]) {
+	  case 'A':
+	    // antenna name; next is string; depends on which Rx# is
+	    // selected, if any; process this after all other flags
+	    if (++t_arg < argc) {
+	      antenna_flag_entry = const_cast<char*>(argv[t_arg]);
+	    } else {
+	      printf ("Error: No antenna name specified with -A flag.\n");
+	      PrintUsage();
+	      return -1;
+	    }
+	    break;
+
+	  case 'b':
+	    {
+	      // bandwidth; next is #
+	      byte rxBandwidth = 0;
+	      if (!GetArgumentNumber(argc, argv, "bandwidth", t_arg, rxBandwidth)) {
+		return -1;
+	      }
+	      if (rxBandwidth <= 0) {
+		printf ("Error: Specified bandwidth (%d) is <= 0; must be positive.\n", rxBandwidth);
+		PrintUsage();
+		return -1;
+	      }
+	      s_rxBandwidth = rxBandwidth;
+	      printf ("selected bandwidth: %d\n", s_rxBandwidth);
+	    }
+	    break;
+
+	  case 'c':
+	    {
+	      // Rx component #, as int 0 or 1
+	      byte idComponent = 0xff;
+	      if (!GetArgumentNumber(argc, argv, "Rx component #", t_arg, idComponent)) {
+		return -1;
+	      }
+	      if (idComponent == 0) {
+		s_idComponent = WCACOMP_RF0;
+	      } else if (idComponent == 1) {
+		s_idComponent = WCACOMP_RF1;
+	      } else {
+		printf ("Error: Unknown Rx component #%d; expecting 0 or 1.\n", idComponent);
+		PrintUsage();
+		return -1;
+	      }
+	      printf ("selected id component: %d\n", idComponent);
+	    }
+	    break;
+
+	  case 'f':
+	    {
+	      // center frequency; next is # as int
+	      uint32 rxFreq = 0;
+	      if (!GetArgumentNumber(argc, argv, "center frequency", t_arg, rxFreq)) {
+		return -1;
+	      }
+	      if (rxFreq <= 0) {
+		printf ("Error: Specified center frequency (%d) is <= 0; must be positive.\n", rxFreq);
+		PrintUsage();
+		return -1;
+	      }
+	      s_rxFreq = rxFreq;
+	      printf ("selected center frequency: %d\n", rxFreq);
+	    }
+	    break;
+
+	  case 'g':
+	    {
+	      // gain in dB; next is # as int
+	      byte rxGain = 0;
+	      if (!GetArgumentNumber(argc, argv, "gain in dB", t_arg, rxGain)) {
+		return -1;
+	      }
+	      if (rxGain <= 0) {
+		printf ("Error: Specified gain in dB (%d) is out of range; expecting an integer in [,].\n", rxGain);
+		PrintUsage();
+		return -1;
+	      }
+	      s_rxGain = rxGain;
+	      printf ("selected gain: %d\n", rxGain);
+	    }
+	    break;
+
+	  case 'N':
+	    {
+	      // number of samples to collect; next is # as int (non-negative; 0 means infinite)
+	      ssize_t numSamples = -1;
+	      if (!GetArgumentNumber(argc, argv, "number of samples to collect", t_arg, numSamples)) {
+		return -1;
+	      }
+	      if (numSamples < 0) {
+		printf ("Error: Specified number of samples to take (%ld) is negative; must be non-negative (0 means infinite).\n", numSamples);
+		PrintUsage();
+		return -1;
+	      }
+	      s_numSamples = (size_t) numSamples;
+	      printf ("selected number of samples: %ld\n", numSamples);
+	    }
+	    break;
+
+	  case 's':
+	    {
+	      // sample rate; next is # as int (positive)
+	      uint16 hostSampRate = 0;
+	      if (!GetArgumentNumber(argc, argv, "sample rate", t_arg, hostSampRate)) {
+		return -1;
+	      }
+	      if (hostSampRate == 0) {
+		printf ("Error: Specified sample rate (%d) is 0, must be positive.\n", hostSampRate);
+		PrintUsage();
+		return -1;
+	      }
+	      s_hostSampRate = hostSampRate;
+	      printf ("selected sample rate: %d\n", hostSampRate);
+	    }
+	    break;
+
+	  default:
+	    printf ("Unknown flag '%c'.\n", t_argv[1]);
+	    PrintUsage();
+	    return -1;
+	  }
+	}
+
+	// was a filename specified?
+	if (!s_fileName) {
+	  printf ("Error: No output filename specified.\n");
+	  PrintUsage();
+	  return -1;
+	}
+
+	// see if the antenna flag entry was set
+	if (antenna_flag_entry) {
+	  // yes: process depending on which Rx #
+	  if (s_idComponent == WCACOMP_RF0) {
+	    // Rx0 names: GpsL1Int, GpsL1Ext, PcsExt, Wideband [PcsExt]
+	    if (       IsArgumentName(antenna_flag_entry, "GpsL1Int", 6)) {
+	      s_rxProfile = RX0DPE_GpsL1Int;
+	    } else if (IsArgumentName(antenna_flag_entry, "GpsL1Ext", 6)) {
+	      s_rxProfile = RX0DPE_GpsL1Ext;
+	    } else if (IsArgumentName(antenna_flag_entry, "PcsExt", 1)) {
+	      s_rxProfile = RX0DPE_PcsExt;
+	    } else if (IsArgumentName(antenna_flag_entry, "Wideband", 1)) {
+	      s_rxProfile = RX0DPE_Wideband;
+	    } else {
+	      printf ("Error: Unknown antenna name '%s' on Rx0.\n",
+		      antenna_flag_entry);
+	      PrintUsage();
+	      return -1;
+	    }
+	    printf ("selected Rx0 antenna: %s\n", antenna_flag_entry);
+	  } else {
+	    // Rx1 names: UhfExt, IsmInt, IsmExt, Wideband [Wideband]
+	    if (       IsArgumentName(antenna_flag_entry, "UhfExt", 1)) {
+	      s_rxProfile = RX1DPE_UhfExt;
+	    } else if (IsArgumentName(antenna_flag_entry, "IsmInt", 4)) {
+	      s_rxProfile = RX1DPE_IsmInt;
+	    } else if (IsArgumentName(antenna_flag_entry, "IsmExt", 4)) {
+	      s_rxProfile = RX1DPE_IsmExt;
+	    } else if (IsArgumentName(antenna_flag_entry, "Wideband", 1)) {
+	      s_rxProfile = RX1DPE_Wideband;
+	    } else {
+	      printf ("Error: Unknown antenna name '%s' on Rx1.\n",
+		      antenna_flag_entry);
+	      PrintUsage();
+	      return -1;
+	    }
+	    printf ("selected Rx1 antenna: %s\n", antenna_flag_entry);
+	  }
+	}
+
+	printf ("selected filename '%s'\n", s_fileName);
+
+	return 0;
 }
 
 /**
