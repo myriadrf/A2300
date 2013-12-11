@@ -21,9 +21,9 @@
 #include <System/DataTypes.h>
 #include <vector>			// Used in FindAttached().
 
-//NOTE MOVE TO SOURCE FILE ONCE WE HAVE REGISTERED.
-#define A2300_VENDOR_ID	  (0xffff)
-#define A2300_PRODUCT_ID  (0x00ff)
+
+#define A2300_VENDOR_ID	  (0x1D50)  //Openmoko.com VID
+#define A2300_PRODUCT_ID  (0x608B)	//Registered ASR-2300 PID.
 #define A2300_ADDR_UNDEF  (0xffff)
 
 #define A2300_DciIdc0_EpIn 0x82
