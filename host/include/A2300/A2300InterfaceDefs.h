@@ -1,4 +1,4 @@
-/** Name: A2300InterfaceDefs.h
+ /** Name: A2300InterfaceDefs.h
 *
 * Copyright(c) 2013 Loctronix Corporation
 * http://www.loctronix.com
@@ -148,6 +148,14 @@ enum Rx1DefaultProfilesEnum
 	RX1DPE_IsmInt   = 0xC2,
 	RX1DPE_IsmExt   = 0x43,
 	RX1DPE_Wideband = 0x44
+};
+
+enum RfBandwidthValuesEnum
+{
+	RFBW_14MHZ,	  RFBW_10MHZ,   RFBW_7MHZ,    RFBW_6MHZ,    RFBW_5MHZ,
+	RFBW_4375KHZ, RFBW_3500KHZ, RFBW_3000KHZ, RFBW_2750KHZ, RFBW_2500MHZ,
+	RFBW_1920KHZ, RFBW_1500KHZ, RFBW_1375KHZ, RFBW_1250KHZ, RFBW_0875KHZ,
+	RFBW_0750KHZ
 };
 
 //*******************************************************

@@ -22,11 +22,12 @@
 
 namespace A2300
 {
+class ConfigDevice;
 
 class ConfigRf : public IConfigComponent
 {
 public:
-	ConfigRf(int idComponent, const std::string& sname );
+	ConfigRf(int idComponent, const std::string& sname, ConfigDevice* pDevice );
 	virtual ~ConfigRf();
 
 	/* Define IConfigComponent interface*/
@@ -35,11 +36,38 @@ public:
 	virtual void Reset();
 	virtual void Synch();
 
+	uint32	RxFrequency( uint32 freqKhz);
+	uint32  RxFrequency() const;
+	byte	RxGain( byte gainDb);
+	byte    RxGain() const;
+	byte	RxPath( byte idPath);
+	byte    RxPath() const;
+	RfBandwidthValuesEnum RxBandwidth( RfBandwidthValuesEnum bw);
+	RfBandwidthValuesEnum RxBandwidth( ) const;
+
+	uint32 TxFrequency( uint32 freqkHz);
+	uint32 TxFrequency( ) const;
+	byte TxGain( byte gainDb);
+	byte TxGain( ) const;
+	byte TxPath( byte idPath);
+	byte TxPath( ) const;
+	RfBandwidthValuesEnum TxBandwidth( RfBandwidthValuesEnum bw);
+	RfBandwidthValuesEnum TxBandwidth( ) const;
+
 private:
 	int  m_idComponent;
 	std::string m_sName;
+	uint32  m_rxfreq;
+	byte    m_rxgain;
+	byte    m_rxpath;		
+	RfBandwidthValuesEnum m_rxbw;
 
+	uint32  m_txfreq;
+	byte    m_txgain;
+	byte    m_txpath;		
+	RfBandwidthValuesEnum m_txbw;
 
+	ConfigDevice* m_pDevice;
 };
 
 } /* namespace A2300 */
