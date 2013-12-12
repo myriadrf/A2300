@@ -17,7 +17,7 @@
 #ifndef BINARY_STREAM_FORMATTER_H
 #define BINARY_STREAM_FORMATTER_H
 
-#include "Dci/DciMsg.h"
+#include "DciMsg.h"
 
 #ifdef  __cplusplus
 extern "C" {

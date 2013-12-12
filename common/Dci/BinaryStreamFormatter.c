@@ -14,7 +14,7 @@
 * GNU General Public License for more details.
 */
 
-#include "Dci/BinaryStreamFormatter.h"
+#include "BinaryStreamFormatter.h"
 #include <string.h>
 
 const int    s_LenHdr = 2;

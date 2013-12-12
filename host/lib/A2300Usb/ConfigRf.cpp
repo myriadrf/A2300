@@ -14,7 +14,9 @@
 * GNU General Public License for more details.
 */
 
+#include <A2300/ConfigDevice.h>
 #include <A2300/ConfigRf.h>
+#include <algorithm>
 
 namespace A2300 {
 
@@ -33,78 +35,101 @@ ConfigRf::~ConfigRf()
 
 uint32 ConfigRf::RxFrequency( uint32 freqkHz)
 {
-	//TODO
+	TransportDci& td = m_pDevice->Dci0Transport();
+	m_rxfreq = std::min<uint32>( 300000, std::max<uint32>( 3800000, freqkHz));
+	td.SetProperty<uint32>(m_idComponent, RFPROP_RXFREQ, m_rxfreq);
+	return m_rxfreq;
 }
 uint32 ConfigRf::RxFrequency( ) const
 {
-	//TODO
+	return m_rxfreq;
 }
 
 byte ConfigRf::RxGain( byte gainDb)
 {
-	//TODO
+	TransportDci& td = m_pDevice->Dci0Transport();
+	m_rxgain = std::min<byte>( 0, std::max<byte>( 60, gainDb));
+	td.SetProperty<byte>(m_idComponent, RFPROP_RXGAIN, m_rxgain);
+	return m_rxgain;
 }
 
 byte ConfigRf::RxGain( ) const
 {
-	//TODO
+	return m_rxgain;
 }
 
 byte ConfigRf::RxPath( byte idPath)
 {
-	//TODO
+	TransportDci& td = m_pDevice->Dci0Transport();
+	m_rxpath = idPath;
+	td.SetProperty<byte>(m_idComponent,   RFPROP_RXPATH, m_rxpath);
+	return m_rxpath;
 }
 byte ConfigRf::RxPath( ) const
 {
-	//TODO
-}
+	return m_rxpath;}
 
 RfBandwidthValuesEnum ConfigRf::RxBandwidth( RfBandwidthValuesEnum bw)
 {
-	//TODO
+	TransportDci& td = m_pDevice->Dci0Transport();
+	m_rxbw = bw;
+	td.SetProperty<byte>(m_idComponent, RFPROP_RXBANDWIDTH, (byte) m_rxbw);
+	return m_rxbw;
 }
 
 RfBandwidthValuesEnum ConfigRf::RxBandwidth( ) const
 {
-	//TODO
+	return m_rxbw;
 }
 
 uint32 ConfigRf::TxFrequency( uint32 freqkHz)
 {
-	//TODO
+	TransportDci& td = m_pDevice->Dci0Transport();
+	m_txfreq = std::min<uint32>( 300000, std::max<uint32>( 3800000, freqkHz));
+	td.SetProperty<uint32>(m_idComponent, RFPROP_TXFREQ, m_txfreq);
+	return m_txfreq;
 }
 uint32 ConfigRf::TxFrequency( ) const
 {
-	//TODO
+	return m_txfreq;
 }
 
 byte ConfigRf::TxGain( byte gainDb)
 {
-	//TODO
+	TransportDci& td = m_pDevice->Dci0Transport();
+	m_txgain = std::min<byte>( 0, std::max<byte>( 60, gainDb));
+	td.SetProperty<byte>(m_idComponent, RFPROP_TXGAIN, m_txgain);
+	return m_txgain;
 }
 
 byte ConfigRf::TxGain( ) const
 {
-	//TODO
+	return m_txgain;
 }
 
 byte ConfigRf::TxPath( byte idPath)
 {
-	//TODO
+	TransportDci& td = m_pDevice->Dci0Transport();
+	m_txpath = idPath;
+	td.SetProperty<byte>(m_idComponent,   RFPROP_TXPATH, m_txpath);
+	return m_txpath;
 }
 byte ConfigRf::TxPath( ) const
 {
-	//TODO
+	return m_txpath;
 }
 
 RfBandwidthValuesEnum ConfigRf::TxBandwidth( RfBandwidthValuesEnum bw)
 {
-	//TODO
+	TransportDci& td = m_pDevice->Dci0Transport();
+	m_txbw = bw;
+	td.SetProperty<byte>(m_idComponent, RFPROP_TXBANDWIDTH, (byte) m_txbw);
+	return m_txbw;
 }
 
 RfBandwidthValuesEnum ConfigRf::TxBandwidth( ) const
 {
-	//TODO
+	return m_txbw;
 }
 
 

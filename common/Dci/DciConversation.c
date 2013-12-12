@@ -14,7 +14,7 @@
 * GNU General Public License for more details.
 */
 
-#include "Dci/DciConversation.h"
+#include "DciConversation.h"
 #include <string.h>
 
 /**

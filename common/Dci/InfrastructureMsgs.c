@@ -14,7 +14,7 @@
 * GNU General Public License for more details.
 */
 
-#include "Dci/InfrastructureMsgs.h"
+#include "InfrastructureMsgs.h"
 #include <string.h>
 
 #ifndef MIN

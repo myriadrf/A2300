@@ -17,7 +17,7 @@
 #ifndef DciConversation_h
 #define DciConversation_h
 
-#include "Dci/DciMsg.h"
+#include "DciMsg.h"
 
 #ifdef  __cplusplus
 extern "C" {

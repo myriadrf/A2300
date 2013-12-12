@@ -17,7 +17,7 @@
 #ifndef WcaMsgs_h
 #define WcaMsgs_h
 
-#include "Dci/DciMsg.h"
+#include "DciMsg.h"
 
 #if defined( WIN32) || defined(LINUX) || defined(APPLE)
 	#pragma pack(push, 1)

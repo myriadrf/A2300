@@ -14,7 +14,7 @@
 * GNU General Public License for more details.
 */
 
-#include "Dci/StandardMsgs.h"
+#include "StandardMsgs.h"
 #include <string.h>
 
 #ifndef MIN

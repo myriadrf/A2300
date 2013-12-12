@@ -17,6 +17,11 @@
 #ifndef DATATYPES_H
 #define DATATYPES_H
 
+#ifdef WIN32
+	#define SIZEOF_INT 4
+	#define SIZEOF_LONG 4
+#endif
+
 typedef char				int8;
 typedef unsigned char		uint8;
 typedef short				int16;

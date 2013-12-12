@@ -21,14 +21,6 @@
 // WCA COMPONENT Idetifiers
 //*******************************************************
 
-#ifndef WCA_COMPONENT_INDEX
-// temporarily, until it is defined elsewhere
-#define WCA_COMPONENT_INDEX ((byte)4)
-#warning "WCA_COMPONENT_INDEX not yet defined."
-#else
-#warning "WCA_COMPONENT_INDEX has been defined elsewhere; please remove this warning section."
-#endif
-
 #define WCACOMP_HALDEFAULT 	((byte)0x00)	//Default WCA FPGA HAL Component
 #define WCACOMP_MICRO	 	((byte)0x80)	//Microcontroller General Configuration
 #define WCACOMP_RF0			((byte)0x81)	//Lime #1 transceiver interface

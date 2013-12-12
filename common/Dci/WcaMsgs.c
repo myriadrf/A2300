@@ -14,7 +14,7 @@
 * GNU General Public License for more details.
 */
 
-#include "Dci/WcaMsgs.h"
+#include "WcaMsgs.h"
 #include <string.h>
 
 /**

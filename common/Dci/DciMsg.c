@@ -14,7 +14,7 @@
 * GNU General Public License for more details.
 */
 
-#include "Dci/DciMsg.h"
+#include "DciMsg.h"
 #include <string.h>
 
 /**

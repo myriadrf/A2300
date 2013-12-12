@@ -15,21 +15,14 @@
 */
 
 #include "../System/DataTypes.h"
-#include "Dci/DciUtils.h"
-#include "Dci/StandardMsgs.h"
+#include "DciUtils.h"
+#include "StandardMsgs.h"
 #include <string.h>
 
 /*****************************************************************************
 * Forward declarations and static declarations.
 *****************************************************************************/
-
-#ifndef WCA_COMPONENT_INDEX
-// temporarily, until it is defined elsewhere
 #define WCA_COMPONENT_INDEX ((byte)4)
-#warning "WCA_COMPONENT_INDEX not yet defined."
-#else
-#warning "WCA_COMPONENT_INDEX has been defined elsewhere; please remove this warning secion."
-#endif
 
 //Declare standard message Type pre-process handlers.
 bool OnTypedDataMsg( Dci_MapEntry* pentry,  Dci_Context* pctxt);

@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="A2300Identify"
-	ProjectGUID="{A93A8C1F-867E-4510-A4AF-78FCA6DB3B42}"
+	Name="A2300Update"
+	ProjectGUID="{A3A5B742-E7CC-4775-A6AE-AB1BDCC333FC}"
 	RootNamespace="A2300Identify"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="0"
@@ -187,7 +187,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\main.cpp"
+				RelativePath=".\A2300Update.cpp"
 				>
 			</File>
 		</Filter>

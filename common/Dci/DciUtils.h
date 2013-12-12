@@ -18,7 +18,7 @@
 #define DciUtils_h
 
 #include "../System/DataTypes.h"
-#include "Dci/WcaMsgs.h"
+#include "WcaMsgs.h"
 
 #ifdef  __cplusplus
 extern "C" {
