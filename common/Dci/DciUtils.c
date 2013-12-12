@@ -22,7 +22,17 @@
 /*****************************************************************************
 * Forward declarations and static declarations.
 *****************************************************************************/
+#ifndef WCA_COMPONENT_INDEX
+// temporarily, until it is defined elsewhere
 #define WCA_COMPONENT_INDEX ((byte)4)
+#ifndef WIN32
+#warning "WCA_COMPONENT_INDEX not yet defined."
+#endif
+#else
+#ifndef WIN32
+#warning "WCA_COMPONENT_INDEX has been defined elsewhere; please remove this warning section."
+#endif
+#endif
 
 //Declare standard message Type pre-process handlers.
 bool OnTypedDataMsg( Dci_MapEntry* pentry,  Dci_Context* pctxt);
