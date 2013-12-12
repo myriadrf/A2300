@@ -21,13 +21,9 @@
 #include <A2300/BulkDataPort.h>
 #include <A2300/TransportDci.h>
 #include <A2300/A2300InterfaceDefs.h>
-#include <A2300/A2300_Defs.h>
 #include <A2300/ConfigRf.h>
 
-
 namespace A2300 {
-
-
 
 typedef std::list<IConfigComponent*> ConfigComponentList;
 
@@ -44,8 +40,8 @@ public:
 		: m_bCreated(false), m_pDevice( NULL),
 		  m_dci0(A2300_DciIdc0_EpIn, A2300_DciIdc0_EpOut),
 		  m_timeoutDefault(A2300_WAIT_TIME ),
-		  m_rf0( WCACOMP_RF0, "RF0"),
-		  m_rf1( WCACOMP_RF1, "RF1")
+		  m_rf0( WCACOMP_RF0, "RF0", this),
+		  m_rf1( WCACOMP_RF1, "RF1", this)
 	{}
 	virtual ~ConfigDevice();
 
