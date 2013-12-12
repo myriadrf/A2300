@@ -47,8 +47,8 @@ using namespace uhd::usrp;
 using namespace uhd::transport;
 
 // A2300 USB information.
-const boost::uint16_t A2300_VENDOR_ID  = 0xffff;
-const boost::uint16_t A2300_PRODUCT_ID = 0x00ff;
+const boost::uint16_t A2300_VENDOR_ID  = 0x1D50;
+const boost::uint16_t A2300_PRODUCT_ID = 0x608B;
 const boost::uint16_t A2300_ADDR_UNDEF = 0xffff;
 
 const boost::uint16_t A2300_DciIdc0_EpIn  = 0x82;
@@ -142,7 +142,7 @@ static device_addrs_t a2300_find(const device_addr_t &hint)
 				usbAddress = libusb_get_device_address(pDevice);
 				sprintf((char *)buff, "%d", usbAddress);
 				new_addr["addr"] = std::string(buff);
-				printf("new_addr = usbAddr:%d [buff:%s]\n", usbAddress, buff);
+				// printf("new_addr = usbAddr:%d [buff:%s]\n", usbAddress, buff);
 
 				// Save
 				a2300_addrs.push_back( new_addr );
@@ -490,12 +490,12 @@ void * a2300_impl::FindDevice(uint16 vid, uint16 pid, int usbAddress)
 
 void a2300_impl::update_clock_source(const std::string &source)
 {
-	printf("update_clock_source()\n");
+  //	printf("update_clock_source()\n");
 }
 
 void a2300_impl::update_time_source(const std::string &source)
 {
-	printf("update_time_source(%s)\n", source.c_str());
+  //	printf("update_time_source(%s)\n", source.c_str());
 
     if (source == "none"){}
     else if (source == "external"){}
@@ -506,7 +506,7 @@ void a2300_impl::update_time_source(const std::string &source)
     	throw uhd::key_error("update_time_source: unknown source: " + source);
     }
 //    _local_ctrl->poke32(TOREG(SR_CORE_PPS_SEL), (source == "external")? 1 : 0);
-    printf("update_time_source() - done\n");
+//    printf("update_time_source() - done\n");
 }
 
 //! get the clock rate range for the frontend
