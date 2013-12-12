@@ -18,6 +18,8 @@
 #define CONFIGRF_H_
 
 #include <A2300/A2300_Defs.h>
+#include <A2300/A2300InterfaceDefs.h>
+#include <System/DataTypes.h>
 #include <string>
 
 namespace A2300
