@@ -15,6 +15,7 @@
 */
 
 #include <A2300/TransportDci.h>
+#include <stdio.h>
 #include <string.h>
 
 #define COUNT_MAX_MESSAGES 	(5)
