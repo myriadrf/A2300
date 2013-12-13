@@ -14,20 +14,36 @@
 * GNU General Public License for more details.
 */
 
+//Include sleep functionality and homogenize api.
+#ifdef WIN32
+#define _CRT_SECURE_NO_WARNINGS
+#define WIN32_LEAN_AND_MEAN 
+	#include<windows.h>
+	#define SLEEP_SEC(a)  Sleep((a)*1000)
+#else
+	#include <unistd.h>
+	#define SLEEP_SEC(a) sleep((a))
+#endif 
+
 #include <errno.h>
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
-#include <unistd.h>
+
+
 
 #include <stdexcept>
 #include <vector>
 
 #include <Dci/DciUtils.h>
+#include <Dci/InfrastructureMsgs.h>
+
 #include <A2300/ConfigDevice.h>
 
 using namespace A2300;
+
+#define WAIT_FLASH_ERASE 25
 
 /******************************************************************
  * Type Declarations.
@@ -58,6 +74,7 @@ typedef struct _opConfig {
 	byte idTargetComponent;
 	OpHandlerFnc  fncOpHandler;
 	pcstr szDescriptionFormat;
+	pcstr szFileExt;
 } opConfig;
 
 /******************************************************************
@@ -96,12 +113,12 @@ static int OnSendMessage(byte* pmsg, int len, bool bAckRequired,	Dci_Context* pc
 //Define supported operations.
 
 static const opConfig s_aops[] = {
-		{e_UpdateFirmware, 			e_Download, "firmware", WCACOMP_FLASH,		DoUpdateFirmware, 	"Updating ASR-2300 firmware with file %s\n"},
-		{e_DownloadToFlash, 		e_Download, "flash", 	WCACOMP_FLASH,		DoBitTransferFlash, "Downloading %s to ASR-2300 flash\n"},
-		{e_DownloadToFpga, 			e_Download, "fpga", 	WCACOMP_FPGA,		DoBitTransfer, 		"Downloading %s to ASR-2300 FPGA\n"},
-		{e_DownloadToRfProfiles, 	e_Download, "profiles", WCACOMP_RFPROFILES, DoBitTransfer,		"Downloading %s to ASR-2300 RF Profiles NVM\n"},
-		{e_UploadFromFlash, 		e_Upload, 	"flash", 	WCACOMP_FLASH, 		DoBitTransfer,		"Uploading ASR-2300 Flash to %s\n" },
-		{e_UploadFromRfProfiles, 	e_Upload, 	"profiles", WCACOMP_RFPROFILES, DoBitTransfer,		"Uploading ASR-2300 RF Profiles to %s\n" }
+		{e_UpdateFirmware, 			e_Download, "firmware", WCACOMP_FLASH,		DoUpdateFirmware, 	"Updating ASR-2300 firmware with file %s\n", "bin"},
+		{e_DownloadToFlash, 		e_Download, "flash", 	WCACOMP_FLASH,		DoBitTransferFlash, "Downloading %s to ASR-2300 flash\n", "bit"},
+		{e_DownloadToFpga, 			e_Download, "fpga", 	WCACOMP_FPGA,		DoBitTransfer, 		"Downloading %s to ASR-2300 FPGA\n", "bit"},
+		{e_DownloadToRfProfiles, 	e_Download, "profiles", WCACOMP_RFPROFILES, DoBitTransfer,		"Downloading %s to ASR-2300 RF Profiles NVM\n", "rfpbit"},
+		{e_UploadFromFlash, 		e_Upload, 	"flash", 	WCACOMP_FLASH, 		DoBitTransfer,		"Uploading ASR-2300 Flash to %s\n","bit"  },
+		{e_UploadFromRfProfiles, 	e_Upload, 	"profiles", WCACOMP_RFPROFILES, DoBitTransfer,		"Uploading ASR-2300 RF Profiles to %s\n", "rfpbit" }
 };
 #define COUNT_OPS  6
 
@@ -110,6 +127,7 @@ static Dci_BitClient s_BITClient;
 static Dci_BitOperationMgr s_bitmgr;
 
 static const opConfig* s_pOp = NULL;
+static byte   s_idLastBitStatus = 0;
 static char* s_fileName = NULL;
 static FILE* s_fileStream = NULL;
 static TransportDci* s_ptd = NULL;
@@ -132,7 +150,7 @@ int main(int argc, char** argv) {
 	{
 		//Open the specified file for writing or reading.
 		if( s_pOp->dir == e_Upload)	{
-			s_fileStream = fopen(s_fileName, "w");
+			s_fileStream = fopen(s_fileName, "wb");
 			if (!s_fileStream) {
 				printf("\nError: Provided filename ('%s') cannot be "
 						"accessed or created.\n", s_fileName);
@@ -140,7 +158,7 @@ int main(int argc, char** argv) {
 				return -3;
 			}
 		} else { //Download
-			s_fileStream = fopen(s_fileName, "r");
+			s_fileStream = fopen(s_fileName, "rb");
 			if (!s_fileStream) {
 				printf("\nError: Provided filename ('%s') cannot be "
 						"accessed for reading.\n", s_fileName);
@@ -149,6 +167,22 @@ int main(int argc, char** argv) {
 			}
 		}
 
+		//Validate file type.
+		std::string filename(s_fileName);
+		std::string::size_type idx;
+		idx = filename.rfind('.');
+		std::string sext = "";
+		if(idx != std::string::npos) {
+			sext  = filename.substr(idx+1);
+		}
+
+		if( sext.size() == 0 || sext !=  s_pOp->szFileExt)
+		{
+			printf("\nError: Provided filename ('%s') does not have the correct file extension: %s\n",
+				s_fileName, s_pOp->szFileExt);
+			PrintUsage();
+			return -4;
+		}
 
 		//Now run the Update operation.
 		retval = Run();
@@ -238,7 +272,7 @@ static int DoUpdateFirmware()
 
 	// 2) Tell device to update firmware.
 	if( retval == 0) {
-		printf("Updating firmware, device will reboot when complete...\n");
+		printf("\n** Updating firmware, device will reboot when complete...\n");
 		fflush (stdout);
 
 		memset(buff, 0, sizeof(buff));
@@ -263,21 +297,50 @@ static int DoBitTransferFlash()
 	// Erase the flash, then wait 20
 	// seconds; FIXME: hopefully this will be changed into an ACK (or
 	// equivalent) in the near future; just sleep for now.
-	printf("Erasing Flash ... ");
+	printf("\n** Erasing Flash ... ");
 	fflush (stdout);
 	memset(buff, 0, sizeof(buff));
 	inLen = Dci_ExecuteAction_Init(buff, sizeof(buff), WCACOMP_FLASH,
 			FLASH_ActionErase, 0, NULL);
 	outLen = s_ptd->SendMsg(buff, (size_t) inLen, false);
 	if (outLen == inLen) {
-		printf("done.\n");
+		printf("  done.\n");
 	} else {
-		printf("error; proceeding anyway.\n");
+		printf("  error; proceeding anyway.\n");
 	}
-	printf("Sleeping for 20 seconds ... ");
+
+	printf("  Waiting for Flash Memory to Erase (%d seconds)...\n", WAIT_FLASH_ERASE );
+	
 	fflush(stdout);
-	sleep(20);
-	printf("done.\n");
+	int cntLoop = 0;
+	while (cntLoop < WAIT_FLASH_ERASE ) {
+		memset(buff, 0, sizeof(buff));
+		int nread = s_ptd->ReceiveMsg(buff, MAX_MSG_SIZE, 1.0);
+		++cntLoop;
+		if( !nread) continue;
+
+		Dci_Hdr* pMsg = (Dci_Hdr*) buff;
+		uint16 idMsg = Dci_Hdr_MessageId(pMsg);
+		switch( idMsg)
+		{
+		case Dci_DebugMsg_Id:
+			{
+				Dci_DebugMsg* plog = (Dci_DebugMsg*)( pMsg);
+				std::string smsg = TransportDci::DebugMsgToString( plog);
+				
+				puts( smsg.c_str());
+				putc( '\n', stdout);
+			}
+			break;
+
+		default:
+			printf("  Unhandled Dci message: %04X.\n", idMsg);
+			break;
+		}
+	} 
+	printf("  done.\n");
+	fflush(stdout);
+
 
 	//Proceed with standard Bit Transfer.
 	return DoBitTransfer();
@@ -297,13 +360,16 @@ static int DoBitTransfer()
 
 	byte idStatus = BSE_OperationNotAvailable;
 
+	printf("\n** Initiating BIT Operation ... \n");
+	fflush (stdout);
+
 	if (s_pOp->dir == e_Download) {
 		idStatus = Dci_BitInitiateTargetTransfer(&s_bitmgr, &s_BITClient,
 				s_pOp->idTargetComponent, 1, 0, &ctxt);
 		// flags: 1 == save; 0 means don't save
 
 		if (idStatus != BSE_InitiatingTransfer) {
-			printf("Error initiating target transfer:\n");
+			printf("  Error initiating target transfer:\n");
 			if (idStatus == BSE_OperationNotAvailable) {
 				printf("  Operation not available.\n");
 				return -5;
@@ -317,11 +383,11 @@ static int DoBitTransfer()
 				s_pOp->idTargetComponent, 0, 0, &ctxt);
 	}
 
-	// enter while loop to process messages while BIT operation complates
+	// enter while loop to process messages while BIT operation completes
 	int nread = 0;
 	int cntLoop = 0;
 
-	while (cntLoop < 2) {
+	while (cntLoop < 20) {
 		memset(buff, 0, sizeof(buff));
 		nread = s_ptd->ReceiveMsg(buff, MAX_MSG_SIZE);
 		if (nread > 0) {
@@ -340,12 +406,27 @@ static int DoBitTransfer()
 
 			//If WCA Message grab the component ID to help WCA
 			// based message processing.
-
 			if (pMsg->idCategory == 0x21)
 				ctxt.idComponent = ((byte*) pMsg)[WCA_COMPONENT_INDEX ];
 
 			if (!Dci_BitProcessDciMsg(&s_bitmgr, &ctxt)) {
-				printf("Unhandled Dci message: %04X.\n", ctxt.idMessage);
+				switch( ctxt.idMessage)
+				{
+				case Dci_DebugMsg_Id:
+					{
+						Dci_DebugMsg* plog = (Dci_DebugMsg*)( pMsg);
+						std::string smsg = TransportDci::DebugMsgToString( plog);
+						puts( smsg.c_str());
+						putc( '\n', stdout);
+					}
+					break;
+
+				default:
+					printf("Unhandled Dci message: %04X.\n", ctxt.idMessage);
+					break;
+
+				}
+
 			}
 
 			// should go idle when finished
@@ -362,8 +443,8 @@ static int DoBitTransfer()
 		}
 	}
 
-
-	return 0;
+	//If not transfer complete, then we had a transfer error (-7);
+	return (s_idLastBitStatus  == BSE_TransferComplete) ? 0: -7;
 }
 
 /**
@@ -389,10 +470,15 @@ static void WriteHeader() {
  */
 static void PrintUsage() {
 	printf("\nUsage for A2300Update:\n\n"
-			"  A2300Update w[rite] [fi[rmware]|p[rofile]|fl[ash]|f[pga]] file\n"
+			"  A2300Update w[rite] [ fi[rmware]|pr[ofile]|fl[ash]|fp[pga]] file\n"
 			"    write (download) file to firmware, RF profiles, flash, or directly to FPGA.\n\n"
 			"  A2300Update r[ead] p[rofile]|fl[ash]] data\n"
 			"    read (upload) Rf profile or flash data from device to file.\n\n"
+			"Allowed File Types for each mode:\n"
+			"  firmware write -- *.bin\n"
+			"  profile  write/read -- *.rfpbit\n"
+			"  flash(hdl) write/read -- *.bit\n"
+			"  fpga(hdl) write -- *.bit\n\n"
 			"NOTE: Distinct sub-words are allowed; for example:\n"
 			"    A2300Update w p file\n"
 			"  means the same as\n"
@@ -496,8 +582,7 @@ static byte OnBitInitiateSourceTransfer(Dci_BitOperation* pbop) {
 	//Get the length of the file to send.
 	fseek(s_fileStream, 0, SEEK_END);
 	long fLen = ftell(s_fileStream);
-	rewind(s_fileStream);
-
+	fseek(s_fileStream, 0, SEEK_SET);
 
 	// If updating firmware mark the biti with the "firmware"
 	// name so it can be recognized in device as firmware.
@@ -546,11 +631,12 @@ static int OnBitSetFrameData(Dci_BitOperation* pbop, byte* buff,
 }
 
 static void OnBitTransferComplete(Dci_BitOperation* /* pbop */, byte idStatus) {
-	if (idStatus == BSE_TransferComplete) {
-		printf("\nTransfer complete.");
-	} else {
-		printf("\nTransfer failed: status is %d.", idStatus);
-	}
+
+	const char* szStatus[] = {"Initiating", "Complete", "ReadyNext", "Frame Error", 
+							   "Write Error", "Read Error", "Operation Not Available",
+							   "Operation Cancelled"};
+	s_idLastBitStatus = idStatus;
+	printf( "\n  BIT Operation Ended: %s\n", szStatus[idStatus]);
 }
 
 /**

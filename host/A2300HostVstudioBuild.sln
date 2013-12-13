@@ -2,18 +2,29 @@
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "A2300Identify", "apps\A2300Identify\A2300Identify.vcproj", "{A93A8C1F-867E-4510-A4AF-78FCA6DB3B42}"
+	ProjectSection(ProjectDependencies) = postProject
+		{88183079-7867-4C3F-9887-65D0003E325C} = {88183079-7867-4C3F-9887-65D0003E325C}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{FA4F5231-1FB4-4BFB-9785-6672B8CE8AB2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{24D02698-AB80-422C-A76E-4EDAF810E2DF}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "A2300Update", "apps\A2300Update\A2300Update.vcproj", "{A3A5B742-E7CC-4775-A6AE-AB1BDCC333FC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{88183079-7867-4C3F-9887-65D0003E325C} = {88183079-7867-4C3F-9887-65D0003E325C}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "A2300Usb", "lib\A2300Usb\A2300UsbLib.vcproj", "{88183079-7867-4C3F-9887-65D0003E325C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "A2300Common", "..\common\A2300Common.vcproj", "{DCFDE6F1-2FF1-4118-8CBB-178579CA0783}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "A2300RxToFile", "apps\A2300RxToFile\A2300RxToFile.vcproj", "{A2CB3134-0644-40EC-987A-D919E9ED3570}"
+	ProjectSection(ProjectDependencies) = postProject
+		{88183079-7867-4C3F-9887-65D0003E325C} = {88183079-7867-4C3F-9887-65D0003E325C}
+	EndProjectSection
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "A2300Win32ApiSetup", "apps\A2300Win32ApiSetup\A2300Win32ApiSetup.vdproj", "{390E300F-0593-47A5-B3A8-DF32241FAB2A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +66,14 @@ Global
 		{A2CB3134-0644-40EC-987A-D919E9ED3570}.Release|Win32.ActiveCfg = Release|Win32
 		{A2CB3134-0644-40EC-987A-D919E9ED3570}.Release|Win32.Build.0 = Release|Win32
 		{A2CB3134-0644-40EC-987A-D919E9ED3570}.Release|x64.ActiveCfg = Release|Win32
+		{390E300F-0593-47A5-B3A8-DF32241FAB2A}.Debug|Win32.ActiveCfg = Debug
+		{390E300F-0593-47A5-B3A8-DF32241FAB2A}.Debug|Win32.Build.0 = Debug
+		{390E300F-0593-47A5-B3A8-DF32241FAB2A}.Debug|x64.ActiveCfg = Debug
+		{390E300F-0593-47A5-B3A8-DF32241FAB2A}.Debug|x64.Build.0 = Debug
+		{390E300F-0593-47A5-B3A8-DF32241FAB2A}.Release|Win32.ActiveCfg = Release
+		{390E300F-0593-47A5-B3A8-DF32241FAB2A}.Release|Win32.Build.0 = Release
+		{390E300F-0593-47A5-B3A8-DF32241FAB2A}.Release|x64.ActiveCfg = Release
+		{390E300F-0593-47A5-B3A8-DF32241FAB2A}.Release|x64.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -65,6 +65,19 @@ void A2300::TransportDci::Term()
 }
 
 /**
+* Translates debug message to a string.
+*/
+std::string A2300::TransportDci::DebugMsgToString( Dci_DebugMsg* pmsg)
+{
+	static const char* pszStatus[]={"ERR", "WRN", "INF", "DBG"};
+	char buff[320];
+	pcstr	szMsg = Dci_DebugMsg_Message( pmsg);
+	int		ct	  = sprintf( buff, "%s (id=%02Xh): %s", 
+						pszStatus[pmsg->status], pmsg->src, szMsg);
+	return std::string(buff,ct);
+}
+
+/**
  * Send a DCI Message
  */
 int A2300::TransportDci::SendMsg( byte* pmsg, size_t lenMsg, bool bRequestAck, double timeout )

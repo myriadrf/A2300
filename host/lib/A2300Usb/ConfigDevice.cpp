@@ -22,6 +22,15 @@
 namespace A2300 {
 
 
+ConfigDevice::ConfigDevice()
+	: m_bCreated(false), m_pDevice( NULL),
+	  m_dci0(A2300_DciIdc0_EpIn, A2300_DciIdc0_EpOut),
+	  m_timeoutDefault(A2300_WAIT_TIME ),
+	  m_rf0( WCACOMP_RF0, "RF0", this),
+	  m_rf1( WCACOMP_RF1, "RF1", this)
+	{}
+
+
 ConfigDevice::~ConfigDevice()
 {
 	Detach();

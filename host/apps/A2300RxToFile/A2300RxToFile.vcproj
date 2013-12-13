@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
@@ -114,7 +114,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\common&quot;;&quot;$(SolutionDir)\host\extern\CypressFx3UsbDriver\include&quot;;&quot;$(SolutionDir)\host\A2300Usb&quot;;&quot;$(SolutionDir)/host/include&quot;"
+				Optimization="3"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\..\common&quot;;&quot;$(ProjectDir)\..\..\extern\CypressFx3UsbDriver\include&quot;;&quot;$(ProjectDir)\..\..\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"

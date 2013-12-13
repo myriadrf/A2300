@@ -22,17 +22,7 @@
 /*****************************************************************************
 * Forward declarations and static declarations.
 *****************************************************************************/
-#ifndef WCA_COMPONENT_INDEX
-// temporarily, until it is defined elsewhere
-#define WCA_COMPONENT_INDEX ((byte)4)
-#ifndef WIN32
-#warning "WCA_COMPONENT_INDEX not yet defined."
-#endif
-#else
-#ifndef WIN32
-#warning "WCA_COMPONENT_INDEX has been defined elsewhere; please remove this warning section."
-#endif
-#endif
+
 
 //Declare standard message Type pre-process handlers.
 bool OnTypedDataMsg( Dci_MapEntry* pentry,  Dci_Context* pctxt);
@@ -371,7 +361,9 @@ bool Dci_BitProcessDciMsg( Dci_BitOperationMgr* pmgr, Dci_Context* pctxt)
 
 	//If this is not a WCA message or not associated with registered clients
 	//leave.
-	if( pctxt->idComponent == 0xFF || ((Dci_Hdr*)(pctxt->pMsg))->idCategory != Dci_WcaCategoryId		|| (pClient = GetBitClient( pmgr, pctxt->idComponent)) == NULL)
+	if( pctxt->idComponent == 0xFF 
+		|| ((Dci_Hdr*)(pctxt->pMsg))->idCategory != Dci_WcaCategoryId		
+		|| (pClient = GetBitClient( pmgr, pctxt->idComponent)) == NULL)
 		return false;
 
 	//Process any BIT messages
@@ -406,7 +398,9 @@ bool Dci_BitProcessDciMsg( Dci_BitOperationMgr* pmgr, Dci_Context* pctxt)
 			}
 
 			//Send a response that we are initiating.
-			lenMsg = Dci_BinaryImageTransferStatus_Init(				buff, pbop->bitinfo.idComponent,				idTransfer, pbop->idFrame, 0, idStatus);
+			lenMsg = Dci_BinaryImageTransferStatus_Init(				
+				buff, pbop->bitinfo.idComponent,				
+				idTransfer, pbop->idFrame, 0, idStatus);
 
 			(*(pmgr->fncSendDciMessage))(buff, lenMsg, false, pctxt);
 		}
@@ -555,7 +549,9 @@ bool Dci_BitProcessDciMsg( Dci_BitOperationMgr* pmgr, Dci_Context* pctxt)
 							pbop->ctBytesRemaining -= ctBytes;
 
 							//Determine if we are done or ready for next frame.
-							idStatus = (pbop->idFrame >= pbop->bitinfo.ctFrames)									 ? BSE_TransferComplete									 : BSE_ReadyNextFrame;
+							idStatus = (pbop->idFrame >= pbop->bitinfo.ctFrames)
+								? BSE_TransferComplete									 
+								: BSE_ReadyNextFrame;
 						}
 						else //Read Error, send notification.
 						{

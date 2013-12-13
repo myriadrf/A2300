@@ -38,6 +38,7 @@ extern "C" {
 #define Dci_HalEventNotification_Id		0x05
 #define Dci_BinaryImageTransferStatus_Id 0x06
 
+#define WCA_COMPONENT_INDEX ((byte)4)
 /*****************************************************************************/
 /*****************************************************************************/
 /**
@@ -249,7 +250,8 @@ enum Dci_BitStatusEnum
     BSE_FrameError = 3,
     BSE_WriteError = 4,
     BSE_ReadError = 5,
-    BSE_OperationNotAvailable =6
+    BSE_OperationNotAvailable =6,
+	BSE_OperationCancelled = 7
 };
 
 /**

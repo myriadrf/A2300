@@ -14,6 +14,16 @@
 * GNU General Public License for more details.
 */
 
+#ifdef WIN32
+#define _CRT_SECURE_NO_WARNINGS
+#define WIN32_LEAN_AND_MEAN 
+	#include<windows.h>
+	#define SLEEP_SEC(a)  Sleep((a)*1000)
+#else
+	#include <unistd.h>
+	#define SLEEP_SEC(a) sleep((a))
+#endif 
+
 #include <errno.h>
 #include <limits.h>
 #include <math.h>
@@ -21,8 +31,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <unistd.h>
-
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -98,7 +106,7 @@ int main(int argc, const char** argv) {
 	if( retval == 0)
 	{
 		// Open the specified file for writing.
-		s_fileStream = fopen(s_fileName, "w");
+		s_fileStream = fopen(s_fileName, "wb");
 		if (!s_fileStream) {
 			printf("\nError: Provided filename ('%s') cannot be "
 					"accessed.\n", s_fileName);
@@ -689,7 +697,7 @@ static int ParseOptions(int argc, const char** argv) {
 	  case 'N':
 	    {
 	      // number of samples to collect; next is # as int (non-negative; 0 means infinite)
-	      ssize_t numSamples = -1;
+	      size_t numSamples = 0;
 	      if (!GetArgumentNumber(argc, argv, "number of samples to collect", t_arg, numSamples)) {
 		return -1;
 	      }

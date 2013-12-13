@@ -101,8 +101,11 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="3"
+				InlineFunctionExpansion="2"
+				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="..\..\..\common;..\..\extern\CypressFx3UsbDriver\include;..\..\include"
-				PreprocessorDefinitions="SIZEOF_LONG=4;SIZEOF_INT=2"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"

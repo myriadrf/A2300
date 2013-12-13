@@ -72,6 +72,11 @@ namespace A2300
 		Dci_Conversation* Conversation() { return m_pConv;}
 		BulkDataPort*    Port() { return m_pPort;}
 		double			 DefaultTimeout() const { return m_timeout;}
+
+		/**
+		* Translates debug message to a string.
+		*/
+		static std::string DebugMsgToString( Dci_DebugMsg* pmsg); 
 	private:
 		//TODO implement asynchronous messaging.
 		//void OnMessageReceived( BulkDataPort::TransferContext* pctxt);
