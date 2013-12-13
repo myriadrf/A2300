@@ -35,6 +35,13 @@ Open a Terminal window and Enter the following commands.
 `UHD_MODULE_PATH=./host/lib/UhdAdaptor/libA2300UhdAdapter.dylib uhd_fft --args "type=a2300" -A Wideband -f 890.4M -s 1M --spec "A:0" -g 0 <click "Average"> <click "Autoscale" twice (or as needed)>`
 `
 
+## Installing ASR-2300 Device Drivers and Access Permissions
+ See Section 4 in the document "./host/docs/ASR-2300 GNU Software Document.pdf" This contains various procedures for configuring Linux and Windows 
+ platforms to communicate with the ASR-2300 via USB interface.
+ 
+ Procedures for Windows and Linux are somewhat different.  On Linux platforms, libusb is used, Cypress FX-3 driver is used on Windows platforms.
+
+
 ##Building A2300 API and Tools Using Eclipse
 
 TBD
