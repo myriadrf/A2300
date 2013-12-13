@@ -21,15 +21,14 @@
 #include <System/DataTypes.h>
 #include <vector>			// Used in FindAttached().
 
+#define A2300_VENDOR_ID	  ((uint16)0x1D50)  //Openmoko.com VID
+#define A2300_PRODUCT_ID  ((uint16)0x608B)	//Registered ASR-2300 PID.
+#define A2300_ADDR_UNDEF  ((uint16)0xffff)
 
-#define A2300_VENDOR_ID	  (0x1D50)  //Openmoko.com VID
-#define A2300_PRODUCT_ID  (0x608B)	//Registered ASR-2300 PID.
-#define A2300_ADDR_UNDEF  (0xffff)
-
-#define A2300_DciIdc0_EpIn 0x82
-#define A2300_DciIdc0_EpOut 0x1
-#define A2300_DciIdc1_EpIn 0x84
-#define A2300_DciIdc1_EpOut 0x3
+#define A2300_DciIdc0_EpIn ((byte)0x82)
+#define A2300_DciIdc0_EpOut ((byte)0x1)
+#define A2300_DciIdc1_EpIn ((byte)0x84)
+#define A2300_DciIdc1_EpOut ((byte)0x3)
 
 namespace A2300
 {
@@ -45,14 +44,14 @@ namespace A2300
 	{
 		friend class PortBase;
 	public:
-		UsbDevice(int vid = A2300_VENDOR_ID, int pid = A2300_PRODUCT_ID);
+		UsbDevice(int vid = (int) A2300_VENDOR_ID, int pid = (int) A2300_PRODUCT_ID);
 		virtual ~UsbDevice();
 
 	public:
 		/**
 		* <summary>
 		* Initializes the driver, User can specify specific address or driver
-		* will search (0xffff) for first available device.
+		* will search for first available device.
 		* Return:  0 for successful start, < 0 for error, > 0 for warning (not started).
 		*
 		* </summary>
