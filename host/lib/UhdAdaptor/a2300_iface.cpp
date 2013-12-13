@@ -36,22 +36,21 @@ class A2300_iface_impl : public A2300_iface
 {
 public:
     /*******************************************************************
-     * Constructors
+     * Constructor
      ******************************************************************/
 	A2300_iface_impl(
 			uhd::transport::usb_zero_copy::sptr transport,
-			const int    idConversation)
+			const byte idConversation)
 	: _transport(transport)
    {
-       // Initialize the DCI context...
-       Dci_Conversation_Init( &m_conv, idConversation);
+	// Initialize the DCI context...
+	Dci_Conversation_Init( &m_conv, idConversation);
    }
 
 	~A2300_iface_impl()
 	{
 		/* NOP */
 	}
-
 
 	/*
 	 * Board Alive Test.
@@ -63,7 +62,7 @@ public:
 		if( txBuff != NULL )
 		{
 			int len = Dci_IdleMsg_Init(txBuff->cast<void *>());
-			CommitDciMessageBuffer(txBuff, len, true);
+			CommitDciMessageBuffer(txBuff, (size_t) len, true);
 			txBuff = NULL;
 		}
 	}
@@ -77,7 +76,7 @@ public:
 		if( mbuff.get() != NULL)
     	{
     		// Process the conversation data
-    		Dci_Conversation_UpdateState( &m_conv, mbuff->cast<byte*>(), mbuff->size());
+	  Dci_Conversation_UpdateState( &m_conv, mbuff->cast<byte*>(), (uint16)(mbuff->size()));
     	}
     	return mbuff;
     }
@@ -104,11 +103,11 @@ public:
 	 */
 	void Test()
 	{
-		volatile int iSendFrameSize = _transport->get_send_frame_size();
-		volatile int iSendCount = _transport->get_num_send_frames();
+		volatile int iSendFrameSize = (int) _transport->get_send_frame_size();
+		volatile int iSendCount = (int) _transport->get_num_send_frames();
 
-		volatile int iReceiveFrameSize = _transport->get_recv_frame_size();
-		volatile int iReceiveCount = _transport->get_num_recv_frames();
+		volatile int iReceiveFrameSize = (int) _transport->get_recv_frame_size();
+		volatile int iReceiveCount = (int) _transport->get_num_recv_frames();
 
 		printf("Send Frame/Count: %d/%d... Receive Frame/Count: %d/%d\n",
 				iSendFrameSize, iSendCount, iReceiveFrameSize, iReceiveCount);
@@ -136,10 +135,7 @@ private:
  */
 A2300_iface::sptr A2300_iface::make(
 	uhd::transport::usb_zero_copy::sptr transport,
-	const int    idConversation)
+	const byte idConversation)
 {
     return sptr(new A2300_iface_impl(transport, idConversation ) );
 }
-
-
-

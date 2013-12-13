@@ -64,7 +64,7 @@ public:
      */
     static sptr make(
     	uhd::transport::usb_zero_copy::sptr transport,
-        const int    idConversation
+        const byte idConversation
     );
 
     virtual void SendIdleMsg(double timeout) = 0;
