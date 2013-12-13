@@ -34,7 +34,6 @@ class DspConfig
 
 public:
 
-
 	DspConfig();
 	~DspConfig();
 
@@ -53,27 +52,27 @@ protected:
     double SetHostRate(const double rate);
     double SetFrequency(const double freq);
 
-
     uhd::meta_range_t GetHostRates(void);
 
     double GetScalingAdjustment(void);
 
     uhd::meta_range_t GetFreqRange(void);
 
-
-
-
-
     void UpdateScalar( void);
 
 private:
+
     int    m_idDsp;
-    int    m_idComponent;
+    byte   m_idComponent;
     bool   m_bContinuousStreaming;
-    double m_tick_rate, m_link_rate;
-    double m_scaling_adjustment, m_dsp_extra_scaling, m_host_extra_scaling;
+    double m_tick_rate;
+    double m_link_rate;
+    double m_scaling_adjustment;
+    double m_dsp_extra_scaling;
+    double m_host_extra_scaling;
     UpdateSampleRateHandler  m_handlerSampleRate;
     A2300_iface::sptr  m_dci_ctrl;
+
 };
 
 #endif /* DSPCONFIG_H_ */

@@ -29,7 +29,6 @@
 
 #include "DciProperty.h"
 
-
 using namespace uhd;
 
 template <class T> T ceil_log2(T num){
@@ -39,7 +38,7 @@ template <class T> T ceil_log2(T num){
 DspConfig::DspConfig()
     :
     	 m_idDsp(-1),
-    	 m_idComponent(-1),
+    	 m_idComponent(0),
     	 m_tick_rate(A2300_DEFAULT_TICK_RATE),
          m_link_rate(A2300_DEFAULT_TICK_RATE),
          m_scaling_adjustment(1.0),
@@ -47,7 +46,6 @@ DspConfig::DspConfig()
          m_host_extra_scaling(1.0)
 {
 	// TODO Auto-generated constructor stub
-
 }
 
 DspConfig::~DspConfig() {
@@ -55,7 +53,7 @@ DspConfig::~DspConfig() {
 }
 
 void DspConfig::Initialize(
-		int idDsp, int idComponent, const fs_path pathroot, A2300_iface::sptr dci_ctrl,
+		int idDsp, byte idComponent, const fs_path pathroot, A2300_iface::sptr dci_ctrl,
 		UpdateSampleRateHandler handler,
 		uhd::property_tree::sptr tree)
 {
@@ -69,7 +67,6 @@ void DspConfig::Initialize(
     //Set up Tree.
     //tree->access<double>(pathroot / "tick_rate")
     //		.subscribe(boost::bind(&DspConfig::SetTickRate, this, _1));
-
 
 	//Set up DDUC configuration register properties.
 	tree->create<byte>(pathdsp / "configreg" )
@@ -93,12 +90,8 @@ void DspConfig::Initialize(
 					//.publish(boost::bind(&DspConfig::GetFrequency, this, idDdcComp))
 					.set(0.0);
 
-
-
 	tree->create<stream_cmd_t>(pathdsp / "stream_cmd")
         .subscribe(boost::bind(&DspConfig::IssueStreamCommand, this, _1));
-
-
 
     this->UpdateScalar();
 }
@@ -128,7 +121,6 @@ void DspConfig::ConfigStreaming(const uhd::stream_args_t &stream_args)
 
 }
 
-
 void DspConfig::SetTickRate(const double rate)
 {
     m_tick_rate = rate;
@@ -152,11 +144,8 @@ uhd::meta_range_t DspConfig::GetHostRates(void){
     return range;
 }
 
-
-
-
 double DspConfig::SetHostRate(const double rate){
-    const size_t decim_rate = boost::math::iround(m_tick_rate/this->GetHostRates().clip(rate, true));
+    const int32 decim_rate = boost::math::iround(m_tick_rate/this->GetHostRates().clip(rate, true));
     int32 decim = decim_rate;
 
     //determine which half-band filters are activated
@@ -181,9 +170,6 @@ double DspConfig::SetHostRate(const double rate){
 	DciProperty prop(m_idComponent, m_dci_ctrl, A2300_WAIT_TIME);
 	prop.SetProperty<uint16>(DSP_DDUC_SAMPRATE,  (uint16) decim );
 
-
-
-
 	if (decim > 1 and hb0 == 0 and hb1 == 0)
     {
         UHD_MSG(warning) << boost::format(
@@ -201,16 +187,16 @@ double DspConfig::SetHostRate(const double rate){
 
     m_handlerSampleRate( rate);
 
-    return m_tick_rate/decim_rate;
+    return m_tick_rate/((double)decim_rate);
 }
 
 void DspConfig::UpdateScalar(void){
 
-    const double factor = 1.0 + std::max(ceil_log2(m_scaling_adjustment), 0.0);
-	//printf("... m_dsp_extra_scaling = %lf, factor = %lf\n", m_dsp_extra_scaling, factor);
+    //const double factor = 1.0 + std::max(ceil_log2(m_scaling_adjustment), 0.0);
+    //printf("... m_dsp_extra_scaling = %lf, factor = %lf\n", m_dsp_extra_scaling, factor);
 
-    const double target_scalar = (1 << 17)*m_scaling_adjustment/m_dsp_extra_scaling/factor;
-    const boost::int32_t actual_scalar = boost::math::iround(target_scalar);
+    // const double target_scalar = (1 << 17)*m_scaling_adjustment/m_dsp_extra_scaling/factor;
+    //const boost::int32_t actual_scalar = boost::math::iround(target_scalar);
     //printf("... extra_scalar = %d\n", actual_scalar);
 
     //_fxpt_scalar_correction = 0.0; // target_scalar/actual_scalar*factor; //should be small
@@ -218,7 +204,6 @@ void DspConfig::UpdateScalar(void){
     //TODO Update scaling parameters
     //Send DCI message.
 }
-
 
 double DspConfig::GetScalingAdjustment(void){
 	return 1.0;
@@ -281,10 +266,8 @@ void DspConfig::IssueStreamCommand( const uhd::stream_cmd_t &stream_cmd)
 	cmd_word |= boost::uint32_t((inst_stop)?             1 : 0) << 28;
 	cmd_word |= (inst_samps)? stream_cmd.num_samps : ((inst_stop)? 0 : 1);
 
-
 	//TODO map this call to the Property Tree so configuration state remains in synch.
 	if( stream_cmd.stream_now)
 		SetConfiguration( 0x01);
-
 
 }
