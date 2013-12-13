@@ -1,4 +1,4 @@
-/** Name:  a2300_impl.cpp
+/** Name: a2300_impl.cpp
 *
 * Copyright(c) 2013 Loctronix Corporation
 * http://www.loctronix.com
@@ -107,10 +107,10 @@ static device_addrs_t a2300_find(const device_addr_t &hint)
 		libusb_set_debug(ctx, 3);
 		// Get a list of USB devices
 		libusb_device** devList;
-		int ctDevices = libusb_get_device_list(ctx, &devList);
-		for (int i = 0; i < ctDevices; i++)
+		int ctDevices = (int) libusb_get_device_list(ctx, &devList);
+		for (int nn = 0; nn < ctDevices; ++nn)
 		{
-			libusb_device *pDevice = devList[i];
+			libusb_device *pDevice = devList[nn];
 
 			struct libusb_device_descriptor desc;
 			int retval = libusb_get_device_descriptor( pDevice, &desc );
@@ -128,8 +128,7 @@ static device_addrs_t a2300_find(const device_addr_t &hint)
 				rc=libusb_open(pDevice, &handle);
 				if( rc == 0x0)
 				{
-					int iSerialNumber = desc.iSerialNumber;
-					rc = libusb_get_string_descriptor_ascii(handle, iSerialNumber, (byte *)buff, buffSize);
+					rc = libusb_get_string_descriptor_ascii(handle, desc.iSerialNumber, (byte *)buff, buffSize);
 					if( rc >= 0)
 						new_addr["serial"] = std::string((char*)buff);
 					else
@@ -442,7 +441,7 @@ uhd::property_tree::sptr a2300_impl::get_tree(void) const
 /*
  * More Device Discovery
  */
-void * a2300_impl::FindDevice(uint16 vid, uint16 pid, int usbAddress)
+void * a2300_impl::FindDevice(uint16 vid, uint16 pid, int /* usbAddress */)
 {
 	libusb_device *pDevice = 0;
 
@@ -453,10 +452,10 @@ void * a2300_impl::FindDevice(uint16 vid, uint16 pid, int usbAddress)
 		libusb_set_debug(ctx, 3);
 		// Get a list of USB devices
 		libusb_device** devList;
-		int ctDevices = libusb_get_device_list(ctx, &devList);
-		for (int i = 0; i < ctDevices; i++)
+		int ctDevices = (int) libusb_get_device_list(ctx, &devList);
+		for (int nn = 0; nn < ctDevices; ++nn)
 		{
-			pDevice = devList[i];
+			pDevice = devList[nn];
 
 			struct libusb_device_descriptor desc;
 			int retval = libusb_get_device_descriptor( pDevice, &desc );
@@ -474,26 +473,21 @@ void * a2300_impl::FindDevice(uint16 vid, uint16 pid, int usbAddress)
 	return( pDevice );
 }
 
-
 /***********************************************************************
  * loopback tests
  **********************************************************************/
 // Not Used.
 
-
-
-
-
 /***********************************************************************
  * Reference time and clock
  **********************************************************************/
 
-void a2300_impl::update_clock_source(const std::string &source)
+void a2300_impl::update_clock_source(const std::string& /* source */)
 {
   //	printf("update_clock_source()\n");
 }
 
-void a2300_impl::update_time_source(const std::string &source)
+void a2300_impl::update_time_source(const std::string& source)
 {
   //	printf("update_time_source(%s)\n", source.c_str());
 
@@ -519,15 +513,14 @@ void a2300_impl::update_time_source(const std::string &source)
 /*******************************************************************
 * Update methods for time
 ******************************************************************/
-void a2300_impl::set_time(const uhd::time_spec_t &time)
+void a2300_impl::set_time(const uhd::time_spec_t& /* time */)
 {
-	printf("set_time\n");
+	printf("set_time not yet implemented\n");
 	//boost::mutex::scoped_lock lock(_mutex);
 	//_time = time;
 	//_use_time = _time != uhd::time_spec_t(0.0);
 	//if (_use_time) _timeout = MASSIVE_TIMEOUT; //permanently sets larger timeout
 }
-
 
 std::string a2300_impl::get_fw_version()
 {
@@ -536,8 +529,6 @@ std::string a2300_impl::get_fw_version()
 
 	//Send DCI Infrastructure Message to get Firmware information.
 }
-
-
 
 /*
  * FPGA Version Query
@@ -553,21 +544,19 @@ std::string a2300_impl::get_fpga_version()
 	char buffout[32];
 	sprintf(buffout, "%04X - %02X.%02X", id, (ver>>8), ver & 0x00FF);		// ASR-2300 uses a Hex format.
 	return std::string(buffout);
-
 }
 
-
-void a2300_impl::update_enables(void)
+void a2300_impl::update_enables()
 {
     //extract settings from state variables
 
-    const bool enb_tx1 = (_is_setup) and bool(m_perifs[0].TxStreamer().lock());
-    const bool enb_rx1 = (_is_setup) and bool(m_perifs[0].RxStreamer().lock());
-    const bool enb_tx2 = (_is_setup) and bool(m_perifs[1].TxStreamer().lock());
-    const bool enb_rx2 = (_is_setup) and bool(m_perifs[1].RxStreamer().lock());
-    const size_t num_rx = (enb_rx1?1:0) + (enb_rx2?1:0);
-    const size_t num_tx = (enb_tx1?1:0) + (enb_tx2?1:0);
-    const bool mimo = num_rx == 2 or num_tx == 2;
+    // const bool enb_tx1 = (_is_setup) and bool(m_perifs[0].TxStreamer().lock());
+    // const bool enb_rx1 = (_is_setup) and bool(m_perifs[0].RxStreamer().lock());
+    // const bool enb_tx2 = (_is_setup) and bool(m_perifs[1].TxStreamer().lock());
+    // const bool enb_rx2 = (_is_setup) and bool(m_perifs[1].RxStreamer().lock());
+    // const size_t num_rx = (enb_rx1?1:0) + (enb_rx2?1:0);
+    // const size_t num_tx = (enb_tx1?1:0) + (enb_tx2?1:0);
+    // const bool mimo = num_rx == 2 or num_tx == 2;
 
     //setup the active chains in the codec
     // _codec_ctrl->set_active_chains(enb_tx1, enb_tx2, enb_rx1, enb_rx2);
@@ -589,9 +578,9 @@ const uhd::usrp::mboard_eeprom_t & a2300_impl::get_mb_eeprom(void)
     return mb_eeprom;
 }
 
-void a2300_impl::set_mb_eeprom(const uhd::usrp::mboard_eeprom_t &mb_eeprom)
+void a2300_impl::set_mb_eeprom(const uhd::usrp::mboard_eeprom_t& /* mb_eeprom */)
 {
-    printf("set_mb_eeprom()\n");
+    printf("set_mb_eeprom not yet implemented.\n");
 //    mb_eeprom.commit(*_iface, "B200");
 }
 

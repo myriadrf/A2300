@@ -221,7 +221,7 @@ void a2300_impl::io_impl::commit_send_buff(
  */
 void a2300_impl::io_impl::flush_send_buff(void){
     //calculate the number of bytes to alignment
-    size_t bytes_to_pad = (-1*curr_buff.offset)%alignment_padding;
+  size_t bytes_to_pad = (size_t)(((ssize_t)-1)*((ssize_t)curr_buff.offset))%((ssize_t)alignment_padding);
 
     //send at least alignment_padding to guarantee zeros are sent
     if (bytes_to_pad == 0) bytes_to_pad = alignment_padding;
@@ -259,7 +259,7 @@ void a2300_impl::rx_stream_on_off(bool enb){
     }
 }
 
-void a2300_impl::tx_stream_on_off(bool enb){
+void a2300_impl::tx_stream_on_off(bool /* enb */){
     _io_impl->last_send_time = boost::get_system_time();
 }
 
@@ -284,7 +284,7 @@ void a2300_impl::vandal_conquest_loop(void){
 
     //start the polling loop...
     try{ while (not boost::this_thread::interruption_requested()){
-        boost::uint8_t underflow = 0, overflow = 0;
+//        boost::uint8_t underflow = 0, overflow = 0;
 //
 //        //shutoff transmit if it has been too long since send() was called
 //        if (_tx_enabled and (boost::get_system_time() - _io_impl->last_send_time) > boost::posix_time::milliseconds(100)){
