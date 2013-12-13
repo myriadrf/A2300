@@ -39,8 +39,8 @@ int main(int, char**)
 
 
 	// Find the list of addresses at the specified VID/PID.
-	printf("\n");
-	printf (" Enumerating ASR-2300 devices...\n");	 
+	printf ("\n");
+	printf ("Enumerating ASR-2300 devices...\n");	 
 	printf ("--------------------------------------\n");
 
 	// Get a list of all attached devices.
@@ -48,7 +48,7 @@ int main(int, char**)
 	int ctDevices = A2300::UsbDevice::FindAttached(addrs, A2300_VENDOR_ID, A2300_PRODUCT_ID);
 	if (ctDevices == 0)
 	{
-		printf(" No devices found.\n\n");
+		printf("ERROR: No devices found.\n\n");
 		return -1;
 	}
 
@@ -84,7 +84,7 @@ int main(int, char**)
 	}
 	catch( std::runtime_error& re)
 	{
-		printf("Error:  %s\n", re.what() );
+		printf("ERROR: %s\n", re.what() );
 		return -1;
 	}
 	return(0);
