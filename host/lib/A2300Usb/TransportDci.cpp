@@ -75,7 +75,7 @@ std::string A2300::TransportDci::DebugMsgToString( Dci_DebugMsg* pmsg)
 	pcstr	szMsg = Dci_DebugMsg_Message( pmsg);
 	int		ct	  = sprintf( buff, "%s (id=%02Xh): %s", 
 						pszStatus[pmsg->status], pmsg->src, szMsg);
-	return std::string(buff,ct);
+	return std::string(buff,(size_t)ct);
 }
 
 /**
