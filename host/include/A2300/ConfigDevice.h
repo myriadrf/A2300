@@ -47,7 +47,6 @@ public:
 	ConfigRf&   RF0()	 { return m_rf0;}
 	ConfigRf&   RF1()	 { return m_rf1;}
 
-
 	/**
 	 * Property gets the DCI Conversation ID 0 transport.  Use to communicate
 	 * with the ASR-2300 device controller.
@@ -58,7 +57,6 @@ public:
 	std::string FirmwareVersion( int idWhich);
 	uint16 FpgaId();
 	uint16 FpgaVersion();
-
 
 	/**
 	 * Attach ASR-2300 device by finding the device specified by address, if not defined,
@@ -88,7 +86,6 @@ public:
 	 */
 	void Reset();
 
-
 	ConfigComponentList& Components() { return m_listComponents;}
 
 protected:
@@ -116,4 +113,5 @@ private:
 };
 
 } /* namespace A2300 */
+
 #endif /* CONFIGDEVICE_H_ */
