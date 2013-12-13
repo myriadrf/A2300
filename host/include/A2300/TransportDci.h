@@ -56,18 +56,18 @@ namespace A2300
 		 */
 		int ReceiveMsg( byte* pmsg, size_t lenMax, double timeout = USE_DEFAULT_TIMEOUT);
 
-		template< typename T> int GetProperty( int /* idComponent */,  int /* idProp */, T& /* value */)
+		template< typename T> int GetProperty( byte /* idComponent */, byte /* idProp */, T& /* value */)
 		{
 			throw std::runtime_error("DCI Property type not supported");
 		}
 
-		template< typename T> int SetProperty( int /* idComponent */,  int /* idProp */, T /* value */)
+		template< typename T> int SetProperty( byte /* idComponent */, byte /* idProp */, T /* value */)
 		{
 			throw std::runtime_error("DCI Property type not supported");
 		}
 
-		int GetProperty( int idComponent, Dci_Property& prop, double timeout);
-		int SetProperty( int idComponent, Dci_Property& prop, double timeout);
+		int GetProperty( byte idComponent, Dci_Property& prop, double timeout);
+		int SetProperty( byte idComponent, Dci_Property& prop, double timeout);
 
 		Dci_Conversation* Conversation() { return m_pConv;}
 		BulkDataPort*    Port() { return m_pPort;}
@@ -88,29 +88,32 @@ namespace A2300
 		//byte*				 m_pbuff;
 	};
 
-	template <> int TransportDci::GetProperty( int idComponent,  int idProp, byte& value);
-	template <> int TransportDci::GetProperty( int idComponent,  int idProp, uint16& value);
-	template <> int TransportDci::GetProperty( int idComponent,  int idProp, int16& value);
-	template <> int TransportDci::GetProperty( int idComponent,  int idProp, uint32& value);
-	template <> int TransportDci::GetProperty( int idComponent,  int idProp, int32& value);
-	template <> int TransportDci::GetProperty( int idComponent,  int idProp, float& value);
-	template <> int TransportDci::GetProperty( int idComponent,  int idProp, double& value);
-	/*
-	template <> int TransportDci::GetProperty( int idComponent,  int idProp, uint64& value);
-	template <> int TransportDci::GetProperty( int idComponent,  int idProp, int64& value);
-	*/
+	template <> int TransportDci::GetProperty( byte idComponent, byte idProp, byte& value);
+	template <> int TransportDci::GetProperty( byte idComponent, byte idProp, uint16& value);
+	template <> int TransportDci::GetProperty( byte idComponent, byte idProp, int16& value);
+	template <> int TransportDci::GetProperty( byte idComponent, byte idProp, uint32& value);
+	template <> int TransportDci::GetProperty( byte idComponent, byte idProp, int32& value);
+	template <> int TransportDci::GetProperty( byte idComponent, byte idProp, float& value);
+	template <> int TransportDci::GetProperty( byte idComponent, byte idProp, double& value);
 
-	template <> int TransportDci::SetProperty( int idComponent,  int idProp, byte value);
-	template <> int TransportDci::SetProperty( int idComponent,  int idProp, uint16 value);
-	template <> int TransportDci::SetProperty( int idComponent,  int idProp, int16 value);
-	template <> int TransportDci::SetProperty( int idComponent,  int idProp, uint32 value);
-	template <> int TransportDci::SetProperty( int idComponent,  int idProp, int32 value);
-	template <> int TransportDci::SetProperty( int idComponent,  int idProp, float value);
-	template <> int TransportDci::SetProperty( int idComponent,  int idProp, double value);
-	/*
-	template <> int TransportDci::SetProperty( int idComponent,  int idProp, uint64 value);
-	template <> int TransportDci::SetProperty( int idComponent,  int idProp, int64 value);
-	*/
+#if 0
+	template <> int TransportDci::GetProperty( byte idComponent, byte idProp, uint64& value);
+	template <> int TransportDci::GetProperty( byte idComponent, byte idProp, int64& value);
+#endif
+
+	template <> int TransportDci::SetProperty( byte idComponent, byte idProp, byte value);
+	template <> int TransportDci::SetProperty( byte idComponent, byte idProp, uint16 value);
+	template <> int TransportDci::SetProperty( byte idComponent, byte idProp, int16 value);
+	template <> int TransportDci::SetProperty( byte idComponent, byte idProp, uint32 value);
+	template <> int TransportDci::SetProperty( byte idComponent, byte idProp, int32 value);
+	template <> int TransportDci::SetProperty( byte idComponent, byte idProp, float value);
+	template <> int TransportDci::SetProperty( byte idComponent, byte idProp, double value);
+
+#if 0
+	template <> int TransportDci::SetProperty( byte idComponent, byte idProp, uint64 value);
+	template <> int TransportDci::SetProperty( byte idComponent, byte idProp, int64 value);
+#endif
+
 }
 
 #endif /* TransportDci_H_ */

@@ -110,12 +110,12 @@ int A2300::TransportDci::ReceiveMsg( byte* pmsg, size_t lenMax, double timeout)
 
 }
 
-int A2300::TransportDci::GetProperty( int idComponent, Dci_Property& prop, double timeout)
+int A2300::TransportDci::GetProperty( byte idComponent, Dci_Property& prop, double timeout)
 {
 	byte buff[DCI_MAX_MSGSIZE];
 
 	//Query Identify Device.
-	int len = Dci_TypedPropertiesQuery_Init(buff, DCI_MAX_MSGSIZE, (byte) idComponent, 1, &(prop.idprop), &(prop.idtype) );
+	int len = Dci_TypedPropertiesQuery_Init(buff, DCI_MAX_MSGSIZE, idComponent, 1, &(prop.idprop), &(prop.idtype) );
 
 	Dci_Conversation_PrepareMessageHdr( m_pConv, (Dci_Hdr*) buff, false);
 
@@ -143,10 +143,10 @@ int A2300::TransportDci::GetProperty( int idComponent, Dci_Property& prop, doubl
 	return -1;
 }
 
-int A2300::TransportDci::SetProperty( int idComponent, Dci_Property& prop, double timeout)
+int A2300::TransportDci::SetProperty( byte idComponent, Dci_Property& prop, double timeout)
 {
 	byte buff[DCI_MAX_MSGSIZE];
-	int len = Dci_TypedProperties_Init(buff, DCI_MAX_MSGSIZE, (byte) idComponent, 1, &prop );
+	int len = Dci_TypedProperties_Init(buff, DCI_MAX_MSGSIZE, idComponent, 1, &prop );
 
 	Dci_Conversation_PrepareMessageHdr( m_pConv, (Dci_Hdr*) buff, true);
 
@@ -161,149 +161,179 @@ int A2300::TransportDci::SetProperty( int idComponent, Dci_Property& prop, doubl
 
 }
 
-template <> int A2300::TransportDci::GetProperty( int idComponent,  int idProp, byte& value)
+template <> int A2300::TransportDci::GetProperty( byte idComponent, byte idProp, byte& value)
 {
-	Dci_Property prop; 	prop.idtype = PT_BYTE;	prop.idprop = (byte) idProp;
+	Dci_Property prop;
+ 	prop.idtype = PT_BYTE;
+	prop.idprop = idProp;
 	int retval = GetProperty( idComponent, prop, m_timeout);
 	value = prop.value.vByte;
 	return retval;
 }
 
-template <> int A2300::TransportDci::GetProperty( int idComponent,  int idProp, uint16& value)
+template <> int A2300::TransportDci::GetProperty( byte idComponent, byte idProp, uint16& value)
 {
-	Dci_Property prop; 	prop.idtype = PT_UINT16;	prop.idprop = (byte) idProp;
+	Dci_Property prop;
+ 	prop.idtype = PT_UINT16;
+	prop.idprop = idProp;
 	int retval = GetProperty( idComponent, prop, m_timeout);
 	value = prop.value.vUint16;
 	return retval;
 }
 
-template <> int A2300::TransportDci::GetProperty( int idComponent,  int idProp, int16& value)
+template <> int A2300::TransportDci::GetProperty( byte idComponent, byte idProp, int16& value)
 {
-	Dci_Property prop; 	prop.idtype = PT_INT16;	prop.idprop = (byte) idProp;
+	Dci_Property prop;
+ 	prop.idtype = PT_INT16;
+	prop.idprop = idProp;
 	int retval = GetProperty( idComponent, prop, m_timeout);
 	value = prop.value.vInt16;
 	return retval;
 }
 
-template <> int A2300::TransportDci::GetProperty( int idComponent,  int idProp, uint32& value)
+template <> int A2300::TransportDci::GetProperty( byte idComponent, byte idProp, uint32& value)
 {
-	Dci_Property prop; 	prop.idtype = PT_UINT32;	prop.idprop = (byte) idProp;
+	Dci_Property prop;
+ 	prop.idtype = PT_UINT32;
+	prop.idprop = idProp;
 	int retval = GetProperty( idComponent, prop, m_timeout);
 	value = prop.value.vUint32;
 	return retval;
 }
 
-template <> int A2300::TransportDci::GetProperty( int idComponent,  int idProp, int32& value)
+template <> int A2300::TransportDci::GetProperty( byte idComponent, byte idProp, int32& value)
 {
-	Dci_Property prop; 	prop.idtype = PT_INT32;	prop.idprop = (byte) idProp;
+	Dci_Property prop;
+ 	prop.idtype = PT_INT32;
+	prop.idprop = idProp;
 	int retval = GetProperty( idComponent, prop, m_timeout);
 	value = prop.value.vInt32;
 	return retval;
 }
 
-template <> int A2300::TransportDci::GetProperty( int idComponent,  int idProp, float& value)
+template <> int A2300::TransportDci::GetProperty( byte idComponent, byte idProp, float& value)
 {
-	Dci_Property prop; 	prop.idtype = PT_FLOAT;	prop.idprop =  (byte) idProp;
+	Dci_Property prop;
+ 	prop.idtype = PT_FLOAT;
+	prop.idprop = idProp;
 	int retval = GetProperty( idComponent, prop, m_timeout);
 	value = prop.value.vFloat;
 	return retval;
 }
 
-template <> int A2300::TransportDci::GetProperty( int idComponent,  int idProp, double& value)
+template <> int A2300::TransportDci::GetProperty( byte idComponent, byte idProp, double& value)
 {
-	Dci_Property prop; 	prop.idtype = PT_DOUBLE;	prop.idprop = (byte) idProp;
+	Dci_Property prop;
+ 	prop.idtype = PT_DOUBLE;
+	prop.idprop = idProp;
 	int retval = GetProperty( idComponent, prop, m_timeout);
 	value = prop.value.vDouble;
 	return retval;
 }
-/*
-template <> int A2300::TransportDci::GetProperty( int idComponent,  int idProp, uint64& value)
+
+#if 0
+
+template <> int A2300::TransportDci::GetProperty( byte idComponent, byte idProp, uint64& value)
 {
-	Dci_Property prop; 	prop.idtype = PT_UINT64;	prop.idprop = (byte) idProp;
+	Dci_Property prop;
+ 	prop.idtype = PT_UINT64;
+	prop.idprop = idProp;
 	int retval = GetProperty( idComponent, prop, m_timeout);
 	value = prop.value.vUint64;
 	return retval;
 }
 
-template <> int A2300::TransportDci::GetProperty( int idComponent,  int idProp, int64& value)
+template <> int A2300::TransportDci::GetProperty( byte idComponent, byte idProp, int64& value)
 {
-	Dci_Property prop; 	prop.idtype = PT_INT64;	prop.idprop = (byte) idProp;
+	Dci_Property prop;
+ 	prop.idtype = PT_INT64;
+	prop.idprop = idProp;
 	int retval = GetProperty( idComponent, prop, m_timeout);
 	value = prop.value.vInt64;
 	return retval;
 }
-*/
 
-template <> int A2300::TransportDci::SetProperty( int idComponent,  int idProp, byte value)
+#endif
+
+template <> int A2300::TransportDci::SetProperty( byte idComponent, byte idProp, byte value)
 {
-	Dci_Property prop;	prop.idtype = PT_BYTE;
-	prop.idprop = (byte) idProp;
+	Dci_Property prop;
+	prop.idtype = PT_BYTE;
+	prop.idprop = idProp;
 	prop.value.vByte = value;
 	return SetProperty( idComponent, prop, m_timeout );
 }
 
-template <> int A2300::TransportDci::SetProperty( int idComponent,  int idProp, uint16 value)
+template <> int A2300::TransportDci::SetProperty( byte idComponent, byte idProp, uint16 value)
 {
-	Dci_Property prop;	prop.idtype = PT_UINT16;
-	prop.idprop = (byte) idProp;
+	Dci_Property prop;
+	prop.idtype = PT_UINT16;
+	prop.idprop = idProp;
 	prop.value.vUint16 = value;
 	return SetProperty( idComponent, prop, m_timeout );
 }
 
-template <> int A2300::TransportDci::SetProperty( int idComponent,  int idProp, int16 value)
+template <> int A2300::TransportDci::SetProperty( byte idComponent, byte idProp, int16 value)
 {
-	Dci_Property prop;	prop.idtype = PT_INT16;
-	prop.idprop = (byte) idProp;
+	Dci_Property prop;
+	prop.idtype = PT_INT16;
+	prop.idprop = idProp;
 	prop.value.vInt16 = value;
 	return SetProperty( idComponent, prop, m_timeout );
 }
 
-template <> int A2300::TransportDci::SetProperty( int idComponent,  int idProp, uint32 value)
+template <> int A2300::TransportDci::SetProperty( byte idComponent, byte idProp, uint32 value)
 {
-	Dci_Property prop;	prop.idtype = PT_UINT32;
-	prop.idprop = (byte) idProp;
+	Dci_Property prop;
+	prop.idtype = PT_UINT32;
+	prop.idprop = idProp;
 	prop.value.vUint32 = value;
 	return SetProperty( idComponent, prop, m_timeout );
 }
 
-template <> int A2300::TransportDci::SetProperty( int idComponent,  int idProp, int32 value)
+template <> int A2300::TransportDci::SetProperty( byte idComponent, byte idProp, int32 value)
 {
-	Dci_Property prop;	prop.idtype = PT_INT32;
-	prop.idprop = (byte) idProp;
+	Dci_Property prop;
+	prop.idtype = PT_INT32;
+	prop.idprop = idProp;
 	prop.value.vInt32 = value;
 	return SetProperty( idComponent, prop, m_timeout );
 }
 
-template <> int A2300::TransportDci::SetProperty( int idComponent,  int idProp, float value)
+template <> int A2300::TransportDci::SetProperty( byte idComponent, byte idProp, float value)
 {
-	Dci_Property prop;	prop.idtype = PT_FLOAT;
-	prop.idprop = (byte) idProp;
+	Dci_Property prop;
+	prop.idtype = PT_FLOAT;
+	prop.idprop = idProp;
 	prop.value.vFloat = value;
 	return SetProperty( idComponent, prop, m_timeout );
 }
 
-template <> int A2300::TransportDci::SetProperty( int idComponent,  int idProp, double value)
+template <> int A2300::TransportDci::SetProperty( byte idComponent, byte idProp, double value)
 {
-	Dci_Property prop;	prop.idtype = PT_DOUBLE;
-	prop.idprop = (byte) idProp;
+	Dci_Property prop;
+	prop.idtype = PT_DOUBLE;
+	prop.idprop = idProp;
 	prop.value.vDouble= value;
 	return SetProperty( idComponent, prop, m_timeout );
 }
 
 #if 0
 
-template <> int A2300::TransportDci::SetProperty( int idComponent,  int idProp, uint64 value)
+template <> int A2300::TransportDci::SetProperty( byte idComponent, byte idProp, uint64 value)
 {
-	Dci_Property prop;	prop.idtype = PT_UINT64;
-	prop.idprop = (byte) idProp;
+	Dci_Property prop;
+	prop.idtype = PT_UINT64;
+	prop.idprop = idProp;
 	prop.value.vUint64 = value;
 	return SetProperty( idComponent, prop, m_timeout );
 }
 
-template <> int A2300::TransportDci::SetProperty( int idComponent,  int idProp, int64 value)
+template <> int A2300::TransportDci::SetProperty( byte idComponent, byte idProp, int64 value)
 {
-	Dci_Property prop;	prop.idtype = PT_INT64;
-	prop.idprop = (byte) idProp;
+	Dci_Property prop;
+	prop.idtype = PT_INT64;
+	prop.idprop = idProp;
 	prop.value.vInt64 = value;
 	return SetProperty( idComponent, prop, m_timeout );
 }
