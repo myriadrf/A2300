@@ -190,7 +190,7 @@ static int DoRxToFile ()
 	printf("RF Component:  %s (id=%02Xh, ep=%02Xh)\n", (bIsRf0)? "RF0" : "RF1", s_idComponent, epRx);
 	printf("RX Profile:    %s (id=%02Xh)\n", szPaths[s_rxProfile & 0xF], s_rxProfile);
 	printf("RX Gain:       %d dB\n", s_rxGain*3);
-	printf("RX Frequency:  %0.3f MHz\n", s_rxFreq/1000.0F);
+	printf("RX Frequency:  %0.3f MHz\n", s_rxFreq/1.0e6f);
 	printf("RX Bandwidth:  ?? MHz (id=%02Xh)\n", s_rxBandwidth);
 	printf("Host Rate:     %0.3f MHz\n", fSampFreq/1.0e6f);
 	if (s_numSamples == 0) {
@@ -430,8 +430,12 @@ void GetMinMax (T& /* arg */, double& MIN_VAL, double& MAX_VAL, bool isSigned)
     MIN_VAL *= ((double)(-1));
   } else {
     MIN_VAL = (double) 0;
-    MAX_VAL = (double) ((((unsigned long long) 1) << numBits) -
-			((unsigned long long) 1));
+    if (numBits == (sizeof(unsigned long long)*CHAR_BIT)) {
+      MAX_VAL = (double)((unsigned long long) -1);
+    } else {
+      MAX_VAL = (double) ((((unsigned long long) 1) << numBits) -
+			  ((unsigned long long) 1));
+    }
   }
 }
 
