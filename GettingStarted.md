@@ -17,6 +17,10 @@ For additional information please visit the links:
 
 The A2300 supports UHD and GnuRadio functions if these capabilities are desired.  Please make sure you have downloaded and properly installed the packages on your system.  The A2300 cmake checks to see if they are installed and builds the adaptor libraries accordingly. 
 
+* [Installing GNU Radio](http://gnuradio.org/redmine/projects/gnuradio/wiki/InstallingGRFromSource)
+* [Installing UHD] (http://code.ettus.com/redmine/ettus/projects/uhd/wiki/UHD_Build)
+
+
 For native C/C++ development, the A2300 API is available for development with projects for Eclipse and Visual Studio.
 
 ##Installation Using Git and CMake
