@@ -701,12 +701,7 @@ static int ParseOptions(int argc, const char** argv) {
 	      if (!GetArgumentNumber(argc, argv, "number of samples to collect", t_arg, numSamples)) {
 		return -1;
 	      }
-	      if (numSamples < 0) {
-		printf ("Error: Specified number of samples to take (%ld) is negative; must be non-negative (0 means infinite).\n", numSamples);
-		PrintUsage();
-		return -1;
-	      }
-	      s_numSamples = (size_t) numSamples;
+	      s_numSamples = numSamples;
 	      printf ("selected number of samples: %ld\n", numSamples);
 	    }
 	    break;
