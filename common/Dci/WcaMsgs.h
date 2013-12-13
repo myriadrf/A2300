@@ -28,17 +28,18 @@ extern "C" {
 #endif
 
 /* WCA messages supported. */
-#define Dci_WcaCategoryId 				0x21
-#define Dci_TypedProperties_Id			0x01
-#define Dci_TypedPropertiesQuery_Id		0x81
-#define Dci_ExecuteAction_Id			0x02
-#define Dci_BinaryImageTransfer_Id		0x03
-#define Dci_BinaryImageTransferFrame_Id	0x04
-#define Dci_BinaryImageTransferQuery_Id	0x83
-#define Dci_HalEventNotification_Id		0x05
-#define Dci_BinaryImageTransferStatus_Id 0x06
+#define Dci_WcaCategoryId 				((byte)0x21)
+#define Dci_TypedProperties_Id			((byte)0x01)
+#define Dci_TypedPropertiesQuery_Id		((byte)0x81)
+#define Dci_ExecuteAction_Id			((byte)0x02)
+#define Dci_BinaryImageTransfer_Id		((byte)0x03)
+#define Dci_BinaryImageTransferFrame_Id	((byte)0x04)
+#define Dci_BinaryImageTransferQuery_Id	((byte)0x83)
+#define Dci_HalEventNotification_Id		((byte)0x05)
+#define Dci_BinaryImageTransferStatus_Id ((byte)0x06)
 
 #define WCA_COMPONENT_INDEX ((byte)4)
+
 /*****************************************************************************/
 /*****************************************************************************/
 /**
