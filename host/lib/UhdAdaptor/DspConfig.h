@@ -38,7 +38,7 @@ public:
 	~DspConfig();
 
     void Initialize( int idDsp,
-    		int idComponent, const uhd::fs_path pathroot,
+    		byte idComponent, const uhd::fs_path pathroot,
     		A2300_iface::sptr dci_ctrl, UpdateSampleRateHandler handler, uhd::property_tree::sptr tree);
 
     void IssueStreamCommand( const uhd::stream_cmd_t &stream_cmd);

@@ -41,10 +41,9 @@ static const double s_rfbandwidths[] =
 RfConfig::RfConfig()
 :
 	 m_idRf(-1),
-	 m_idComponent(-1)
+	 m_idComponent(0)
 {
 	// TODO Auto-generated constructor stub
-
 }
 
 RfConfig::~RfConfig()
@@ -52,8 +51,7 @@ RfConfig::~RfConfig()
 	// TODO Auto-generated destructor stub
 }
 
-
-void RfConfig::Initialize(int idRf, int idComponent, bool bTx, const uhd::fs_path pathroot, A2300_iface::sptr dci_ctrl, uhd::property_tree::sptr tree)
+void RfConfig::Initialize(int idRf, byte idComponent, bool bTx, const uhd::fs_path pathroot, A2300_iface::sptr dci_ctrl, uhd::property_tree::sptr tree)
 {
 	//Save the relevant information.
 	fs_path pathRf = pathroot / str(boost::format("%u") % idRf);
@@ -167,8 +165,8 @@ void RfConfig::SetRfBandwidth( const double bandwidth)
 uhd::meta_range_t 	RfConfig::GetRfBandwidthRange(void)
 {
     meta_range_t range;
-	for( size_t i = 0; i < CT_BANDWIDTHS; i++)
-		range.push_back( range_t( s_rfbandwidths[i]));
+	for( size_t nn = 0; nn < CT_BANDWIDTHS; ++nn)
+		range.push_back( range_t( s_rfbandwidths[nn]));
     return range;
 }
 
@@ -183,16 +181,15 @@ int RfConfig::GetBandwidthIndex( const double bandwidth)
 
 	// Find best match (below).
 	int iFound = 0;
-	for( size_t i=1; i<CT_BANDWIDTHS; i++ )
+	for( int nn=1; nn<CT_BANDWIDTHS; ++nn )
 	{
-		if( s_rfbandwidths[i] <=  bandwidth)
-			iFound = i;
+		if( s_rfbandwidths[nn] <=  bandwidth)
+			iFound = nn;
 		else
 			break;
 	}
 	return(iFound);
 }
-
 
 void RfConfig::SetRfFrequency( const double freq)
 {

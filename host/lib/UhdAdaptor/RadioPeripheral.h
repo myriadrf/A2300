@@ -26,7 +26,6 @@
 #include "RfConfig.h"
 #include "DspConfig.h"
 
-
 /**
  * Class implements a complete RF TX/RX signal processing chain on the 2300.
  */
@@ -39,9 +38,9 @@ public:
     	int idxRx;  //RX DSP Channel index
     	int idxTx;	//TX DSP Channel index
     	int idxRf;	//RF Front end index
-    	int compidRx; 	//RX DSP WCA Component ID
-    	int compidTx;	//TX DSP WCA Component ID
-    	int compidRF;	//RF WCA Component ID
+    	byte compidRx; 	//RX DSP WCA Component ID
+    	byte compidTx;	//TX DSP WCA Component ID
+    	byte compidRF;	//RF WCA Component ID
     };
 
 public:

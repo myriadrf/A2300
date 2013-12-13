@@ -31,7 +31,7 @@ public:
 	RfConfig();
 	~RfConfig();
 
-    void Initialize(int idRf, int idComponent, bool bTx, const uhd::fs_path pathroot, A2300_iface::sptr dci_ctrl, uhd::property_tree::sptr tree);
+    void Initialize(int idRf, byte idComponent, bool bTx, const uhd::fs_path pathroot, A2300_iface::sptr dci_ctrl, uhd::property_tree::sptr tree);
 
 protected:
     void 				SetPgaGain( const double gain);
@@ -48,7 +48,7 @@ protected:
 private:
     int    m_idRf;
     bool   m_bIsTx;
-    int    m_idComponent;
+    byte   m_idComponent;
     A2300_iface::sptr  m_dci_ctrl;
 
 };
