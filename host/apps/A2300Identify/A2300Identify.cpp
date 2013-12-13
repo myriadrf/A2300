@@ -1,4 +1,4 @@
-/** Name: main.cpp
+/** Name: A2300Identify.cpp
 *
 * Copyright(c) 2013 Loctronix Corporation
 * http://www.loctronix.com
