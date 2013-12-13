@@ -23,7 +23,7 @@ For native C/C++ development, the A2300 API is available for development with pr
 
 Open a Terminal window and Enter the following commands.  
 
-`https://github.com/myriadrf/A2300.git`
+`git clone https://github.com/myriadrf/A2300.git trunk`
 
 `cd A2300`
 
