@@ -19,8 +19,8 @@
 #include <Dci/StandardMsgs.h>
 #include <stdexcept>
 #include <stdio.h>
-namespace A2300 {
 
+namespace A2300 {
 
 ConfigDevice::ConfigDevice()
 	: m_bCreated(false), m_pDevice( NULL),
@@ -29,7 +29,6 @@ ConfigDevice::ConfigDevice()
 	  m_rf0( WCACOMP_RF0, "RF0", this),
 	  m_rf1( WCACOMP_RF1, "RF1", this)
 	{}
-
 
 ConfigDevice::~ConfigDevice()
 {
@@ -90,6 +89,7 @@ uint16 ConfigDevice::FpgaId()
 	else
 		return 0;
 }
+
 uint16 ConfigDevice::FpgaVersion()
 {
 	TransportDci& dt = m_dci0.transport;
@@ -101,7 +101,6 @@ uint16 ConfigDevice::FpgaVersion()
 		return 0;
 
 }
-
 
 /**
  * Attach ASR-2300 device by finding the device specified by address, if not defined,
@@ -170,7 +169,6 @@ void ConfigDevice::Detach()
 	//Terminate all components and internal transports.
 	m_dci0.Term();
 
-
 	if( m_bCreated && m_pDevice != NULL)
 	{
 		m_pDevice->Stop();
@@ -215,9 +213,6 @@ void ConfigDevice::Reset()
 
 }
 
-
-
-
 void ConfigDevice::DciCtrl::Init( UsbDevice& device, int idc, double timeout)
 {
 	// Bind the USB driver to a portDci.
@@ -240,7 +235,5 @@ void ConfigDevice::DciCtrl::Term()
 	port.Close();
 
 }
-
-
 
 } /* namespace A2300 */
