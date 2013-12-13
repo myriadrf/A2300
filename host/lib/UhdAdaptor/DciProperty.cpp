@@ -29,7 +29,7 @@ int DciProperty::GetProperty(  Dci_Property& prop, double timeout)
 	int len = Dci_TypedPropertiesQuery_Init(buff, DCI_MAX_MSGSIZE, m_idComponent, 1, &(prop.idprop), &(prop.idtype) );
 
 	//Send the DCI command.
-	m_piface->CommitDciMessageBuffer(txbuff, len, false);
+	m_piface->CommitDciMessageBuffer(txbuff, (size_t) len, false);
 	txbuff = NULL;
 
 	//Process DCI Response.
@@ -60,7 +60,7 @@ int DciProperty::SetProperty( Dci_Property& prop, double timeout)
 		int len = Dci_TypedProperties_Init(buff, DCI_MAX_MSGSIZE, m_idComponent, 1, &prop );
 
 		//Send the DCI command.
-		m_piface->CommitDciMessageBuffer(txbuff, len, false);
+		m_piface->CommitDciMessageBuffer(txbuff, (size_t) len, false);
 		txbuff = NULL;  // Release Buffer.
 
 		//Process DCI Response. should be an ack.
@@ -81,7 +81,7 @@ int DciProperty::SetProperty( Dci_Property& prop, double timeout)
 		return -1;
 }
 
-template <> int DciProperty::GetProperty( int idProp, byte& value)
+template <> int DciProperty::GetProperty( byte idProp, byte& value)
 {
 	Dci_Property prop; 	prop.idtype = PT_BYTE;	prop.idprop = idProp;
 	int retval = GetProperty( prop, m_timeout);
@@ -89,7 +89,7 @@ template <> int DciProperty::GetProperty( int idProp, byte& value)
 	return retval;
 }
 
-template <> int DciProperty::GetProperty( int idProp, uint16& value)
+template <> int DciProperty::GetProperty( byte idProp, uint16& value)
 {
 	Dci_Property prop; 	prop.idtype = PT_UINT16;	prop.idprop = idProp;
 	int retval = GetProperty( prop, m_timeout);
@@ -97,7 +97,7 @@ template <> int DciProperty::GetProperty( int idProp, uint16& value)
 	return retval;
 }
 
-template <> int DciProperty::GetProperty( int idProp, int16& value)
+template <> int DciProperty::GetProperty( byte idProp, int16& value)
 {
 	Dci_Property prop; 	prop.idtype = PT_INT16;	prop.idprop = idProp;
 	int retval = GetProperty( prop, m_timeout);
@@ -105,7 +105,7 @@ template <> int DciProperty::GetProperty( int idProp, int16& value)
 	return retval;
 }
 
-template <> int DciProperty::GetProperty( int idProp, uint32& value)
+template <> int DciProperty::GetProperty( byte idProp, uint32& value)
 {
 	Dci_Property prop; 	prop.idtype = PT_UINT32;	prop.idprop = idProp;
 	int retval = GetProperty( prop, m_timeout);
@@ -113,7 +113,7 @@ template <> int DciProperty::GetProperty( int idProp, uint32& value)
 	return retval;
 }
 
-template <> int DciProperty::GetProperty( int idProp, int32& value)
+template <> int DciProperty::GetProperty( byte idProp, int32& value)
 {
 	Dci_Property prop; 	prop.idtype = PT_INT32;	prop.idprop = idProp;
 	int retval = GetProperty( prop, m_timeout);
@@ -121,7 +121,7 @@ template <> int DciProperty::GetProperty( int idProp, int32& value)
 	return retval;
 }
 
-template <> int DciProperty::GetProperty( int idProp, float& value)
+template <> int DciProperty::GetProperty( byte idProp, float& value)
 {
 	Dci_Property prop; 	prop.idtype = PT_FLOAT;	prop.idprop = idProp;
 	int retval = GetProperty( prop, m_timeout);
@@ -129,7 +129,7 @@ template <> int DciProperty::GetProperty( int idProp, float& value)
 	return retval;
 }
 
-template <> int DciProperty::GetProperty( int idProp, double& value)
+template <> int DciProperty::GetProperty( byte idProp, double& value)
 {
 	Dci_Property prop; 	prop.idtype = PT_DOUBLE;	prop.idprop = idProp;
 	int retval = GetProperty( prop, m_timeout);
@@ -137,7 +137,7 @@ template <> int DciProperty::GetProperty( int idProp, double& value)
 	return retval;
 }
 /*
-template <> int DciProperty::GetProperty( int idProp, uint64& value)
+template <> int DciProperty::GetProperty( byte idProp, uint64& value)
 {
 	Dci_Property prop; 	prop.idtype = PT_UINT64;	prop.idprop = idProp;
 	int retval = GetProperty( prop, m_timeout);
@@ -145,7 +145,7 @@ template <> int DciProperty::GetProperty( int idProp, uint64& value)
 	return retval;
 }
 
-template <> int DciProperty::GetProperty( int idProp, int64& value)
+template <> int DciProperty::GetProperty( byte idProp, int64& value)
 {
 	Dci_Property prop; 	prop.idtype = PT_INT64;	prop.idprop = idProp;
 	int retval = GetProperty( prop, m_timeout);
@@ -155,7 +155,7 @@ template <> int DciProperty::GetProperty( int idProp, int64& value)
 */
 
 
-template <> int DciProperty::SetProperty( int idProp, byte value)
+template <> int DciProperty::SetProperty( byte idProp, byte value)
 {
 	Dci_Property prop;	prop.idtype = PT_BYTE;
 	prop.idprop = idProp;
@@ -163,7 +163,7 @@ template <> int DciProperty::SetProperty( int idProp, byte value)
 	return SetProperty( prop, m_timeout );
 }
 
-template <> int DciProperty::SetProperty( int idProp, uint16 value)
+template <> int DciProperty::SetProperty( byte idProp, uint16 value)
 {
 	Dci_Property prop;	prop.idtype = PT_UINT16;
 	prop.idprop = idProp;
@@ -172,7 +172,7 @@ template <> int DciProperty::SetProperty( int idProp, uint16 value)
 }
 
 
-template <> int DciProperty::SetProperty( int idProp, int16 value)
+template <> int DciProperty::SetProperty( byte idProp, int16 value)
 {
 	Dci_Property prop;	prop.idtype = PT_INT16;
 	prop.idprop = idProp;
@@ -180,7 +180,7 @@ template <> int DciProperty::SetProperty( int idProp, int16 value)
 	return SetProperty( prop, m_timeout );
 }
 
-template <> int DciProperty::SetProperty( int idProp, uint32 value)
+template <> int DciProperty::SetProperty( byte idProp, uint32 value)
 {
 	Dci_Property prop;	prop.idtype = PT_UINT32;
 	prop.idprop = idProp;
@@ -189,7 +189,7 @@ template <> int DciProperty::SetProperty( int idProp, uint32 value)
 }
 
 
-template <> int DciProperty::SetProperty( int idProp, int32 value)
+template <> int DciProperty::SetProperty( byte idProp, int32 value)
 {
 	Dci_Property prop;	prop.idtype = PT_INT32;
 	prop.idprop = idProp;
@@ -197,7 +197,7 @@ template <> int DciProperty::SetProperty( int idProp, int32 value)
 	return SetProperty( prop, m_timeout );
 }
 
-template <> int DciProperty::SetProperty( int idProp, float value)
+template <> int DciProperty::SetProperty( byte idProp, float value)
 {
 	Dci_Property prop;	prop.idtype = PT_FLOAT;
 	prop.idprop = idProp;
@@ -206,7 +206,7 @@ template <> int DciProperty::SetProperty( int idProp, float value)
 }
 
 
-template <> int DciProperty::SetProperty( int idProp, double value)
+template <> int DciProperty::SetProperty( byte idProp, double value)
 {
 	Dci_Property prop;	prop.idtype = PT_DOUBLE;
 	prop.idprop = idProp;
@@ -214,7 +214,7 @@ template <> int DciProperty::SetProperty( int idProp, double value)
 	return SetProperty( prop, m_timeout );
 }
 /*
-template <> int DciProperty::SetProperty( int idProp, uint64 value)
+template <> int DciProperty::SetProperty( byte idProp, uint64 value)
 {
 	Dci_Property prop;	prop.idtype = PT_UINT64;
 	prop.idprop = idProp;
@@ -222,7 +222,7 @@ template <> int DciProperty::SetProperty( int idProp, uint64 value)
 	return SetProperty( prop, m_timeout );
 }
 
-template <> int DciProperty::SetProperty( int idProp, int64 value)
+template <> int DciProperty::SetProperty( byte idProp, int64 value)
 {
 	Dci_Property prop;	prop.idtype = PT_INT64;
 	prop.idprop = idProp;

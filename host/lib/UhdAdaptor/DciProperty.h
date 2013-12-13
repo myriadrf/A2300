@@ -17,7 +17,6 @@
 #ifndef DCIPROPERTY_H_
 #define DCIPROPERTY_H_
 
-
 #include "Dci/DciMsg.h"
 #include "Dci/DciConversation.h"
 #include "Dci/InfrastructureMsgs.h"
@@ -38,12 +37,12 @@ public:
 	}
 	~DciProperty() {}
 
-	template< typename T> int GetProperty( int idProp, T& value)
+	template< typename T> int GetProperty( byte /* idProp */, T& /* value */)
 	{
 		throw std::runtime_error("DCI Property type not supported");
 	}
 
-	template< typename T> int SetProperty( int idProp, T value)
+	template< typename T> int SetProperty( byte /* idProp */, T /* value */)
 	{
 		throw std::runtime_error("DCI Property type not supported");
 	}
@@ -58,46 +57,46 @@ private:
 };
 
 
-template <> int DciProperty::GetProperty( int idProp, byte& value);
+template <> int DciProperty::GetProperty( byte idProp, byte& value);
 
-template <> int DciProperty::GetProperty( int idProp, uint16& value);
+template <> int DciProperty::GetProperty( byte idProp, uint16& value);
 
-template <> int DciProperty::GetProperty( int idProp, int16& value);
+template <> int DciProperty::GetProperty( byte idProp, int16& value);
 
-template <> int DciProperty::GetProperty( int idProp, uint32& value);
+template <> int DciProperty::GetProperty( byte idProp, uint32& value);
 
-template <> int DciProperty::GetProperty( int idProp, int32& value);
+template <> int DciProperty::GetProperty( byte idProp, int32& value);
 
-template <> int DciProperty::GetProperty( int idProp, float& value);
+template <> int DciProperty::GetProperty( byte idProp, float& value);
 
-template <> int DciProperty::GetProperty( int idProp, double& value);
+template <> int DciProperty::GetProperty( byte idProp, double& value);
 
 /*
-template <> int DciProperty::GetProperty( int idProp, uint64& value);
+template <> int DciProperty::GetProperty( byte idProp, uint64& value);
 
-template <> int DciProperty::GetProperty( int idProp, int64& value);
+template <> int DciProperty::GetProperty( byte idProp, int64& value);
 */
 
 
 
-template <> int DciProperty::SetProperty( int idProp, byte value);
+template <> int DciProperty::SetProperty( byte idProp, byte value);
 
-template <> int DciProperty::SetProperty( int idProp, uint16 value);
+template <> int DciProperty::SetProperty( byte idProp, uint16 value);
 
-template <> int DciProperty::SetProperty( int idProp, int16 value);
+template <> int DciProperty::SetProperty( byte idProp, int16 value);
 
-template <> int DciProperty::SetProperty( int idProp, uint32 value);
+template <> int DciProperty::SetProperty( byte idProp, uint32 value);
 
-template <> int DciProperty::SetProperty( int idProp, int32 value);
+template <> int DciProperty::SetProperty( byte idProp, int32 value);
 
-template <> int DciProperty::SetProperty( int idProp, float value);
+template <> int DciProperty::SetProperty( byte idProp, float value);
 
-template <> int DciProperty::SetProperty( int idProp, double value);
+template <> int DciProperty::SetProperty( byte idProp, double value);
 
 /*
-template <> int DciProperty::SetProperty( int idProp, uint64 value);
+template <> int DciProperty::SetProperty( byte idProp, uint64 value);
 
-template <> int DciProperty::SetProperty( int idProp, int64 value);
+template <> int DciProperty::SetProperty( byte idProp, int64 value);
 */
 
 
