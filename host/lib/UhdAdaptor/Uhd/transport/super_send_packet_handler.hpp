@@ -179,7 +179,7 @@ public:
         if_packet_info.has_tlr = _has_tlr;
         if_packet_info.has_tsi = false;
         if_packet_info.has_tsf = metadata.has_time_spec;
-        if_packet_info.tsf     = metadata.time_spec.to_ticks(_tick_rate);
+        if_packet_info.tsf     = (boost::uint64_t)metadata.time_spec.to_ticks(_tick_rate);
         if_packet_info.sob     = metadata.start_of_burst;
         if_packet_info.eob     = metadata.end_of_burst;
 
@@ -218,8 +218,8 @@ public:
             if (num_samps_sent == 0) return total_num_samps_sent;
 
             //setup metadata for the next fragment
-            const time_spec_t time_spec = metadata.time_spec + time_spec_t::from_ticks(total_num_samps_sent, _samp_rate);
-            if_packet_info.tsf = time_spec.to_ticks(_tick_rate);
+            const time_spec_t time_spec = metadata.time_spec + time_spec_t::from_ticks((long long)total_num_samps_sent, _samp_rate);
+            if_packet_info.tsf = (boost::uint64_t)time_spec.to_ticks(_tick_rate);
             if_packet_info.sob = false;
 
         }

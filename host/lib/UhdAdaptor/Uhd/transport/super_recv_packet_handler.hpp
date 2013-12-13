@@ -332,7 +332,7 @@ private:
         info.ifpi.num_packet_words32 = num_packet_words32 - _header_offset_words32;
         info.vrt_hdr = buff->cast<const boost::uint32_t *>() + _header_offset_words32;
         _vrt_unpacker(info.vrt_hdr, info.ifpi);
-        info.time = time_spec_t::from_ticks(info.ifpi.tsf, _tick_rate); //assumes has_tsf is true
+        info.time = time_spec_t::from_ticks((long long)info.ifpi.tsf, _tick_rate); //assumes has_tsf is true
         info.copy_buff = reinterpret_cast<const char *>(info.vrt_hdr + info.ifpi.num_header_words32);
 
         //handle flow control
@@ -496,7 +496,7 @@ private:
                 std::swap(curr_info, next_info); //save progress from curr -> next
                 curr_info.metadata.has_time_spec = prev_info.metadata.has_time_spec;
                 curr_info.metadata.time_spec = prev_info.metadata.time_spec + time_spec_t::from_ticks(
-                    prev_info[index].ifpi.num_payload_words32*sizeof(boost::uint32_t)/_bytes_per_otw_item, _samp_rate);
+												      (long long)(prev_info[index].ifpi.num_payload_words32*sizeof(boost::uint32_t)/_bytes_per_otw_item), _samp_rate);
                 curr_info.metadata.more_fragments = false;
                 curr_info.metadata.fragment_offset = 0;
                 curr_info.metadata.start_of_burst = false;
@@ -568,7 +568,7 @@ private:
         metadata = info.metadata;
 
         //interpolate the time spec (useful when this is a fragment)
-        metadata.time_spec += time_spec_t::from_ticks(info.fragment_offset_in_samps, _samp_rate);
+        metadata.time_spec += time_spec_t::from_ticks((long long)info.fragment_offset_in_samps, _samp_rate);
 
         //extract the number of samples available to copy
         const size_t nsamps_available = info.data_bytes_to_copy/_bytes_per_otw_item;
