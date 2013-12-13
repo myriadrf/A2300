@@ -20,13 +20,12 @@
 
 namespace A2300 {
 
-ConfigRf::ConfigRf(int idComponent, const std::string& sname, ConfigDevice* pDevice )
+ConfigRf::ConfigRf(byte idComponent, const std::string& sname, ConfigDevice* pDevice )
 : m_idComponent( idComponent), m_sName ( sname), m_pDevice(pDevice)
 {
 	// TODO Auto-generated constructor stub
 
 }
-
 
 ConfigRf::~ConfigRf()
 {

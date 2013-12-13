@@ -29,7 +29,7 @@ class ConfigDevice;
 class ConfigRf : public IConfigComponent
 {
 public:
-	ConfigRf(int idComponent, const std::string& sname, ConfigDevice* pDevice );
+	ConfigRf(byte idComponent, const std::string& sname, ConfigDevice* pDevice );
 	virtual ~ConfigRf();
 
 	/* Define IConfigComponent interface*/
@@ -57,7 +57,7 @@ public:
 	RfBandwidthValuesEnum TxBandwidth( ) const;
 
 private:
-	int  m_idComponent;
+	byte  m_idComponent;
 	std::string m_sName;
 	uint32  m_rxfreq;
 	byte    m_rxgain;
