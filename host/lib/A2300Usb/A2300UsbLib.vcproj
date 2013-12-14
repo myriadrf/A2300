@@ -150,7 +150,35 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\..\include\A2300\A2300_Defs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\A2300\A2300InterfaceDefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\A2300\BitUtil.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\include\A2300\BulkDataPort.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\A2300\ConfigDduc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\A2300\ConfigDevice.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\A2300\ConfigRf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\A2300\TransportDci.h"
 				>
 			</File>
 			<File
@@ -178,11 +206,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ConfigDevice.cpp"
+				RelativePath=".\ConfigDduc.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ConfigDsp.cpp"
+				RelativePath=".\ConfigDevice.cpp"
 				>
 			</File>
 			<File

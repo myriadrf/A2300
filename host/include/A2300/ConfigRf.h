@@ -38,6 +38,18 @@ public:
 	virtual void Reset();
 	virtual void Synch();
 
+	/**
+	* Routine converts full I/Q bandwidth (28 MHz to 1.5 MHz) values in MHz to half bandwidth enum
+	* identifiers.
+	*/
+	static RfBandwidthValuesEnum BandwidthFromMHz( double bandwidthMHz);
+
+	/**
+	* Routines convers half bandwidth identifiers into fullbandwidth (28 MHz to 1.5 MHz)
+	* values in units of MHz.
+	*/
+	static double  BandwidthToMHz( RfBandwidthValuesEnum bw);
+
 	uint32	RxFrequency( uint32 freqKhz);
 	uint32  RxFrequency() const;
 	byte	RxGain( byte gainDb);

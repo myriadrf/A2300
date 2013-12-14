@@ -20,6 +20,12 @@
 
 namespace A2300 {
 
+// Look-up table to map bandwidth (MHz) to A2300 entry.
+static const double s_rfbandwidths[] =
+	{28.0, 20.0, 14.0, 12.0, 10.0, 8.75, 7.0, 6.0, 5.5, 5.0, 3.84, 3.0, 2.75, 2.5, 1.75, 1.5};
+	
+#define  CT_BANDWIDTHS 16
+
 ConfigRf::ConfigRf(byte idComponent, const std::string& sname, ConfigDevice* pDevice )
 : m_idComponent( idComponent), m_sName ( sname), m_pDevice(pDevice)
 {
@@ -32,10 +38,37 @@ ConfigRf::~ConfigRf()
 	// TODO Auto-generated destructor stub
 }
 
+RfBandwidthValuesEnum ConfigRf::BandwidthFromMHz( double bandwidthMhz)
+{
+	// Verify range.
+	if( bandwidthMhz > s_rfbandwidths[0] ||
+			bandwidthMhz < s_rfbandwidths[CT_BANDWIDTHS-1] )
+	{
+		return RFBW_5MHZ;
+	}
+
+	// Find best match (below).
+	int iFound = 0;
+	for( int nn = 0; nn < CT_BANDWIDTHS; ++nn )
+	{
+		if( s_rfbandwidths[nn] >=  bandwidthMhz)
+			iFound = nn;
+		else
+			break;
+	}
+	return (RfBandwidthValuesEnum) (iFound);
+}
+
+
+double  ConfigRf::BandwidthToMHz( RfBandwidthValuesEnum bw)
+{
+	return s_rfbandwidths[bw];
+}
+
 uint32 ConfigRf::RxFrequency( uint32 freqkHz)
 {
 	TransportDci& td = m_pDevice->Dci0Transport();
-	m_rxfreq = std::min<uint32>( 300000, std::max<uint32>( 3800000, freqkHz));
+	m_rxfreq = std::max<uint32>( 300000, std::min<uint32>( 3800000, freqkHz));
 	td.SetProperty<uint32>(m_idComponent, RFPROP_RXFREQ, m_rxfreq);
 	return m_rxfreq;
 }
@@ -47,8 +80,8 @@ uint32 ConfigRf::RxFrequency( ) const
 byte ConfigRf::RxGain( byte gainDb)
 {
 	TransportDci& td = m_pDevice->Dci0Transport();
-	m_rxgain = std::min<byte>( 0, std::max<byte>( 60, gainDb));
-	td.SetProperty<byte>(m_idComponent, RFPROP_RXGAIN, m_rxgain);
+	m_rxgain = std::max<byte>( 0, std::min<byte>( 60, gainDb));
+	td.SetProperty<byte>(m_idComponent, RFPROP_RXGAIN, m_rxgain/3);
 	return m_rxgain;
 }
 
