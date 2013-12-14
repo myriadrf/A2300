@@ -99,24 +99,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_763CFAD4A08D3FB1D37B3BF09AAA6905"
-        "OwnerKey" = "8:_4BD440CC38044D08A064023B13DFFCC4"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_763CFAD4A08D3FB1D37B3BF09AAA6905"
-        "OwnerKey" = "8:_F6A2E8CC04FA4CBF89A1BBAC14DD1BEE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_763CFAD4A08D3FB1D37B3BF09AAA6905"
-        "OwnerKey" = "8:_89C358E0CDF8415D82BFB6E1E1CF9832"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_7FE6FEA795B142EF9A516CFCBF7154D5"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -129,7 +111,19 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_9710C72FA06C4DBCBA9AF27756EB0FFA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_B00326039837420E804C1FCE1F99895A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B025E32B9AF84F9C9827CB077953BDFB"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -141,32 +135,8 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_B64E61A58CBD4654A88D9F7C30567E91"
-        "OwnerKey" = "8:_4BD440CC38044D08A064023B13DFFCC4"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_B64E61A58CBD4654A88D9F7C30567E91"
-        "OwnerKey" = "8:_F6A2E8CC04FA4CBF89A1BBAC14DD1BEE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_B64E61A58CBD4654A88D9F7C30567E91"
-        "OwnerKey" = "8:_89C358E0CDF8415D82BFB6E1E1CF9832"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_C5E9F9BC6AB6449582E2F64097062E64"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_CA07506A068341A388050F1BA71413A2"
-        "OwnerKey" = "8:_B64E61A58CBD4654A88D9F7C30567E91"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -190,6 +160,12 @@
         "Entry"
         {
         "MsmKey" = "8:_E4DEDEE5710D4DD1B6DB72AB0160F81F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E5593813D97A4240A6296BF8868A06DA"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -226,12 +202,6 @@
         "Entry"
         {
         "MsmKey" = "8:_F8866CD82CFF42EEBEBB951575EEDB74"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_FE16750863094F8D9AD90654CB299124"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -552,12 +522,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_763CFAD4A08D3FB1D37B3BF09AAA6905"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9710C72FA06C4DBCBA9AF27756EB0FFA"
             {
-            "SourcePath" = "8:SETUPAPI.dll"
-            "TargetName" = "8:SETUPAPI.dll"
+            "SourcePath" = "8:..\\..\\..\\common\\System\\ArgParser.hpp"
+            "TargetName" = "8:ArgParser.hpp"
             "Tag" = "8:"
-            "Folder" = "8:_C080DFF20FC347C29851F384461B8845"
+            "Folder" = "8:_18175FBC6BFE42B4B975A7826EBEF113"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -569,7 +539,7 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B00326039837420E804C1FCE1F99895A"
@@ -578,6 +548,26 @@
             "TargetName" = "8:ASR-2300 Communications Interface Specification.pdf"
             "Tag" = "8:"
             "Folder" = "8:_93FEFCE9EE0649D09BB7CAE4E0704D15"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B025E32B9AF84F9C9827CB077953BDFB"
+            {
+            "SourcePath" = "8:..\\..\\include\\A2300\\ConfigDduc.h"
+            "TargetName" = "8:ConfigDduc.h"
+            "Tag" = "8:"
+            "Folder" = "8:_E3F44315498C4AB79DC0D7C203BD4018"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -712,6 +702,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E5593813D97A4240A6296BF8868A06DA"
+            {
+            "SourcePath" = "8:..\\..\\..\\common\\System\\std\\strtools.h"
+            "TargetName" = "8:strtools.h"
+            "Tag" = "8:"
+            "Folder" = "8:_57FDAD43A1914C7AAE855112C8CA37CB"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E61978C7D33644EA86A191636E12C94D"
             {
             "SourcePath" = "8:..\\..\\..\\design\\ASR-2300 Board I-O Locations and Programming.pdf"
@@ -776,26 +786,6 @@
             {
             "SourcePath" = "8:..\\..\\include\\A2300\\ConfigRf.h"
             "TargetName" = "8:ConfigRf.h"
-            "Tag" = "8:"
-            "Folder" = "8:_E3F44315498C4AB79DC0D7C203BD4018"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FE16750863094F8D9AD90654CB299124"
-            {
-            "SourcePath" = "8:..\\..\\include\\A2300\\ConfigDsp.h"
-            "TargetName" = "8:ConfigDsp.h"
             "Tag" = "8:"
             "Folder" = "8:_E3F44315498C4AB79DC0D7C203BD4018"
             "Condition" = "8:"
@@ -956,6 +946,17 @@
                             "Property" = "8:_7F160CF314F04F0694BA2801529140CC"
                                 "Folders"
                                 {
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_57FDAD43A1914C7AAE855112C8CA37CB"
+                                    {
+                                    "Name" = "8:std"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_81D5B563C3AE41678610A83BE7E19C0A"
+                                        "Folders"
+                                        {
+                                        }
+                                    }
                                 }
                             }
                             "{9EF0B969-E518-4E46-987F-47570745A589}:_E3F44315498C4AB79DC0D7C203BD4018"
@@ -1527,34 +1528,6 @@
         }
         "MergeModule"
         {
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_B64E61A58CBD4654A88D9F7C30567E91"
-            {
-            "UseDynamicProperties" = "11:TRUE"
-            "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:policy_9_0_Microsoft_VC90_CRT_x86.msm"
-                "Properties"
-                {
-                }
-            "LanguageId" = "3:0"
-            "Exclude" = "11:FALSE"
-            "Folder" = "8:"
-            "Feature" = "8:"
-            "IsolateTo" = "8:"
-            }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_CA07506A068341A388050F1BA71413A2"
-            {
-            "UseDynamicProperties" = "11:TRUE"
-            "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:microsoft_vc90_crt_x86.msm"
-                "Properties"
-                {
-                }
-            "LanguageId" = "3:0"
-            "Exclude" = "11:FALSE"
-            "Folder" = "8:"
-            "Feature" = "8:"
-            "IsolateTo" = "8:"
-            }
         }
         "ProjectOutput"
         {
@@ -1588,7 +1561,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_4BD440CC38044D08A064023B13DFFCC4"
             {
-            "SourcePath" = "8:..\\A2300Update\\Debug\\A2300Update.exe"
+            "SourcePath" = "8:..\\A2300Update\\Release\\A2300Update.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_104C90EEFBD74B8585745C115D0769F4"
@@ -1672,7 +1645,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_89C358E0CDF8415D82BFB6E1E1CF9832"
             {
-            "SourcePath" = "8:..\\A2300RxToFile\\Debug\\A2300RxToFile.exe"
+            "SourcePath" = "8:..\\A2300RxToFile\\Release\\A2300RxToFile.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_104C90EEFBD74B8585745C115D0769F4"
@@ -1728,7 +1701,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_F6A2E8CC04FA4CBF89A1BBAC14DD1BEE"
             {
-            "SourcePath" = "8:..\\A2300Identify\\Debug\\A2300Identify.exe"
+            "SourcePath" = "8:..\\A2300Identify\\Release\\A2300Identify.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_104C90EEFBD74B8585745C115D0769F4"
