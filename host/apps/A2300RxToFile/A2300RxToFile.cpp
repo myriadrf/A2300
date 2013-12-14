@@ -74,7 +74,7 @@ struct UserParams {
 
 ARGPARSER_BEGIN_MAP( s_argmap ) 
 ARGPARSER_PARAM( "filename", "", "Output file name.")
-ARGPARSER_VAR( "path", ArgParser::Entry::DOUBLE, "PcsExt", 
+ARGPARSER_VAR( "path", ArgParser::Entry::DOUBLE, "pcs",
 			  "Receiver path to use. Choose from \"gpsant\", \"gpsext\", \"pcs\","
 			  "\"wideband0\", \"uhf\", \"ism_ant\", \"ism_ext\", \"wideband1\"")
 ARGPARSER_VAR( "freq", ArgParser::Entry::DOUBLE, "1970", "Receiver center frequency in MHz. Valid range is between 300 MHz to 3.8 MHz")
@@ -366,7 +366,7 @@ static void OnFrameReady (void* /* arg */, BulkDataPort::TransferContext* pctxt)
 	    // Save data to disk
 	    size_t nWritten = fwrite (pctxt->bufFrame, 1, pctxt->nActualLength, s_fileStream);
 	    if (nWritten != pctxt->nActualLength) {
-	      printf ("\nWarning: Some data failed to write to the selected file ('%s').\n", s_params.sfile);
+	      printf ("\nWarning: Some data failed to write to the selected file ('%s').\n", s_params.sfile.c_str());
 	      printf ("  Ignoring and hoping for the best.\n");
 	    }
 
@@ -388,7 +388,7 @@ static void OnFrameReady (void* /* arg */, BulkDataPort::TransferContext* pctxt)
 	    // Save data to disk
 	    size_t nWritten = fwrite (pctxt->bufFrame, 1, nToWrite, s_fileStream);
 	    if (nWritten != nToWrite) {
-	      printf ("\nWarning: Some data failed to write to the selected file ('%s').\n", s_params.sfile);
+	      printf ("\nWarning: Some data failed to write to the selected file ('%s').\n", s_params.sfile.c_str());
 	      printf ("  Ignoring and hoping for the best.\n");
 	    }
 

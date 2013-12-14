@@ -63,8 +63,8 @@ namespace A2300
 				defaultValue(""), description(""){}
 			Entry( EntryTypeEnum etype, DataTypeEnum dtype, const std::string& skey, const std::string& sdefValue,
 					const std::string& sDescription, const std::string& sGroup) 
-					:	entryType( etype), dataType(dtype), idxParam(-1), keyName( skey), 
-					defaultValue( sdefValue), description( sDescription), group( sGroup) {}
+					:	entryType( etype), dataType(dtype), idxParam(-1), group( sGroup), keyName( skey),
+					defaultValue( sdefValue), description( sDescription) {}
 			
 			// Entry information
 			EntryTypeEnum	  entryType;
