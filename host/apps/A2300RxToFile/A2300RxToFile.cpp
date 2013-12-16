@@ -74,8 +74,8 @@ ARGPARSER_VAR( "path", ArgParser::Entry::DOUBLE, "pcs",
 			  "\"wideband0\", \"uhf\", \"ism_ant\", \"ism_ext\", \"wideband1\"")
 ARGPARSER_VAR( "freq", ArgParser::Entry::DOUBLE, "1970", "Receiver center frequency in MHz. Valid range is between 300 MHz to 3.8 MHz")
 ARGPARSER_VAR( "gain", ArgParser::Entry::LONG,   "9",    "Receiver gain in dB. Valid range is between 0 dB to 60 dB")
-ARGPARSER_VAR( "bw",   ArgParser::Entry::DOUBLE, "5",    "Receiver front-end bandwidth in MHz. Valid range is 1.5 MHz to 28 MHz.") 
-ARGPARSER_VAR( "rate", ArgParser::Entry::DOUBLE, "2",    "Host sample rate in MS/s. Valid range is 32 MHz to 3.90625 KHz.") 
+ARGPARSER_VAR( "bw",   ArgParser::Entry::DOUBLE, "5",    "Receiver front-end bandwidth in MHz. Valid range is 1.5 MHz to 28 MHz.")
+ARGPARSER_VAR( "rate", ArgParser::Entry::DOUBLE, "2",    "Host sample rate in MS/s. Valid range is 3.90625 kS/s to 32 MS/s.")
 ARGPARSER_VAR( "num",  ArgParser::Entry::LONG,   "0",    "Number of samples to collect.  Default (0) is infinite.")
 ARGPARSER_END_MAP
 
@@ -456,7 +456,7 @@ static void WriteHeader() {
  */
 static void PrintUsage() {
 	printf( "\nUsage for A2300RxToFile:\n\n"
-			"  A2300RxToFile [filename] [[<var>=<value>] ...]\n\n");
+			"  A2300RxToFile filename [[<var>=<value>] ...]\n\n");
 
 	s_args.WriteDescriptions();
 }
