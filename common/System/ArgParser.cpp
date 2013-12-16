@@ -1,5 +1,4 @@
-/** 
-* Name: ArgParser.cpp
+/** Name: ArgParser.cpp
 *
 * Copyright(c) 2013 Loctronix Corporation
 * http://www.loctronix.com
@@ -14,14 +13,15 @@
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU General Public License for more details.
 */
+
 #include "ArgParser.hpp"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <iostream>
+#include <sstream>
 
-
-#ifdef LINUX
+#if defined(LINUX) || defined(APPLE)
 	#include "std/strtools.h"
 #endif
 
@@ -31,7 +31,6 @@
 
 using namespace std;
 using namespace A2300;
-
 
 void WriteEntryFields(ArgParser::Entry& entry);
 
@@ -104,11 +103,11 @@ A2300::ArgParser::Entry&	A2300::ArgParser::GetEntry( int idxParam  )
 		}
 	}
 
-	std::string smsg = "Parameter Index not found: " + idxParam;
-	ArgParserException ex(smsg);
+	std::stringstream smsg("Parameter Index not found: ");
+	smsg << idxParam;
+	ArgParserException ex(smsg.str());
 	throw ex;
 }
-
 
 /**
 * Method returns boolean value at the specified key.
@@ -127,7 +126,7 @@ bool A2300::ArgParser::GetBool( const std::string& sKey )
 int32 A2300::ArgParser::GetLong( const std::string& sKey )
 {
 	std::string s = GetString(sKey );
-	return atol( s.c_str() );	
+	return (int32)(atol( s.c_str() ));
 }
 
 /**
@@ -136,7 +135,7 @@ int32 A2300::ArgParser::GetLong( const std::string& sKey )
 double A2300::ArgParser::GetDouble( const std::string& sKey )
 {
 	std::string s = GetString(sKey );
-	return atof( s.c_str() );	
+	return (double)(atof( s.c_str() ));
 }
 
 /**
@@ -241,7 +240,7 @@ int A2300::ArgParser::Parse( int argc, const char* argv[] )
 		{
 			// parse the parameter
 			p = argv[ctArgs];
-#ifdef LINUX
+#if defined(LINUX) || defined(APPLE)
 			if( p[0] == '?' || stricmp(p, "help") == 0)
 #else
 			if( p[0] == '?' || _stricmp(p, "help") == 0)
@@ -255,7 +254,7 @@ int A2300::ArgParser::Parse( int argc, const char* argv[] )
 
 				if( p2 != NULL ) // User defined switch value.
 				{
-					int len = (int) (p2-p)-1;
+					size_t len = (size_t) (p2-p)-1;
 					strncpy(buff, p+1, len); // copy switch value.
 					buff[len] = '\0';
 					Entry& e = GetEntry( buff );
@@ -266,6 +265,7 @@ int A2300::ArgParser::Parse( int argc, const char* argv[] )
 					p2 = strchr(p+1,'/');
 					if( p2 != NULL )
 					{	// User entered absolute path
+
 						Entry& e = GetEntry( _itoa( ctParam, buff, 10));
 						ctParam++;
 						e.userValue = p;
@@ -282,8 +282,9 @@ int A2300::ArgParser::Parse( int argc, const char* argv[] )
 				const char* p2 = strchr( p, '=');
 				if( p2 != NULL) //It's a switch.
 				{
-					strncpy(buff, p, p2 - p ); // copy switch value.
-					buff[p2-p] = '\0';
+					size_t diff = (size_t)(p2 - p);
+					strncpy(buff, p, diff); // copy switch value.
+					buff[diff] = '\0';
 					Entry& e = GetEntry( buff );
 					e.userValue = p2+1;
 				}
@@ -307,7 +308,6 @@ int A2300::ArgParser::Parse( int argc, const char* argv[] )
 	}
 	return argc;
 }
-
 
 void A2300::ArgParser::WriteDescriptions()
 {
@@ -368,7 +368,7 @@ void WriteEntryFields( ArgParser::Entry& entry)
 	int ct = 0;
 	while( nLen > 0 )
 	{
-		int ctWrite = std::min(79, nLen);
+		size_t ctWrite = std::min((size_t) 79, (size_t) nLen);
 		if( ct > 1) fwrite( "                 ", 1, 13, stdout);
 		ct += fwrite( buff + ct, 1, ctWrite , stdout);
 		fwrite( "\n", 1,1, stdout);
@@ -377,4 +377,3 @@ void WriteEntryFields( ArgParser::Entry& entry)
 
 	fwrite( "\n", 1,1,stdout);
 }
-
