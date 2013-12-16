@@ -29,14 +29,12 @@
 
 #include "DciProperty.h"
 
-
 using namespace uhd;
-
 
 // Look-up table to map bandwidth (MHz) to A2300 entry.
 static const double s_rfbandwidths[] =
 	{ 1.5, 1.75, 2.5, 2.75, 3.0, 3.84, 5.0, 5.5, 6.0, 7.0, 8.75, 10.0, 12.0, 14.0, 20.0, 28.0};
-#define  CT_BANDWIDTHS 16
+static const int CT_BANDWIDTHS = (int)(sizeof(s_rfbandwidths)/sizeof(double));
 
 RfConfig::RfConfig()
 :
@@ -71,18 +69,16 @@ void RfConfig::Initialize(int idRf, byte idComponent, bool bTx, const uhd::fs_pa
     //Configure the RF Programmable Gain for this channel.
     tree->create<double>(pathRf / "gains/PGA/value")
         .subscribe(boost::bind(&RfConfig::SetPgaGain, this, _1))
-        .set(12.0);
+        .set(A2300_TXGAIN_STEP*((double)((int)((((A2300_TXGAIN_MAX + A2300_TXGAIN_MIN)/2.0) + A2300_TXGAIN_STEP)/A2300_TXGAIN_STEP))));
     tree->create<meta_range_t>(pathRf / "gains/PGA/range")
         .publish(boost::bind( &RfConfig::GetPgaGainRange, this));
-
 
     //Configure Bandwidth value and range properties.
     tree->create<double>(pathRf / "bandwidth" / "value")
 		.subscribe( boost::bind( &RfConfig::SetRfBandwidth, this, _1))
-        .set(1.5);
+        .set(s_rfbandwidths[0]);
     tree->create<meta_range_t>(pathRf / "bandwidth" / "range")
         .publish(boost::bind(&RfConfig::GetRfBandwidthRange, this));
-
 
     //Configure RF Center Frequency value and range properties.
     tree->create<double>(pathRf / "freq" / "value")
@@ -91,14 +87,13 @@ void RfConfig::Initialize(int idRf, byte idComponent, bool bTx, const uhd::fs_pa
     tree->create<meta_range_t>(pathRf / "freq" / "range")
         .publish(boost::bind(&RfConfig::GetRfFrequencyRange, this));
 
-
     //TODO Configure RF Sensors
     tree->create<int>(pathRf / "sensors");
 
-
     //Configure RF Path profiles as antenna options.  There are four different possibilities here.
     std::vector<std::string> ants;
-    std::string sDefault = "Disabled";
+    //Select wideband as the default antenna, since it is common to all RF chains (both Tx and Rx)
+    std::string sDefault = "Wideband";
     if( idComponent == WCACOMP_RF0)
     {
     	if( m_bIsTx )
@@ -128,14 +123,16 @@ void RfConfig::Initialize(int idRf, byte idComponent, bool bTx, const uhd::fs_pa
         .set(sDefault);
 }
 
-
 void RfConfig::SetPgaGain( const double gain)
 {
 	DciProperty prop(m_idComponent, m_dci_ctrl, A2300_WAIT_TIME);
 	byte idProperty = (m_bIsTx) ?  0x06 : 0x02;
+	// FIXME?: ?should really verify that the range is within range?
+	// FIXME?: ?should use A2300_RXGAIN_STEP or A2300_TXGAIN_STEP?
 	byte val = ((byte)gain + 2) / 3;  // Round to closest step.
 	prop.SetProperty<byte>(idProperty, val);
 }
+
 uhd::meta_range_t 	RfConfig::GetPgaGainRange(void)
 {
 	if( m_bIsTx)
@@ -173,21 +170,15 @@ uhd::meta_range_t 	RfConfig::GetRfBandwidthRange(void)
 int RfConfig::GetBandwidthIndex( const double bandwidth)
 {
 	// Verify range.
-	if( bandwidth < s_rfbandwidths[0] ||
-			bandwidth > s_rfbandwidths[CT_BANDWIDTHS-1] )
+	if( (bandwidth < s_rfbandwidths[0]) ||
+		(bandwidth > s_rfbandwidths[CT_BANDWIDTHS-1]) )
 	{
 		return -1;
 	}
 
 	// Find best match (below).
-	int iFound = 0;
-	for( int nn=1; nn<CT_BANDWIDTHS; ++nn )
-	{
-		if( s_rfbandwidths[nn] <=  bandwidth)
-			iFound = nn;
-		else
-			break;
-	}
+	int iFound = CT_BANDWIDTHS-1;
+	while(s_rfbandwidths[--iFound] > bandwidth);
 	return(iFound);
 }
 
