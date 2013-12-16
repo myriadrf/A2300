@@ -58,7 +58,6 @@ const boost::uint16_t A2300_DciIdc1_EpOut = 0x3;
 
 static const boost::posix_time::milliseconds REENUMERATION_TIMEOUT_MS(3000);
 
-
 /***********************************************************************
  * Discovery
  **********************************************************************/

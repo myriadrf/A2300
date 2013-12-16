@@ -34,7 +34,6 @@
 #include <uhd/transport/bounded_buffer.hpp>
 #include "Uhd/usrp/usrp1/soft_time_ctrl.hpp"
 
-
 #include <boost/foreach.hpp>
 #include <boost/weak_ptr.hpp>
 #include <complex>
@@ -88,8 +87,6 @@ private:
     uhd::transport::usb_zero_copy::sptr _idc0_transport;
     uhd::transport::usb_zero_copy::sptr _idc1_transport;
 
-
-
     void * FindDevice(uint16 vid, uint16 pid, int usbAddress);
     bool FindEndPoint(void *pDevice, int epId);
 
@@ -104,7 +101,6 @@ private:
 
 //    void update_antenna_sel(const size_t which, const std::string &ant);
     uhd::sensor_value_t get_ref_locked(void);
-
 
     //Create RF Peripherials
     std::vector<RadioPeripheral> m_perifs;
