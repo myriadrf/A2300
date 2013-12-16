@@ -25,7 +25,7 @@
 namespace A2300 {
 
 ConfigDduc::ConfigDduc( byte idComponent, const std::string& sname, 
-					   ConfigDevice* pDevice, bool bReset, uint32 uiSamplingRateHz )
+					   ConfigDevice* pDevice, bool bReset, double uiSamplingRateHz )
 :   m_idComponent( idComponent), m_sName ( sname), m_pDevice(pDevice),
 	m_bEnable(false), m_byteMode( Default), 
 	m_uiSampRate( uiSamplingRateHz ), m_uiSamplingDivisor(16), 
@@ -45,8 +45,7 @@ void ConfigDduc::Enable( bool bEnable)
 	Mode( m_byteMode);
 }
 
-
-void ConfigDduc::Reset(uint32 uiSamplingRateHz)
+void ConfigDduc::Reset( double uiSamplingRateHz)
 {
 	m_uiSampRate		= uiSamplingRateHz;
 	m_bEnable			= false;
@@ -69,16 +68,14 @@ void ConfigDduc::Mode( byte modeFlags)
 	td.SetProperty<byte>(m_idComponent, DSP_DDUC_CTRL,flags );
 }
 
-
 /** 
 * Sets the hose sampling rate which is a multiple of the Default sampling rate.
 */
 double ConfigDduc::HostSamplingRate( double  dRateHz, bool bAutoSetMode )
 {
-	double dphase = ((double) m_uiSampRate)/ dRateHz ;
-    m_uiSamplingDivisor = (uint16)( dphase + 0.5);
+	double dphase = m_uiSampRate / dRateHz;
+	m_uiSamplingDivisor = (uint16)( dphase + 0.5);
 	m_uiSamplingDivisor = std::max<uint16>( 1, std::min<uint16>( m_uiSamplingDivisor, 8192));
-
 	
 	//determine which half-band filters are activated
     uint16 divisor = m_uiSamplingDivisor;
@@ -106,7 +103,7 @@ double ConfigDduc::HostSamplingRate( double  dRateHz, bool bAutoSetMode )
 
 double ConfigDduc::FrequencyOffset( double dOffsetHz)
 {
-	double dphase = dOffsetHz / ((double) m_uiSampRate) * 2147483648;
+	double dphase = dOffsetHz / m_uiSampRate * ((double) 2147483648);
 	m_iPhaseRate = (int32) (dphase + 0.5);
 	TransportDci& td = m_pDevice->Dci0Transport();
 	td.SetProperty<int32>(m_idComponent, DSP_DDUC_PHASERATE, m_iPhaseRate);
@@ -129,6 +126,5 @@ void ConfigDduc::Synch()
 {
 	//TODO
 }
-
 
 } /* namespace A2300 */

@@ -43,11 +43,9 @@ public:
 		BypassHalfband	= 0x20
 	};
 
-	static const uint32 DEFAULT_SAMPLING_RATE = (uint32) A2300_MAX_SAMPLING_FREQ;
-
 public:
-	ConfigDduc(byte idComponent, const std::string& sname, ConfigDevice* pDevice, 
-			   bool bReset = true, uint32 uiSamplingRateHz = DEFAULT_SAMPLING_RATE );
+	ConfigDduc(byte idComponent, const std::string& sname, ConfigDevice* pDevice,
+		   bool bReset = true, double uiSamplingRateHz = A2300_MAX_SAMPLING_FREQ );
 	virtual ~ConfigDduc();
 
 	/* Define IConfigComponent interface*/
@@ -59,12 +57,12 @@ public:
 	void Enable( bool bEnable);
 	bool IsEnabled() const { return m_bEnable;}
 
-	void Reset( uint32 uiSamplingRateHz  );
+	void Reset( double uiSamplingRateHz);
 
 	/**
 	* Returns the Sampling rate.
 	*/
-	uint32 SamplingRate() const { return m_uiSampRate;}
+	double SamplingRate() const { return m_uiSampRate;}
 
 	/**
 	* Sets thes DDUC operating mode.
@@ -73,16 +71,17 @@ public:
 	byte Mode() const { return m_byteMode;}
 
 	/** 
-	* Sets the hose sampling rate which is a multiple of the Default sampling rate.
-    * Decimation / Integration sampling rate conversion .  This is the
-    * rate for down/up sampling sampling the 32 MHz sampling rate.  Valid
-    * range is 1 to 8192 equivalent to 32 MHz to  3906.25 KHz.
+	* Sets the hose sampling rate which is a multiple of the
+	* Default sampling rate.  Decimation / Integration sampling
+	* rate conversion .  This is the rate for down/up sampling
+	* sampling the 32 MHz sampling rate.  Valid range is 1 to 8192
+	* equivalent to 32 MHz to 3906.25 KHz.
 	*/
 	double HostSamplingRate( double  dRateHz, bool bAutoSetMode = false);
-	double HostSamplingRate() const { return ((double)m_uiSampRate )/((double) m_uiSamplingDivisor); }
+	double HostSamplingRate() const { return m_uiSampRate / ((double) m_uiSamplingDivisor); }
 
 	double FrequencyOffset( double dOffsetHz);
-	double FrequencyOffset() const { return ((double) m_iPhaseRate) * ((double) m_uiSampRate) / 2147483648; }
+	double FrequencyOffset() const { return ((double) m_iPhaseRate) * m_uiSampRate / ((double)2147483648); }
 
 private:
 	byte  m_idComponent;
@@ -92,7 +91,7 @@ private:
 	bool m_bEnable;
 	byte m_byteMode;
 
-	uint32 m_uiSampRate;
+	double m_uiSampRate;
 	uint16 m_uiSamplingDivisor;
 	int32  m_iPhaseRate;
 };
