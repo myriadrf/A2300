@@ -21,7 +21,9 @@
 #include <A2300/A2300InterfaceDefs.h>
 #include <System/DataTypes.h>
 #include <string>
+
 namespace A2300 {
+
 class ConfigDevice;
 
 /**
@@ -41,7 +43,8 @@ public:
 		BypassHalfband	= 0x20
 	};
 
-	static const uint32 DEFAULT_SAMPLING_RATE = A2300_MAX_SAMPLING_FREQ;
+	static const uint32 DEFAULT_SAMPLING_RATE = (uint32) A2300_MAX_SAMPLING_FREQ;
+
 public:
 	ConfigDduc(byte idComponent, const std::string& sname, ConfigDevice* pDevice, 
 			   bool bReset = true, uint32 uiSamplingRateHz = DEFAULT_SAMPLING_RATE );
@@ -52,7 +55,6 @@ public:
 	virtual int  componentId();
 	virtual void Reset();
 	virtual void Synch();
-
 
 	void Enable( bool bEnable);
 	bool IsEnabled() const { return m_bEnable;}
@@ -96,4 +98,5 @@ private:
 };
 
 } /* namespace A2300 */
+
 #endif /* CONFIGDSP_H_ */
