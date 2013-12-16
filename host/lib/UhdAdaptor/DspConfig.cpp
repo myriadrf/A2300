@@ -212,7 +212,7 @@ double DspConfig::GetScalingAdjustment(void){
 
 double DspConfig::SetFrequency(const double freq)
 {
-	uint32  deltaphase = (uint32)  boost::math::iround(freq/A2300_MAX_SAMPLING_FREQ * 2147483648);
+	uint32  deltaphase = (uint32) boost::math::iround(freq/A2300_MAX_SAMPLING_FREQ * ((double)2147483648));
 
 	DciProperty prop(m_idComponent, m_dci_ctrl, A2300_WAIT_TIME);
 	prop.SetProperty<uint32>(DSP_DDUC_PHASERATE, deltaphase );
