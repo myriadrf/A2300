@@ -39,15 +39,12 @@
 #include <A2300/ConfigDduc.h>
 #include <System/ArgParser.hpp>
 
-
 using namespace A2300;
-
 
 /******************************************************************
  * Declarations
  *****************************************************************/
-struct RxConfig{
-
+struct RxConfig {
 	const char* szPath;
 	const char* szDescr;
 	byte		epRx;
@@ -65,8 +62,6 @@ struct UserParams {
 	double samprate;
 	size_t numsamples;
 };
-
-
 
 /******************************************************************
  * Static Data
@@ -97,7 +92,6 @@ static const RxConfig s_config[] = {
 const static int COUNT_CONFIG = 8;
 static UserParams s_params = { "", 2, 9, 1970.0, 5.0, 2.0, 0};
 static ArgParser s_args;
-
 
 const static size_t cs_BytesPerSample = 4;
 const static size_t cs_ctFrames = 16;
@@ -283,7 +277,6 @@ static int DoRxToFile ()
 	  printf("Duration:      %ld samples, %0.02lf sec, %lu frames\n", s_params.numsamples, dt, totalFrames);
 	}
 
-
 	//8) Process until finished
 	printf("\n--> Starting Run\n");
 	s_numBytesToCollect = s_params.numsamples * cs_BytesPerSample;
@@ -342,7 +335,6 @@ static int DoRxToFile ()
 	//13) Destroy all the transfer contexts.
 	for( iter = listContext.begin(); iter != listContext.end(); iter++)
 		(*iter)->Destroy(); // All done.
-
 
 	//14) Close the Data Port
 	portData.Close();
@@ -413,7 +405,6 @@ static void OnFrameReady (void* /* arg */, BulkDataPort::TransferContext* pctxt)
 	}
 }
 
-
 static int ValidateArgs()
 {
 	//Get configuration path.
@@ -436,13 +427,11 @@ static int ValidateArgs()
 	s_params.gain = (byte) s_args.GetLong("gain");
 	s_params.bandwidth = s_args.GetDouble("bw");
 	s_params.samprate = s_args.GetDouble("rate");
-	s_params.numsamples = s_args.GetLong("num");
+	s_params.numsamples = (size_t) s_args.GetLong("num");
 
 	//TODO Add range validation.  Rather extend ArgParser to do it.	
 	return 0;
 }
-
-
 
 /**
  * <summary>
@@ -471,7 +460,6 @@ static void PrintUsage() {
 
 	s_args.WriteDescriptions();
 }
-
 
 /**
  * <summary>

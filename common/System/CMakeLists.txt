@@ -14,11 +14,31 @@
 ##############################################################
 
 ##############################################################
+# Setup common System library as static
+##############################################################
+
+SET(A2300System_sources
+    ${CMAKE_CURRENT_SOURCE_DIR}/ArgParser.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/std/itoa.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/std/strrev.cpp
+)
+
+ADD_LIBRARY(A2300System STATIC ${A2300System_sources})
+
+##############################################################
 # Install information
 ##############################################################
 
+INSTALL(TARGETS A2300System
+    LIBRARY DESTINATION ${LIBRARY_DIR} COMPONENT libraries # .so file
+    ARCHIVE DESTINATION ${LIBRARY_DIR} COMPONENT libraries # .lib file
+    RUNTIME DESTINATION ${RUNTIME_DIR} COMPONENT libraries # .dll file
+)
+
 UHD_INSTALL(FILES
     DataTypes.h
+    ArgParser.hpp
+    std/strtools.h
     DESTINATION ${INCLUDE_DIR}/A2300/System
     COMPONENT headers
 )

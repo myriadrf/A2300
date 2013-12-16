@@ -31,11 +31,11 @@ IF(ENABLE_A2300USB)
 
     SET(A2300Usb_sources
         ${CMAKE_CURRENT_SOURCE_DIR}/BitUtil.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/ConfigDduc.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/ConfigDevice.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/ConfigDsp.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/ConfigRf.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/TransportDci.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/PortBase.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/TransportDci.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/UsbDevice_core.cpp
     )
 
