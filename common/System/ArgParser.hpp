@@ -1,5 +1,4 @@
-/** 
-* Name: ConfigRf.hpp
+/** Name: ConfigRf.hpp
 *
 * Copyright(c) 2013 Loctronix Corporation
 * http://www.loctronix.com
@@ -14,6 +13,7 @@
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU General Public License for more details.
 */
+
 #ifndef _ArgParser_h__
 #define _ArgParser_h__
 
@@ -253,6 +253,5 @@ namespace A2300
 	};
 
 }
-
 
 #endif
