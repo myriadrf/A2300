@@ -640,7 +640,7 @@ byte Dci_BitInitiateTargetTransfer( Dci_BitOperationMgr* pmgr, Dci_BitClient* pC
 bool Dci_BitRequestSourceTransfer( Dci_BitOperationMgr* pmgr, Dci_BitClient* pClient, byte idComponentSource, byte flags, byte idTransfer, Dci_Context* pctxt)
 {
 
-  Dci_BitOperation* pbop = NULL;
+  Dci_BitOperation* pbop;
   byte buff[MAX_MSG_SIZE];
 
   //Set up the operation.

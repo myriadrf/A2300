@@ -57,12 +57,10 @@
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.1158856350" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug.1985654558" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug">
 								<option id="gnu.cpp.link.option.paths.2116869063" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Common/Release}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/A2300Usb/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/A2300Usb/Debug}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/common/Debug}&quot;"/>
 								</option>
 								<option id="gnu.cpp.link.option.libs.809567217" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="Common"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="A2300Usb"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="usb-1.0"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="common"/>
@@ -92,14 +90,14 @@
 				<externalSettings containerId="A2300Usb;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/A2300Usb"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/A2300Usb/Release"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/A2300Usb/Debug"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="A2300Usb" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="common;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/Common"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/Common/Release"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/Common/Debug"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="Common" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>

@@ -69,7 +69,6 @@ To execute the applications in the debugger you will need to define several envi
    * LD_LIBRARY_PATH -- Define path to UHD if not in standard location.
    * UHD_MODULE_PATH -- Define path to A2300 UhdAdaptor shared library e.g. <installdir>/A2300/host/lib/UhdAdaptor/Debug/libUhdAdaptor.so.
 
-Browse to the <installdir>/A2300 and
 
 ##Building the A2300 API and Tools Using Visual Studio
 

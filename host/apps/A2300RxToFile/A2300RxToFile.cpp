@@ -36,57 +36,94 @@
 #include <vector>
 
 #include <A2300/ConfigDevice.h>
+#include <A2300/ConfigDduc.h>
+#include <System/ArgParser.hpp>
+
 
 using namespace A2300;
+
+
+/******************************************************************
+ * Declarations
+ *****************************************************************/
+struct RxConfig{
+
+	const char* szPath;
+	const char* szDescr;
+	byte		epRx;
+	byte		idRf;
+	byte		idDdc;
+	byte        idPath;
+}; 
+
+struct UserParams {
+	std::string sfile;
+	int idxConfig;
+	byte gain;
+	double freq;
+	double bandwidth;
+	double samprate;
+	size_t numsamples;
+};
+
+
 
 /******************************************************************
  * Static Data
  *****************************************************************/
 
-// const values
+ARGPARSER_BEGIN_MAP( s_argmap ) 
+ARGPARSER_PARAM( "filename", "", "Output file name.")
+ARGPARSER_VAR( "path", ArgParser::Entry::DOUBLE, "pcs",
+			  "Receiver path to use. Choose from \"gpsant\", \"gpsext\", \"pcs\","
+			  "\"wideband0\", \"uhf\", \"ism_ant\", \"ism_ext\", \"wideband1\"")
+ARGPARSER_VAR( "freq", ArgParser::Entry::DOUBLE, "1970", "Receiver center frequency in MHz. Valid range is between 300 MHz to 3.8 MHz")
+ARGPARSER_VAR( "gain", ArgParser::Entry::LONG,   "9",    "Receiver gain in dB. Valid range is between 0 dB to 60 dB")
+ARGPARSER_VAR( "bw",   ArgParser::Entry::DOUBLE, "5",    "Receiver front-end bandwidth in MHz. Valid range is 1.5 MHz to 28 MHz.") 
+ARGPARSER_VAR( "rate", ArgParser::Entry::DOUBLE, "2",    "Host sample rate in MS/s. Valid range is 32 MHz to 3.90625 KHz.") 
+ARGPARSER_VAR( "num",  ArgParser::Entry::LONG,   "0",    "Number of samples to collect.  Default (0) is infinite.")
+ARGPARSER_END_MAP
+
+static const RxConfig s_config[] = {
+	{ "gpsant",		"GPS L1 Internal Antenna",	0x88,  WCACOMP_RF0, WCACOMP_DSP_DDC0, RX0DPE_GpsL1Int },
+	{ "gpsext",		"GPS L1 External Input",	0x88,  WCACOMP_RF0, WCACOMP_DSP_DDC0, RX0DPE_GpsL1Ext },
+	{ "pcs",		"PCS Input",				0x88,  WCACOMP_RF0, WCACOMP_DSP_DDC0, RX0DPE_PcsExt },
+	{ "wideband0",  "RF0 Wideband Input",		0x88,  WCACOMP_RF0, WCACOMP_DSP_DDC0, RX0DPE_Wideband },
+	{ "uhf",		"UHF External Input",		0x89,  WCACOMP_RF1, WCACOMP_DSP_DDC1, RX1DPE_UhfExt },
+	{ "ism_ant",	"ISM 2.4 GHz Antenna",		0x89,  WCACOMP_RF1, WCACOMP_DSP_DDC1, RX1DPE_IsmInt },
+	{ "ism_ext",	"ISM 2.4 GHz Ext. Input",	0x89,  WCACOMP_RF1, WCACOMP_DSP_DDC1, RX1DPE_IsmExt },
+	{ "wideband1",	"RF1 Wideband Input",		0x89,  WCACOMP_RF1, WCACOMP_DSP_DDC1, RX1DPE_Wideband }
+};
+const static int COUNT_CONFIG = 8;
+static UserParams s_params = { "", 2, 9, 1970.0, 5.0, 2.0, 0};
+static ArgParser s_args;
+
 
 const static size_t cs_BytesPerSample = 4;
 const static size_t cs_ctFrames = 16;
 const static size_t cs_sizeFrame = 8192;
 
-// default to: RF0, PCS Band, 9 dB Gain, 1950 MHz, 2.5 MHz bandwidth,
-// 2 MHz sampling, infinite # samples (0)
-
-static byte s_idComponent = WCACOMP_RF0;
-static byte s_rxProfile = RX0DPE_PcsExt;
-static byte s_rxGain = 3;
-static uint32 s_rxFreq = 1950000;
-static byte s_rxBandwidth = 13;
-static uint16 s_hostSampRate = 8;
-static size_t s_numSamples = 0;
 static size_t s_numBytesToCollect = 0;
 static size_t s_numBytesCollected = 0;
 
-static char* s_fileName = NULL;
-static FILE* s_fileStream = NULL;
-
-static ConfigDevice s_config;
-static ulong s_ctPackets = 0;
-static ulong s_ctData = 0;
-static bool s_bRunning = false;
+static FILE*		s_fileStream = NULL;
+static ConfigDevice s_cfgDevice;
+static ulong		s_ctPackets = 0;
+static ulong		s_ctData = 0;
+static bool			s_bRunning = false;
 
 /******************************************************************
  * Forward Declarations.
  *****************************************************************/
 
 static int Run ();
-
-// Program configuration routines
+static int ValidateArgs();
 static void WriteHeader ();
 static void PrintUsage ();
-static int ParseOptions (int argc, const char** argv);
 static void DumpDeviceInformation ();
 
-template < typename T >
-static bool GetArgumentNumber(int argc, const char** argv, const char* propertyName, int& currentArgNumber, T& outVar);
-
 // Support functions
-static int DoRxToFile ();
+static int  DoRxToFile ();
 static void OnFrameReady (void* arg, BulkDataPort::TransferContext* pctxt);
 
 /******************************************************************
@@ -98,18 +135,28 @@ static void OnFrameReady (void* arg, BulkDataPort::TransferContext* pctxt);
  * Main Program Entry Point.
  * </summary>
  */
-
 int main(int argc, const char** argv) {
 	int retval = 0;
+
 	WriteHeader();
-	retval = ParseOptions(argc, argv);
-	if( retval == 0)
+
+	s_args.AddMapEntries( s_argmap);
+	retval = s_args.Parse( argc, argv);
+
+	if( retval > 0)
 	{
+		//Validate Arguments.
+		retval = ValidateArgs();
+		if( retval) {
+			PrintUsage();
+			return retval;
+		}
+
 		// Open the specified file for writing.
-		s_fileStream = fopen(s_fileName, "wb");
+		s_fileStream = fopen(s_params.sfile.c_str(), "wb");
 		if (!s_fileStream) {
 			printf("\nError: Provided filename ('%s') cannot be "
-					"accessed.\n", s_fileName);
+					"accessed.\n", s_params.sfile.c_str());
 			PrintUsage();
 			return -3;
 		}
@@ -119,8 +166,12 @@ int main(int argc, const char** argv) {
 
 		//close the file -- note this was opened in ParseOptions,
 		if (fclose(s_fileStream) != 0) {
-			printf("\nError %d closing file '%s'.\n", errno, s_fileName);
+			printf("\nError %d closing file '%s'.\n", errno, s_params.sfile.c_str());
 		}
+	}
+	else //Arguments were not right.
+	{
+		PrintUsage();
 	}
 	return retval;
 }
@@ -132,7 +183,6 @@ int main(int argc, const char** argv) {
  */
 
 static int Run() {
-
 	int retval = 0;
 
 	try {
@@ -141,7 +191,7 @@ static int Run() {
 				"Enumerating ASR-2300 devices...\n"
 				"--------------------------------------\n");
 
-		int addr = s_config.Attach();
+		int addr = s_cfgDevice.Attach();
 
 		printf("Attached to ASR-2300 at address = %d\n", addr);
 
@@ -156,7 +206,7 @@ static int Run() {
 	// Execute the bulk data transfer program
 	retval = DoRxToFile ();
 
-	s_config.Detach();
+	s_cfgDevice.Detach();
 	return retval;
 }
 
@@ -167,41 +217,17 @@ static int Run() {
 
 static int DoRxToFile ()
 {
-	const static char* s_rx0_pathsDefault[] = {"Disabled", "GPS L1 Int.", "GPS L1 Ext.", "PCS Band Ext.", "Wideband"};
-	const static char* s_rx1_pathsDefault[] = {"Disabled", "UHF Ext.", "ISM Int.", "ISM Ext.", "Wideband"};
+	const RxConfig& cfg    = s_config[s_params.idxConfig];
+	bool      bIsRf0 = cfg.idRf == WCACOMP_RF0;
 
-	//Select endpoints, components, and path definitions based on which RF front-end was specified.
-	bool  bIsRf0   = (s_idComponent == WCACOMP_RF0);
-	byte  epRx     = (bIsRf0) ? 0x88 : 0x98;
-	byte  idDdc    = (bIsRf0) ? WCACOMP_DSP_DDC0 : WCACOMP_DSP_DDC1;
-	pcstr* szPaths = (bIsRf0) ? s_rx0_pathsDefault : s_rx1_pathsDefault;
-	float fSampFreq = 32.0e6f / (s_hostSampRate / 2);
-
-	double dt = ((double) s_numSamples) / ((double) fSampFreq);
-	double framesPerSecond = fSampFreq*cs_BytesPerSample / cs_sizeFrame;
+	double dSampRateHz = s_params.samprate * 1.0e6;
+	double dt = ((double) s_params.numsamples) / dSampRateHz;
+	double framesPerSecond = dSampRateHz*cs_BytesPerSample / cs_sizeFrame;
 	ulong totalFrames = (ulong)ceil(framesPerSecond*dt);
 
-	TransportDci& td = s_config.Dci0Transport();  //Get the dci interface so we can send messages directly.
-
-	//Display some interesting information about the configuration.
-	printf("\n");
-	printf("Opening Data Port...\n");
-	printf("--------------------------------------\n");
-	printf("RF Component:  %s (id=%02Xh, ep=%02Xh)\n", (bIsRf0)? "RF0" : "RF1", s_idComponent, epRx);
-	printf("RX Profile:    %s (id=%02Xh)\n", szPaths[s_rxProfile & 0xF], s_rxProfile);
-	printf("RX Gain:       %d dB\n", s_rxGain*3);
-	printf("RX Frequency:  %0.3f MHz\n", s_rxFreq/1.0e6f);
-	printf("RX Bandwidth:  ?? MHz (id=%02Xh)\n", s_rxBandwidth);
-	printf("Host Rate:     %0.3f MHz\n", fSampFreq/1.0e6f);
-	if (s_numSamples == 0) {
-	  printf("Duration:      infinite samples\n");
-	} else {
-	  printf("Duration:      %ld samples, %0.02lf sec, %lu frames\n", s_numSamples, dt, totalFrames);
-	}
-
 	// 1) Bind the Bulk Data Port to the specified endpoint.
-	BulkDataPort portData(epRx, PortBase::EP_UNDEF);
-	UsbDevice& device  = s_config.Device();
+	BulkDataPort portData(cfg.epRx, PortBase::EP_UNDEF);
+	UsbDevice& device  = s_cfgDevice.Device();
 	if( device.BindPort( &portData) != 0)
 	{
 		printf("Error Binding to Wca Ports.");
@@ -209,16 +235,15 @@ static int DoRxToFile ()
 	}
 
 	//2) Reset the DDC Component so no data is in cache.
-	td.SetProperty<byte>(idDdc, DSP_DDUC_CTRL, DSP_DDUC_CTRL_RESET);
-	td.SetProperty<byte>(idDdc, DSP_DDUC_CTRL, DSP_DDUC_CTRL_DISABLED);
+	ConfigDduc ddc( cfg.idDdc, "ddc", &s_cfgDevice, true);
+	s_cfgDevice.Components().push_back(&ddc);
 
 	//3) Configure the RF Front-end profile, gain, frequency, and Bandwidth.
-    //   NOTE: this will get moved to the ConfigRf object soon.  This is the
-	//         brute force way of doing it.
-	td.SetProperty<byte>(s_idComponent,   RFPROP_RXPATH, s_rxProfile );
-	td.SetProperty<byte>(s_idComponent,   RFPROP_RXGAIN, s_rxGain);
-	td.SetProperty<uint32>(s_idComponent, RFPROP_RXFREQ, s_rxFreq);
-	td.SetProperty<uint32>(s_idComponent, RFPROP_RXBANDWIDTH, s_rxBandwidth);
+	ConfigRf& rf = (bIsRf0) ? s_cfgDevice.RF0() : s_cfgDevice.RF1();
+	rf.RxPath( cfg.idPath);
+	s_params.gain		= rf.RxGain( s_params.gain);
+	s_params.freq		= rf.RxFrequency( (uint32) (s_params.freq*1000 + 0.5))/1000.0;
+	s_params.bandwidth	= ConfigRf::BandwidthToMHz(rf.RxBandwidth( ConfigRf::BandwidthFromMHz( s_params.bandwidth)));
 
 	//4) Open the port, attach callback function to receive data as it comes in.
 	portData.Open();
@@ -239,18 +264,33 @@ static int DoRxToFile ()
 	}
 
 	//6) Configure the DDC and Enable bulk data transfer on the device.
-	//   NOTE:  DDC functionality will move to the ConfigDDUC class at some point.
-	td.SetProperty<uint16>(idDdc, DSP_DDUC_SAMPRATE, s_hostSampRate);
+	s_params.samprate = ddc.HostSamplingRate( s_params.samprate*1.0e6, true)/1.0e6;
 	//TODO CONFIGURE IF Frequency.
-	td.SetProperty<byte>(idDdc, DSP_DDUC_CTRL, DSP_DDUC_CTRL_ENABLED);
 
-	//7) Process until finished
+	//7) Display Configuration actually used.
+	printf("\n");
+	printf("Opening Data Port...\n");
+	printf("--------------------------------------\n");
+	printf("RF Component:  %s (id=%02Xh, ep=%02Xh)\n", (bIsRf0)? "RF0" : "RF1", cfg.idRf, cfg.epRx);
+	printf("RX Profile:    %s (id=%02Xh)\n", cfg.szDescr, cfg.idPath);
+	printf("RX Gain:       %d dB\n",	  s_params.gain);
+	printf("RX Frequency:  %0.3f MHz\n",  s_params.freq);
+	printf("RX Bandwidth:  %0.3lf MHz\n", s_params.bandwidth);
+	printf("Host Rate:     %0.3lf MHz\n", s_params.samprate);
+	if (s_params.numsamples == 0) {
+	  printf("Duration:      infinite samples\n");
+	} else {
+	  printf("Duration:      %ld samples, %0.02lf sec, %lu frames\n", s_params.numsamples, dt, totalFrames);
+	}
 
+
+	//8) Process until finished
 	printf("\n--> Starting Run\n");
-
-	s_numBytesToCollect = s_numSamples * cs_BytesPerSample;
+	s_numBytesToCollect = s_params.numsamples * cs_BytesPerSample;
 	s_numBytesCollected = 0;
 	int retval = 0;
+	ddc.Enable(true);
+
 	while ((retval == 0) &&
 	       (s_numBytesCollected < s_numBytesToCollect))
 	{
@@ -267,17 +307,19 @@ static int DoRxToFile ()
 	// check for USB error
 	if( retval != 0) printf("USB error occurred transfer stopped.\n");
 
-	//8) Reset the DDC Port
-	td.SetProperty<byte>(idDdc, DSP_DDUC_CTRL, DSP_DDUC_CTRL_RESET);
-	td.SetProperty<byte>(idDdc, DSP_DDUC_CTRL, DSP_DDUC_CTRL_DISABLED);
+	//9) Reset the DDC Port (disables the data pump)
+	ddc.Reset();
 
-	//9) Print results
+	//Done with DDC.
+	s_cfgDevice.Components().remove( &ddc);
+
+	//10) Print results
 	printf("\n--> Completed Run: Packets = %ld, Bytes = %ld\n", s_ctPackets, s_ctData);
 
-	//10) Disable the RF Communications
-	td.SetProperty<byte>(s_idComponent,  RFPROP_RXPATH, bIsRf0 ? (byte)RX0DPE_Disabled : (byte)RX1DPE_Disabled );
+	//11) Disable the RF Communications
+	rf.RxPath( bIsRf0 ? (byte)RX0DPE_Disabled : (byte)RX1DPE_Disabled );
 
-	//11) Cancel all transfer operations.
+	//12) Cancel all transfer operations.
 	BulkDataPort::TransferContextList::iterator iter;
 	for( iter = listContext.begin(); iter != listContext.end(); iter++)
 		(*iter)->Cancel();
@@ -297,12 +339,12 @@ static int DoRxToFile ()
 	}
 #endif
 
-	//12) Destroy all the transfer contexts.
+	//13) Destroy all the transfer contexts.
 	for( iter = listContext.begin(); iter != listContext.end(); iter++)
 		(*iter)->Destroy(); // All done.
 
 
-	//11) Close the Data Port
+	//14) Close the Data Port
 	portData.Close();
 
 	return 0;
@@ -320,16 +362,16 @@ static void OnFrameReady (void* /* arg */, BulkDataPort::TransferContext* pctxt)
 	if (pctxt->status == 0)
 	{
 	  ++s_ctPackets;
-	  if (s_numSamples == 0) {
+	  if (s_params.numsamples == 0) {
 	    // Save data to disk
 	    size_t nWritten = fwrite (pctxt->bufFrame, 1, pctxt->nActualLength, s_fileStream);
 	    if (nWritten != pctxt->nActualLength) {
-	      printf ("\nWarning: Some data failed to write to the selected file ('%s').\n", s_fileName);
+	      printf ("\nWarning: Some data failed to write to the selected file ('%s').\n", s_params.sfile.c_str());
 	      printf ("  Ignoring and hoping for the best.\n");
 	    }
 
 	    // Print progress '.'
-	    if (s_numSamples == 0) {
+	    if (s_params.numsamples == 0) {
 	      if ((s_ctPackets % 488) == 0)
 		{
 		  putc('.', stdout);
@@ -346,7 +388,7 @@ static void OnFrameReady (void* /* arg */, BulkDataPort::TransferContext* pctxt)
 	    // Save data to disk
 	    size_t nWritten = fwrite (pctxt->bufFrame, 1, nToWrite, s_fileStream);
 	    if (nWritten != nToWrite) {
-	      printf ("\nWarning: Some data failed to write to the selected file ('%s').\n", s_fileName);
+	      printf ("\nWarning: Some data failed to write to the selected file ('%s').\n", s_params.sfile.c_str());
 	      printf ("  Ignoring and hoping for the best.\n");
 	    }
 
@@ -371,6 +413,37 @@ static void OnFrameReady (void* /* arg */, BulkDataPort::TransferContext* pctxt)
 	}
 }
 
+
+static int ValidateArgs()
+{
+	//Get configuration path.
+	std::string sPath = s_args.GetString("path");
+	int idxConfig = 0;
+	for( ; idxConfig < COUNT_CONFIG; idxConfig++)
+	{
+		if( sPath.compare( s_config[ idxConfig].szPath) == 0)
+			break;
+	}
+	if( idxConfig == COUNT_CONFIG)
+	{
+		printf( "Error - Invalid path variable %s\n\n", sPath.c_str());
+		return -1;
+	}
+
+	s_params.sfile = s_args.GetString("filename");
+	s_params.idxConfig = idxConfig;
+	s_params.freq = s_args.GetDouble("freq");
+	s_params.gain = (byte) s_args.GetLong("gain");
+	s_params.bandwidth = s_args.GetDouble("bw");
+	s_params.samprate = s_args.GetDouble("rate");
+	s_params.numsamples = s_args.GetLong("num");
+
+	//TODO Add range validation.  Rather extend ArgParser to do it.	
+	return 0;
+}
+
+
+
 /**
  * <summary>
  * Writes the application header information to the standard output.
@@ -394,397 +467,11 @@ static void WriteHeader() {
  */
 static void PrintUsage() {
 	printf( "\nUsage for A2300RxToFile:\n\n"
-		"  A2300RxToFile [options] output_filename\n\n"
-		"Options [default]:\n"
-		"    -h        This usage message.\n"
-		"    -c #      Rx component number, 0 or 1 [0].\n"
-		"    -A name   antenna name:\n"
-		"      Rx0 : GpsL1Int, GpsL1Ext, PcsExt, Wideband [PcsExt]\n"
-		"      Rx1 : UhfExt, IsmInt, IsmExt, Wideband [Wideband]\n"
-		"    -g #      gain in dB [9]\n"
-		"    -f #      center frequency [1950 MHz]\n"
-		"    -b #      bandwidth [2.5 MHz]\n"
-		"    -s #      sample rate [2 MS/s]\n"
-		"    -N #      number of samples to collect [inf]\n");
+			"  A2300RxToFile [filename] [[<var>=<value>] ...]\n\n");
+
+	s_args.WriteDescriptions();
 }
 
-/**
- * <summary>
- * Helper function makes argument number conversion more generic.
- * </summary>
- */
-
-// number of bits in a 'char'
-#ifndef CHAR_BIT
-#define CHAR_BIT 8
-#endif
-
-template < typename T >
-void GetMinMax (T& /* arg */, double& MIN_VAL, double& MAX_VAL, bool isSigned)
-{
-  unsigned char numBits = sizeof(T)*CHAR_BIT;
-  if (isSigned) {
-    --numBits;
-    MIN_VAL = (double) (((unsigned long long) 1) << numBits);
-    MAX_VAL = MIN_VAL - ((double) 1);
-    MIN_VAL *= ((double)(-1));
-  } else {
-    MIN_VAL = (double) 0;
-    if (numBits == (sizeof(unsigned long long)*CHAR_BIT)) {
-      MAX_VAL = (double)((unsigned long long) -1);
-    } else {
-      MAX_VAL = (double) ((((unsigned long long) 1) << numBits) -
-			  ((unsigned long long) 1));
-    }
-  }
-}
-
-void GetMinMaxName (char arg, double& MIN_VAL, double& MAX_VAL, std::string& nameString)
-{
-  GetMinMax (arg, MIN_VAL, MAX_VAL, true);
-  nameString = "char";
-}
-
-void GetMinMaxName (unsigned char arg, double& MIN_VAL, double& MAX_VAL, std::string& nameString)
-{
-  GetMinMax (arg, MIN_VAL, MAX_VAL, false);
-  nameString = "unsigned char";
-}
-
-void GetMinMaxName (short arg, double& MIN_VAL, double& MAX_VAL, std::string& nameString)
-{
-  GetMinMax (arg, MIN_VAL, MAX_VAL, true);
-  nameString = "short";
-}
-
-void GetMinMaxName (unsigned short arg, double& MIN_VAL, double& MAX_VAL, std::string& nameString)
-{
-  GetMinMax (arg, MIN_VAL, MAX_VAL, false);
-  nameString = "unsigned short";
-}
-
-void GetMinMaxName (int arg, double& MIN_VAL, double& MAX_VAL, std::string& nameString)
-{
-  GetMinMax (arg, MIN_VAL, MAX_VAL, true);
-  nameString = "int";
-}
-
-void GetMinMaxName (unsigned int arg, double& MIN_VAL, double& MAX_VAL, std::string& nameString)
-{
-  GetMinMax (arg, MIN_VAL, MAX_VAL, false);
-  nameString = "unsigned int";
-}
-
-void GetMinMaxName (long arg, double& MIN_VAL, double& MAX_VAL, std::string& nameString)
-{
-  GetMinMax (arg, MIN_VAL, MAX_VAL, true);
-  nameString = "int";
-}
-
-void GetMinMaxName (unsigned long arg, double& MIN_VAL, double& MAX_VAL, std::string& nameString)
-{
-  GetMinMax (arg, MIN_VAL, MAX_VAL, false);
-  nameString = "unsigned long";
-}
-
-template < typename T >
-static bool GetArgumentAsDouble(int argc, const char** argv, const char* propertyName, int& currentArgNumber, double& outValAsDouble)
-{
-  // convert to double
-
-  // retrieve the argument string, checking to make sure there are enough
-
-  bool rv = (++currentArgNumber < argc);
-  if (rv) {
-    // convert to a double, allowing for "0x" starting and "e+" ending
-    char* endPtr = 0;
-    outValAsDouble = strtod (argv[currentArgNumber], &endPtr);
-    if (endPtr == argv[currentArgNumber]) {
-      // failed to convert
-      printf ("Error: Unable to convert the string for argument %s ('%s') into a number.\n", propertyName, argv[currentArgNumber]);
-      PrintUsage();
-      rv = false;
-    }
-  } else {
-    printf ("Error: Too few arguments to determine %s.\n", propertyName);
-    PrintUsage();
-  }
-
-  // check for MIN, MAX, and factional value
-
-  if (rv) {
-
-    // retrieve MIN, MAX, name string
-
-    T arg = (T) 0;
-    double MIN_VAL, MAX_VAL;
-    std::string typeName;
-    GetMinMaxName (arg, MIN_VAL, MAX_VAL, typeName);
-
-    // convert to the number type, taking into account limits
-    if (outValAsDouble > MAX_VAL) {
-      printf ("Warning: Argument %s (%g) is larger than the maximum for converting to type '%s' (%g); truncating to max.\n", propertyName, outValAsDouble, typeName.c_str(), MAX_VAL);
-      outValAsDouble = MAX_VAL;
-    } else if (outValAsDouble < MIN_VAL) {
-      printf ("Warning: Argument %s (%g) is more negative than the minimum for converting to type '%s' (%g); truncating to min.\n", propertyName, outValAsDouble, typeName.c_str(), MIN_VAL);
-      outValAsDouble = MIN_VAL;
-    } else if (((double)((T)outValAsDouble)) != outValAsDouble) {
-      printf ("Warning: Argument %s (%g) contains fractional value; truncating to integer.\n", propertyName, outValAsDouble);
-      outValAsDouble = (double)((T) outValAsDouble);
-    }
-  }
-
-  return rv;
-}
-
-template < typename T >
-static bool GetArgumentNumber(int argc, const char** argv, const char* propertyName, int& currentArgNumber, T& outVar)
-{
-  double outValAsDouble = (double) 0;
-  bool rv = GetArgumentAsDouble<T>(argc, argv, propertyName, currentArgNumber, outValAsDouble);
-  if (rv) {
-    outVar = (T) outValAsDouble;
-  }
-  return rv;
-}
-
-/**
- * <summary>
- * Helper function makes argument matching more readable.
- * </summary>
- */
-
-static bool IsArgumentName( pcstr arg, pcstr szName, size_t minChars)
-{
-	size_t lenArg = strlen(arg);
-	size_t lenName = strlen(szName);
-	return lenArg >= minChars && lenArg <= lenName
-			&& (strncmp( arg, szName, lenArg) == 0);
-}
-
-/**
- * <summary>
- * Parses the privided command line string.
- * </summary>
- */
-
-static int ParseOptions(int argc, const char** argv) {
-	if (argc < 2) {
-		printf("\nError: Too few arguments: Got %d, expecting at least 2.\n", argc);
-		PrintUsage();
-		return -1;
-	}
-
-	int t_arg = 0;
-	char* antenna_flag_entry = NULL;
-
-	while (++t_arg < argc) {
-
-	  // get this argument string
-	  const char* t_argv = argv[t_arg];
-
-	  // see if this argument starts with '-'
-	  if (t_argv[0] != '-') {
-	    // no; is it the last one?
-	    if (++t_arg == argc) {
-	      // yes; set filename
-	      s_fileName = const_cast<char*>(t_argv);
-	      break;
-	    } else {
-	      // no; print an error
-	      printf ("Error: unknown flag '%s'.\n", t_argv);
-	      PrintUsage();
-	      return -1;
-	    }
-	  }
-
-	  // make sure the string length is 2
-	  if (strlen (t_argv) != 2) {
-	    // no: print error and exit
-	    printf ("Error: unknown flag '%s'.\n", t_argv);
-	    PrintUsage();
-	    return -1;
-	  }
-
-	  // swtich on the flag letter
-	  switch (t_argv[1]) {
-	  case 'A':
-	    // antenna name; next is string; depends on which Rx# is
-	    // selected, if any; process this after all other flags
-	    if (++t_arg < argc) {
-	      antenna_flag_entry = const_cast<char*>(argv[t_arg]);
-	    } else {
-	      printf ("Error: No antenna name specified with -A flag.\n");
-	      PrintUsage();
-	      return -1;
-	    }
-	    break;
-
-	  case 'b':
-	    {
-	      // bandwidth; next is #
-	      byte rxBandwidth = 0;
-	      if (!GetArgumentNumber(argc, argv, "bandwidth", t_arg, rxBandwidth)) {
-		return -1;
-	      }
-	      if (rxBandwidth == 0) {
-		printf ("Error: Specified bandwidth (%d) is 0; must be positive.\n", rxBandwidth);
-		PrintUsage();
-		return -1;
-	      }
-	      s_rxBandwidth = rxBandwidth;
-	      printf ("selected bandwidth: %d\n", s_rxBandwidth);
-	    }
-	    break;
-
-	  case 'c':
-	    {
-	      // Rx component #, as int 0 or 1
-	      byte idComponent = 0xff;
-	      if (!GetArgumentNumber(argc, argv, "Rx component #", t_arg, idComponent)) {
-		return -1;
-	      }
-	      if (idComponent == 0) {
-		s_idComponent = WCACOMP_RF0;
-	      } else if (idComponent == 1) {
-		s_idComponent = WCACOMP_RF1;
-	      } else {
-		printf ("Error: Unknown Rx component #%d; expecting 0 or 1.\n", idComponent);
-		PrintUsage();
-		return -1;
-	      }
-	      printf ("selected id component: %d\n", idComponent);
-	    }
-	    break;
-
-	  case 'f':
-	    {
-	      // center frequency; next is # as int
-	      uint32 rxFreq = 0;
-	      if (!GetArgumentNumber(argc, argv, "center frequency", t_arg, rxFreq)) {
-		return -1;
-	      }
-	      if (rxFreq <= 0) {
-		printf ("Error: Specified center frequency (%d) is <= 0; must be positive.\n", rxFreq);
-		PrintUsage();
-		return -1;
-	      }
-	      s_rxFreq = rxFreq;
-	      printf ("selected center frequency: %d\n", rxFreq);
-	    }
-	    break;
-
-	  case 'g':
-	    {
-	      // gain in dB; next is # as int
-	      byte rxGain = 0;
-	      if (!GetArgumentNumber(argc, argv, "gain in dB", t_arg, rxGain)) {
-		return -1;
-	      }
-	      if (rxGain <= 0) {
-		printf ("Error: Specified gain in dB (%d) is out of range; expecting an integer in [,].\n", rxGain);
-		PrintUsage();
-		return -1;
-	      }
-	      s_rxGain = rxGain;
-	      printf ("selected gain: %d\n", rxGain);
-	    }
-	    break;
-
-	  case 'h':
-	    {
-	      PrintUsage();
-	      return -1;
-	    }
-	    break;
-
-	  case 'N':
-	    {
-	      // number of samples to collect; next is # as int (non-negative; 0 means infinite)
-	      size_t numSamples = 0;
-	      if (!GetArgumentNumber(argc, argv, "number of samples to collect", t_arg, numSamples)) {
-		return -1;
-	      }
-	      s_numSamples = numSamples;
-	      printf ("selected number of samples: %ld\n", numSamples);
-	    }
-	    break;
-
-	  case 's':
-	    {
-	      // sample rate; next is # as int (positive)
-	      uint16 hostSampRate = 0;
-	      if (!GetArgumentNumber(argc, argv, "sample rate", t_arg, hostSampRate)) {
-		return -1;
-	      }
-	      if (hostSampRate == 0) {
-		printf ("Error: Specified sample rate (%d) is 0, must be positive.\n", hostSampRate);
-		PrintUsage();
-		return -1;
-	      }
-	      s_hostSampRate = hostSampRate;
-	      printf ("selected sample rate: %d\n", hostSampRate);
-	    }
-	    break;
-
-	  default:
-	    printf ("Unknown flag '%c'.\n", t_argv[1]);
-	    PrintUsage();
-	    return -1;
-	  }
-	}
-
-	// was a filename specified?
-	if (!s_fileName) {
-	  printf ("Error: No output filename specified.\n");
-	  PrintUsage();
-	  return -1;
-	}
-
-	// see if the antenna flag entry was set
-	if (antenna_flag_entry) {
-	  // yes: process depending on which Rx #
-	  if (s_idComponent == WCACOMP_RF0) {
-	    // Rx0 names: GpsL1Int, GpsL1Ext, PcsExt, Wideband [PcsExt]
-	    if (       IsArgumentName(antenna_flag_entry, "GpsL1Int", 6)) {
-	      s_rxProfile = RX0DPE_GpsL1Int;
-	    } else if (IsArgumentName(antenna_flag_entry, "GpsL1Ext", 6)) {
-	      s_rxProfile = RX0DPE_GpsL1Ext;
-	    } else if (IsArgumentName(antenna_flag_entry, "PcsExt", 1)) {
-	      s_rxProfile = RX0DPE_PcsExt;
-	    } else if (IsArgumentName(antenna_flag_entry, "Wideband", 1)) {
-	      s_rxProfile = RX0DPE_Wideband;
-	    } else {
-	      printf ("Error: Unknown antenna name '%s' on Rx0.\n",
-		      antenna_flag_entry);
-	      PrintUsage();
-	      return -1;
-	    }
-	    printf ("selected Rx0 antenna: %s\n", antenna_flag_entry);
-	  } else {
-	    // Rx1 names: UhfExt, IsmInt, IsmExt, Wideband [Wideband]
-	    if (       IsArgumentName(antenna_flag_entry, "UhfExt", 1)) {
-	      s_rxProfile = RX1DPE_UhfExt;
-	    } else if (IsArgumentName(antenna_flag_entry, "IsmInt", 4)) {
-	      s_rxProfile = RX1DPE_IsmInt;
-	    } else if (IsArgumentName(antenna_flag_entry, "IsmExt", 4)) {
-	      s_rxProfile = RX1DPE_IsmExt;
-	    } else if (IsArgumentName(antenna_flag_entry, "Wideband", 1)) {
-	      s_rxProfile = RX1DPE_Wideband;
-	    } else {
-	      printf ("Error: Unknown antenna name '%s' on Rx1.\n",
-		      antenna_flag_entry);
-	      PrintUsage();
-	      return -1;
-	    }
-	    printf ("selected Rx1 antenna: %s\n", antenna_flag_entry);
-	  }
-	}
-
-	printf ("selected filename '%s'\n", s_fileName);
-
-	return 0;
-}
 
 /**
  * <summary>
@@ -794,10 +481,10 @@ static int ParseOptions(int argc, const char** argv) {
 
 static void DumpDeviceInformation ()
 {
-	std::string sId = s_config.IdentifyDevice();
-	std::string sVer = s_config.FirmwareVersion(0);
-	uint16 idFpga = s_config.FpgaId();
-	uint16 verFpga = s_config.FpgaVersion();
+	std::string sId = s_cfgDevice.IdentifyDevice();
+	std::string sVer = s_cfgDevice.FirmwareVersion(0);
+	uint16 idFpga = s_cfgDevice.FpgaId();
+	uint16 verFpga = s_cfgDevice.FpgaVersion();
 	int iVer = (verFpga >> 8);
 	int iRev = (verFpga & 0x00ff);
 

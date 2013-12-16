@@ -20,7 +20,6 @@
 #include <string>
 #include <list>
 
-
 // Loctronix System Defaults
 #define A2300_DEFAULT_FREQ      ((double)(1.946e9))   	// gHz -> mHz -> kHz
 #define A2300_DEFAULT_GAIN		((double)(0.0))
