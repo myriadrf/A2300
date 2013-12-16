@@ -1,6 +1,4 @@
-
-/**
-* Name: strrev.cpp
+/** Name: strrev.cpp
 *
 * Copyright(c) 2013 Loctronix Corporation
 * http://www.loctronix.com
@@ -17,7 +15,7 @@
 */
 
 #include <string.h>
-#include"strtools.h"
+#include "strtools.h"
 
 char* strrev(char* szT)
 {

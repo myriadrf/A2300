@@ -1,6 +1,4 @@
-
-/**
-* Name: itoa.cpp
+/** Name: itoa.cpp
 *
 * Copyright(c) 2013 Loctronix Corporation
 * http://www.loctronix.com
@@ -15,7 +13,8 @@
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU General Public License for more details.
 */
-#include"strtools.h"
+
+#include "strtools.h"
 
 char* itoa(int value, char*  str, int radix)
 {
