@@ -42,7 +42,7 @@ IF(ENABLE_A2300RXTOFILE_APP)
 # Link with the A2300 USB interface
 ##############################################################
 
-    TARGET_LINK_LIBRARIES(A2300RxToFile A2300Usb)
+    TARGET_LINK_LIBRARIES(A2300RxToFile A2300Usb A2300System)
 
 ##############################################################
 # On Linux, link with the real time clock
