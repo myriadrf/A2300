@@ -27,10 +27,15 @@
 #include <errno.h>
 #include <limits.h>
 #include <math.h>
+#if defined(LINUX) || defined(APPLE)
+#include <pthread.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <termios.h>
 #include <time.h>
+
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -105,6 +110,7 @@ static ConfigDevice s_cfgDevice;
 static ulong		s_ctPackets = 0;
 static ulong		s_ctData = 0;
 static bool			s_bRunning = false;
+static bool			s_bKeyHit = false;
 
 /******************************************************************
  * Forward Declarations.
@@ -119,6 +125,9 @@ static void DumpDeviceInformation ();
 // Support functions
 static int  DoRxToFile ();
 static void OnFrameReady (void* arg, BulkDataPort::TransferContext* pctxt);
+static void* KeyThreadFunc (void* arg);
+static bool setCbreak (struct termios& saveTermios);
+static bool unsetCbreak (struct termios& savedTermios);
 
 /******************************************************************
  * Functions.
@@ -279,22 +288,51 @@ static int DoRxToFile ()
 
 	//8) Process until finished
 	printf("\n--> Starting Run\n");
-	s_numBytesToCollect = s_params.numsamples * cs_BytesPerSample;
-	s_numBytesCollected = 0;
 	int retval = 0;
 	ddc.Enable(true);
 
-	while ((retval == 0) &&
-	       (s_numBytesCollected < s_numBytesToCollect))
-	{
-#if defined(HAVE_LIBUSB)
-		retval= device.PollAsynchronousEvents();
-#elif defined(WIN32)
-		//Windows implementation does not have a PollAsynchronous Data method.
-		//Instead, we wait for events on each port.
-		BulkDataPort::TransferContext& ctxt = portData.WaitForReadTransferEvent( 1000);
-		retval = ctxt.status;
+	// start a separate thread waiting on any keyboard entry
+#if defined(LINUX) || defined(APPLE)
+	pthread_t keyThread;
+	if (pthread_create (&keyThread, NULL, KeyThreadFunc, NULL) != 0) {
+	  printf ("Error creating key entry thread; use ^C to exit data connection if necessary.\n");
+	}
 #endif
+
+	if (s_params.numsamples != 0) {
+
+	  printf("Wait for finish, or hit any key to stop data collection ...\n");
+
+	  s_numBytesToCollect = s_params.numsamples * cs_BytesPerSample;
+	  s_numBytesCollected = 0;
+
+	  while ((retval == 0) && (!s_bKeyHit) &&
+		 (s_numBytesCollected < s_numBytesToCollect))
+	    {
+#if defined(HAVE_LIBUSB)
+	      retval= device.PollAsynchronousEvents();
+#elif defined(WIN32)
+	      //Windows implementation does not have a PollAsynchronous Data method.
+	      //Instead, we wait for events on each port.
+	      BulkDataPort::TransferContext& ctxt = portData.WaitForReadTransferEvent( 1000);
+	      retval = ctxt.status;
+#endif
+	    }
+	} else {
+
+	  printf("Hit any key to stop data collection ...\n");
+
+	  while ((retval == 0) && (!s_bKeyHit))
+	    {
+#if defined(HAVE_LIBUSB)
+	      retval= device.PollAsynchronousEvents();
+#elif defined(WIN32)
+	      //Windows implementation does not have a PollAsynchronous Data method.
+	      //Instead, we wait for events on each port.
+	      BulkDataPort::TransferContext& ctxt = portData.WaitForReadTransferEvent( 1000);
+	      retval = ctxt.status;
+#endif
+	    }
 	}
 
 	// check for USB error
@@ -339,6 +377,11 @@ static int DoRxToFile ()
 	//14) Close the Data Port
 	portData.Close();
 
+	// join the keyboard entry thread
+#if defined(LINUX) || defined(APPLE)
+	pthread_join (keyThread, NULL);
+#endif
+
 	return 0;
 }
 
@@ -353,7 +396,11 @@ static void OnFrameReady (void* /* arg */, BulkDataPort::TransferContext* pctxt)
 	// if the status is OK (0)
 	if (pctxt->status == 0)
 	{
+	  // common functionality
 	  ++s_ctPackets;
+	  s_ctData += pctxt->nActualLength;
+	  pctxt->Submit();
+
 	  if (s_params.numsamples == 0) {
 	    // Save data to disk
 	    size_t nWritten = fwrite (pctxt->bufFrame, 1, pctxt->nActualLength, s_fileStream);
@@ -363,13 +410,11 @@ static void OnFrameReady (void* /* arg */, BulkDataPort::TransferContext* pctxt)
 	    }
 
 	    // Print progress '.'
-	    if (s_params.numsamples == 0) {
-	      if ((s_ctPackets % 488) == 0)
-		{
-		  putc('.', stdout);
-		  fflush(stdout);
-		}
-	    }
+	    if ((s_ctPackets % 488) == 0)
+	      {
+		putc('.', stdout);
+		fflush(stdout);
+	      }
 	  } else {
 
 	    size_t nToWrite = s_numBytesToCollect - s_numBytesCollected;
@@ -386,10 +431,6 @@ static void OnFrameReady (void* /* arg */, BulkDataPort::TransferContext* pctxt)
 
 	    size_t oldNumBytesCollected = s_numBytesCollected;
 	    s_numBytesCollected += nWritten;
-	    s_ctData += pctxt->nActualLength;
-
-	    // Resubmit
-	    pctxt->Submit();
 
 	    // 60 dots is complete; figure out how far along and if
 	    // another dot needs to be printed.
@@ -480,4 +521,68 @@ static void DumpDeviceInformation ()
 	printf("Identity:    %s\n", sId.c_str());
 	printf("FW Ver:      %s\n", sVer.c_str());
 	printf("FPGA ID-Ver: %04X-%02X.%02X\n\n", idFpga, iVer, iRev);
+}
+
+/**
+ * <summary>
+ * Thread to get key hit, unbuffered but blocking, to stop data collection
+ * </summary>
+ */
+
+static void* KeyThreadFunc (void* /* arg */)
+{
+  struct termios saveTermios;
+  setCbreak (saveTermios);
+  s_bKeyHit = false;
+  getchar();
+  unsetCbreak (saveTermios);
+  s_bKeyHit = true;
+  return NULL;
+}
+
+/**
+ * <summary>
+ * Set terminal character mode to unbuffered, read at will; returns
+ * true on success, false on failure (for any reason).
+ * </summary>
+ */
+
+static bool setCbreak (struct termios& saveTermios)
+{
+  // Remove line buffering from stdin
+  if (setvbuf (stdin, NULL, _IONBF, 0) != 0) {
+    return false;
+  }
+
+  // Store previous terminal settings
+  if (tcgetattr (0, &saveTermios)) {
+    return false;
+  }
+
+  // Modify terminal settings, using a copy of the previous settings
+  struct termios buf = saveTermios;
+  buf.c_lflag &= ~(ECHO|ICANON);
+  buf.c_cc[VMIN] = 1;
+  buf.c_cc[VTIME] = 0;
+
+  // Set new terminal settings
+  if (tcsetattr (0, TCSAFLUSH, &buf) < 0) {
+    return false;
+  }
+  return true;
+}
+
+static bool unsetCbreak (struct termios& savedTermios)
+{
+  // Return line buffering to stdin
+  if (setvbuf (stdin, NULL, _IOLBF, 0) != 0) {
+    return false;
+  }
+
+  // Return original terminal settings
+  if (tcsetattr (0, TCSAFLUSH, &savedTermios) < 0) {
+    return false;
+  }
+
+  return true;
 }
