@@ -640,11 +640,11 @@ byte Dci_BitInitiateTargetTransfer( Dci_BitOperationMgr* pmgr, Dci_BitClient* pC
 bool Dci_BitRequestSourceTransfer( Dci_BitOperationMgr* pmgr, Dci_BitClient* pClient, byte idComponentSource, byte flags, byte idTransfer, Dci_Context* pctxt)
 {
 
-  Dci_BitOperation* pbop;
+  // Dci_BitOperation* pbop;
   byte buff[MAX_MSG_SIZE];
 
   //Set up the operation.
-  pbop = pmgr->aBitOps + idTransfer;
+  // pbop = pmgr->aBitOps + idTransfer;
 
   //Look up requested operation and make sure it is inactive
   //and Client supports the type of operation.
