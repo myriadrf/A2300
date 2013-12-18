@@ -76,14 +76,7 @@ void Dci_Bsf_Init( Dci_Bsf *pfmttr, byte* pBuff, int sizeBuff);
  * Encodes payload and calculates the checksum. Returns the checksum value.
  * </summary>
  */
-short Dci_Bsf_EncodePayloadType1(
-	byte* pOut, short* pLenOutput, const byte* pDciMsg,
-#if 0
-	byte lenMsg
-#else
-	short lenMsg
-#endif
-);
+short Dci_Bsf_EncodePayloadType1( byte* pOut, short* pLenOutput, const byte* pDciMsg, short lenMsg );
 
 /**
  * <summary>
@@ -97,14 +90,7 @@ short Dci_Bsf_DecodePayloadType1( byte* pOut, int* pLenOutput, byte* pHdr, byte*
  * Formats a DCI Message in accordance to Binary Serial Stream Transport requirements.
  *</summary>
  */
-int Dci_Bsf_FormatMessage(
-	byte* pOutBuff, int nMaxBuffLen, const byte* pDciMsg,
-#if 0
-	byte lenMsg
-#else
-	short lenMsg
-#endif
-);
+int Dci_Bsf_FormatMessage( byte* pOutBuff, int nMaxBuffLen, const byte* pDciMsg, short lenMsg );
 
 /**
  *<summary>
