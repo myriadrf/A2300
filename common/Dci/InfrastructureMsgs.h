@@ -29,9 +29,9 @@ extern "C" {
 
 /* Infrastructure messages defined. */
 
-#define Dci_IdentifyDeviceQuery_Id	0x0280
-#define Dci_IdentifyDevice_Id		0x0200
-#define Dci_MessageError_Id			0x0301
+#define Dci_IdentifyDeviceQuery_Id	((uint16)0x0280)
+#define Dci_IdentifyDevice_Id		((uint16)0x0200)
+#define Dci_MessageError_Id			((uint16)0x0301)
 
 /*
 * IdleMsg (0x0100); defined in DciMsg.h; returns message length.

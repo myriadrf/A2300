@@ -99,7 +99,8 @@ byte ConfigRf::RxPath( byte idPath)
 }
 byte ConfigRf::RxPath( ) const
 {
-	return m_rxpath;}
+	return m_rxpath;
+}
 
 RfBandwidthValuesEnum ConfigRf::RxBandwidth( RfBandwidthValuesEnum bw)
 {

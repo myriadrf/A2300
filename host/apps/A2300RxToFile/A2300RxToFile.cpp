@@ -22,13 +22,14 @@
 #else
 	#include <unistd.h>
 	#define SLEEP_SEC(a) sleep((a))
-#endif 
+#endif
 
 #include <errno.h>
 #include <limits.h>
 #include <math.h>
 #if defined(LINUX) || defined(APPLE)
 #include <pthread.h>
+#include <signal.h>
 #endif
 #include <stdio.h>
 #include <stdlib.h>
@@ -214,8 +215,10 @@ static int Run() {
 }
 
 /**
+ * <summary>
  * Function configures the ASR-2300 to receive a specified frequency
  * and then streams the data to the host via BulkDataPort interface.
+ * </summary>
  */
 
 static int DoRxToFile ()
@@ -379,6 +382,9 @@ static int DoRxToFile ()
 
 	// join the keyboard entry thread
 #if defined(LINUX) || defined(APPLE)
+	if (!s_bKeyHit) {
+	  pthread_kill (keyThread, SIGINT);
+	}
 	pthread_join (keyThread, NULL);
 #endif
 

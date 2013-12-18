@@ -33,10 +33,10 @@ extern "C" {
 #define DCI_MAX_MSGSIZE     320
 
 #define Dci_MsgId_Category(MsgId) ((byte)(MsgId >> 8))
-#define Dci_MsgId_TypeId(MsgId) ((byte)(MsgId & (uint16)0x00ff))
+#define Dci_MsgId_TypeId(MsgId) ((byte)(MsgId & ((uint16)0x00ff)))
 
-#define Dci_IdleMsg_Id 		(uint16)(0x0100)
-#define Dci_DebugMsg_Id 	(uint16)(0x0501)
+#define Dci_IdleMsg_Id 		((uint16)0x0100)
+#define Dci_DebugMsg_Id 	((uint16)0x0501)
 
 /**
 * Dci_Hdr Structure
@@ -63,7 +63,7 @@ int Dci_Hdr_Init( void* buff, byte idCategory, byte idType);
  */
 bool Dci_Hdr_ValidateNonIdleMsg( Dci_Hdr* phdr);
 
-uint16  Dci_Hdr_MessageId( Dci_Hdr* phdr);
+uint16 Dci_Hdr_MessageId( Dci_Hdr* phdr);
 byte Dci_Hdr_CategoryId( Dci_Hdr* phdr);
 byte Dci_Hdr_TypeId( Dci_Hdr* phdr);
 uint16 Dci_Hdr_MessageId( Dci_Hdr* phdr);

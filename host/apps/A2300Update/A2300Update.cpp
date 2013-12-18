@@ -14,24 +14,11 @@
 * GNU General Public License for more details.
 */
 
-//Include sleep functionality and homogenize api.
-#ifdef WIN32
-#define _CRT_SECURE_NO_WARNINGS
-#define WIN32_LEAN_AND_MEAN 
-	#include<windows.h>
-	#define SLEEP_SEC(a)  Sleep((a)*1000)
-#else
-	#include <unistd.h>
-	#define SLEEP_SEC(a) sleep((a))
-#endif 
-
 #include <errno.h>
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
-
-
 
 #include <stdexcept>
 #include <vector>
@@ -168,20 +155,20 @@ int main(int argc, char** argv) {
 		}
 
 		//Validate file type.
-		std::string filename(s_fileName);
-		std::string::size_type idx;
-		idx = filename.rfind('.');
-		std::string sext = "";
-		if(idx != std::string::npos) {
-			sext  = filename.substr(idx+1);
-		}
-
-		if( sext.size() == 0 || sext !=  s_pOp->szFileExt)
-		{
+		std::string filename(s_fileName);
+		std::string::size_type idx;
+		idx = filename.rfind('.');
+		std::string sext = "";
+		if(idx != std::string::npos) {
+			sext  = filename.substr(idx+1);
+		}
+
+		if( sext.size() == 0 || sext !=  s_pOp->szFileExt)
+		{
 			printf("\nError: Provided filename ('%s') does not have the correct file extension: %s\n",
 				s_fileName, s_pOp->szFileExt);
 			PrintUsage();
-			return -4;
+			return -4;
 		}
 
 		//Now run the Update operation.
@@ -289,6 +276,7 @@ static int DoUpdateFirmware()
 	}
 	return retval;
 }
+
 static int DoBitTransferFlash()
 {
 	byte buff[MAX_MSG_SIZE];
@@ -310,14 +298,14 @@ static int DoBitTransferFlash()
 	}
 
 	printf("  Waiting for Flash Memory to Erase (%d seconds)...\n", WAIT_FLASH_ERASE );
-	
 	fflush(stdout);
+
 	int cntLoop = 0;
 	while (cntLoop < WAIT_FLASH_ERASE ) {
 		memset(buff, 0, sizeof(buff));
 		int nread = s_ptd->ReceiveMsg(buff, MAX_MSG_SIZE, 1.0);
 		++cntLoop;
-		if( !nread) continue;
+		if( nread <= 0) continue;
 
 		Dci_Hdr* pMsg = (Dci_Hdr*) buff;
 		uint16 idMsg = Dci_Hdr_MessageId(pMsg);
@@ -327,7 +315,6 @@ static int DoBitTransferFlash()
 			{
 				Dci_DebugMsg* plog = (Dci_DebugMsg*)( pMsg);
 				std::string smsg = TransportDci::DebugMsgToString( plog);
-				
 				puts( smsg.c_str());
 				putc( '\n', stdout);
 			}
@@ -337,14 +324,12 @@ static int DoBitTransferFlash()
 			printf("  Unhandled Dci message: %04X.\n", idMsg);
 			break;
 		}
-	} 
+	}
 	printf("  done.\n");
 	fflush(stdout);
 
-
-	//Proceed with standard Bit Transfer.
+	// Proceed with standard Bit Transfer.
 	return DoBitTransfer();
-
 }
 
 /**
@@ -632,7 +617,7 @@ static int OnBitSetFrameData(Dci_BitOperation* pbop, byte* buff,
 
 static void OnBitTransferComplete(Dci_BitOperation* /* pbop */, byte idStatus) {
 
-	const char* szStatus[] = {"Initiating", "Complete", "ReadyNext", "Frame Error", 
+	const char* szStatus[] = {"Initiating", "Complete", "ReadyNext", "Frame Error",
 							   "Write Error", "Read Error", "Operation Not Available",
 							   "Operation Cancelled"};
 	s_idLastBitStatus = idStatus;

@@ -32,8 +32,8 @@ int Dci_TypedProperties_Init( void* buff, uint16 sizeBuff,
 	if( (ctProperties > 0) )
 	{
 		// Compute the Properities length.
-		lenData = ctProperties * sizeof( Dci_Property);
-		lenHdr = sizeof(Dci_TypedProperties);
+		lenData = ((int)ctProperties) * ((int)sizeof( Dci_Property));
+		lenHdr = (int)sizeof(Dci_TypedProperties);
 		lenMsg = lenHdr + lenData;
 
 		// Make sure it will fit in the output buffer.
@@ -44,9 +44,9 @@ int Dci_TypedProperties_Init( void* buff, uint16 sizeBuff,
 			pmsg->idComponent  = idComponent;
 			pmsg->ctProperties = ctProperties;
 
-			//Copy if properties specified, otherwise, skip.
+			// Copy if properties specified, otherwise, skip.
 			if(pProps != NULL)
-				memcpy((byte*)buff+lenHdr, pProps, lenData);
+				memcpy(((byte*)buff)+lenHdr, pProps, (size_t) lenData);
 			return (lenMsg);
 		}
 	}
@@ -59,8 +59,8 @@ int Dci_TypedProperties_Init( void* buff, uint16 sizeBuff,
 */
 int Dci_TypedProperties_MsgLength( Dci_TypedProperties* pmsg)
 {
-	int lenData = pmsg->ctProperties * sizeof(Dci_Property);
-	return ((int)(sizeof( Dci_TypedProperties))) + lenData;
+	int lenData = ((int)pmsg->ctProperties) * ((int)sizeof(Dci_Property));
+	return ((int)(sizeof(Dci_TypedProperties))) + lenData;
 }
 
 /**
@@ -69,8 +69,8 @@ int Dci_TypedProperties_MsgLength( Dci_TypedProperties* pmsg)
 Dci_Property* Dci_TypedProperties_GetProperties( Dci_TypedProperties* pmsg)
 {
 	// Data is appended at end of header.
-	byte *pData = (byte*)pmsg + sizeof(Dci_TypedProperties);
-	return (Dci_Property *)pData;
+	byte *pData = ((byte*)pmsg) + sizeof(Dci_TypedProperties);
+	return (Dci_Property*) pData;
 }
 
 //*****************************************************************************
@@ -105,14 +105,14 @@ int Dci_TypedPropertiesQuery_Init( void* buff, uint16 sizeBuff,
 	{
 		lenMsg += ctProperties;
 		if( lenMsg <= sizeBuff )
-			memcpy( (byte*)buff+lenHdr, aPropIds, ctProperties);
+		  memcpy( (byte*)buff+lenHdr, aPropIds, (size_t) ctProperties);
 	}
 
 	/* Copy typeids if defined. */
 	if( aTypeIds != NULL)
 	{
 		if( lenMsg <= sizeBuff )
-			memcpy( ((byte*)buff + lenHdr + ctProperties), aTypeIds, ctProperties);
+			memcpy( ((byte*)buff) + lenHdr + ctProperties, aTypeIds, (size_t) ctProperties);
 		return(lenMsg);
 	}
 	return (lenMsg < sizeBuff) ? lenMsg : -1;
@@ -161,7 +161,7 @@ int Dci_ExecuteAction_Init( void* buff, uint16 sizeBuff,
 		pmsg->idComponent  = idComponent;
 		pmsg->idAction  = idAction;
 		pmsg->lenData   = lenData;
-		memcpy( ((byte*)buff+lenHdr), pdata, lenData);
+		memcpy( ((byte*)buff+lenHdr), pdata, (size_t) lenData);
 		return(lenMsg);
 	}
 	return(0);
@@ -223,7 +223,7 @@ int Dci_BinaryImageTransferFrame_Init( void* buff, byte idComponent,
 
 	if( pdata != NULL )
 	{
-		memcpy( (byte*)buff+lenHdr, pdata, ctBytes);
+	  memcpy( ((byte*)buff)+lenHdr, pdata, (size_t) ctBytes);
 	}
 	return (lenHdr + ctBytes);
 }

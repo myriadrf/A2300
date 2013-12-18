@@ -90,8 +90,8 @@ int A2300::TransportDci::SendMsg( byte* pmsg, size_t lenMsg, bool bRequestAck, d
 
 	//Send the DCI command.
 	return m_pPort->Write(pmsg, (int) lenMsg, TO_MSEC(timeout) );
-
 }
+
 /**
  * Receive DCI Message.
  */
@@ -107,7 +107,6 @@ int A2300::TransportDci::ReceiveMsg( byte* pmsg, size_t lenMax, double timeout)
 	if( ctRead > 0)
 		Dci_Conversation_UpdateState( m_pConv, pmsg, (uint16) ctRead);
 	return ctRead;
-
 }
 
 int A2300::TransportDci::GetProperty( byte idComponent, Dci_Property& prop, double timeout)

@@ -28,16 +28,16 @@ extern "C" {
 #endif
 
 /* Standard DCI Messages defined */
-#define Dci_DeviceInfo_Id				0x0200
-#define Dci_DeviceInfoQuery_Id			0x0280
+#define Dci_DeviceInfo_Id				((uint16)0x0200)
+#define Dci_DeviceInfoQuery_Id			((uint16)0x0280)
 
-#define Dci_Reset_Id					0x2001
-#define Dci_VersionInfo_Id				0x2002
-#define Dci_VersionInfoQuery_Id			0x2082
-#define Dci_StringProperties_Id			0x2005
-#define Dci_StringPropertiesQuery_Id	0x2085
-#define Dci_TypedDataRecord_Id			0x2013
-#define Dci_TypedDataRecordQuery_Id		0x2093
+#define Dci_Reset_Id					((uint16)0x2001)
+#define Dci_VersionInfo_Id				((uint16)0x2002)
+#define Dci_VersionInfoQuery_Id			((uint16)0x2082)
+#define Dci_StringProperties_Id			((uint16)0x2005)
+#define Dci_StringPropertiesQuery_Id	((uint16)0x2085)
+#define Dci_TypedDataRecord_Id			((uint16)0x2013)
+#define Dci_TypedDataRecordQuery_Id		((uint16)0x2093)
 
 /* Time sync messages not currently implemented. */
 
