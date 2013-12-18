@@ -381,6 +381,9 @@ static int DoRxToFile ()
 
 	// join the keyboard entry thread
 #if defined(LINUX) || defined(APPLE)
+	if (!s_bKeyHit) {
+	  pthread_kill (keyThread, SIGINT);
+	}
 	pthread_join (keyThread, NULL);
 #endif
 
