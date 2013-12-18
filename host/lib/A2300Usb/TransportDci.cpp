@@ -90,8 +90,8 @@ int A2300::TransportDci::SendMsg( byte* pmsg, size_t lenMsg, bool bRequestAck, d
 
 	//Send the DCI command.
 	return m_pPort->Write(pmsg, (int) lenMsg, TO_MSEC(timeout) );
-
 }
+
 /**
  * Receive DCI Message.
  */
