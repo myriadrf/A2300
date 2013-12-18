@@ -14,17 +14,6 @@
 * GNU General Public License for more details.
 */
 
-//Include sleep functionality and homogenize api.
-#ifdef WIN32
-#define _CRT_SECURE_NO_WARNINGS
-#define WIN32_LEAN_AND_MEAN 
-	#include<windows.h>
-	#define SLEEP_SEC(a)  Sleep((a)*1000)
-#else
-	#include <unistd.h>
-	#define SLEEP_SEC(a) sleep((a))
-#endif 
-
 #include <errno.h>
 #include <math.h>
 #include <stdio.h>
@@ -309,8 +298,8 @@ static int DoBitTransferFlash()
 	}
 
 	printf("  Waiting for Flash Memory to Erase (%d seconds)...\n", WAIT_FLASH_ERASE );
-	
 	fflush(stdout);
+
 	int cntLoop = 0;
 	while (cntLoop < WAIT_FLASH_ERASE ) {
 		memset(buff, 0, sizeof(buff));
@@ -628,7 +617,7 @@ static int OnBitSetFrameData(Dci_BitOperation* pbop, byte* buff,
 
 static void OnBitTransferComplete(Dci_BitOperation* /* pbop */, byte idStatus) {
 
-	const char* szStatus[] = {"Initiating", "Complete", "ReadyNext", "Frame Error", 
+	const char* szStatus[] = {"Initiating", "Complete", "ReadyNext", "Frame Error",
 							   "Write Error", "Read Error", "Operation Not Available",
 							   "Operation Cancelled"};
 	s_idLastBitStatus = idStatus;
