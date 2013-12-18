@@ -316,7 +316,7 @@ static int DoBitTransferFlash()
 		memset(buff, 0, sizeof(buff));
 		int nread = s_ptd->ReceiveMsg(buff, MAX_MSG_SIZE, 1.0);
 		++cntLoop;
-		if( !nread) continue;
+		if( nread <= 0) continue;
 
 		Dci_Hdr* pMsg = (Dci_Hdr*) buff;
 		uint16 idMsg = Dci_Hdr_MessageId(pMsg);
