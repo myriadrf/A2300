@@ -214,8 +214,10 @@ static int Run() {
 }
 
 /**
+ * <summary>
  * Function configures the ASR-2300 to receive a specified frequency
  * and then streams the data to the host via BulkDataPort interface.
+ * </summary>
  */
 
 static int DoRxToFile ()
