@@ -138,8 +138,6 @@ A2300::BulkDataPort::TransferContext*	A2300::BulkDataPort::CreateWriteTransferCo
 
 }
 
-
-
 /**
  * Read the specified number of bytes from the port.
  */
@@ -151,12 +149,8 @@ int A2300::BulkDataPort::Read( byte * pdata, int ctBytes, int msecTimeout )
 	int ctRead = 0;
 	int retval = libusb_bulk_transfer(DeviceHandle(), (epidIn() | LIBUSB_ENDPOINT_IN), pdata, ctBytes, &ctRead, (unsigned int) msecTimeout);
 
-
 	return (retval == 0) ? ctRead: retval;
 }
-
-
-
 
 /**
  * Writes the specified number bytes to the port.
