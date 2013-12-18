@@ -22,13 +22,14 @@
 #else
 	#include <unistd.h>
 	#define SLEEP_SEC(a) sleep((a))
-#endif 
+#endif
 
 #include <errno.h>
 #include <limits.h>
 #include <math.h>
 #if defined(LINUX) || defined(APPLE)
 #include <pthread.h>
+#include <signal.h>
 #endif
 #include <stdio.h>
 #include <stdlib.h>
