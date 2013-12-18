@@ -33,8 +33,6 @@ void Dci_Bsf_Init( Dci_Bsf *pfmttr, byte* pBuff, int sizeBuff)
 	Dci_Bsf_Reset(pfmttr);
 }
 
-
-
 /**
  * <summary>
  * Encodes payload and calculates the checksum. Returns the checksum value.
@@ -167,15 +165,12 @@ short Dci_Bsf_CalcChecksum( const byte* pDciMsg, short nLen )
     return (short) (chksum & 0x7FFF);
 }
 
-
-
-
 /**
  * Helper method used to reset the formatter for the next message.
  */
 void Dci_Bsf_Reset(Dci_Bsf *pfmttr )
 {
-	memset( pfmttr->pBuff, 0, pfmttr->sizeBuff);
+	memset( pfmttr->pBuff, 0, (size_t) pfmttr->sizeBuff);
 	pfmttr->pNext	 = pfmttr->pBuff;
 	pfmttr->iPayload = -1;
 	pfmttr->ct		 = 0;
@@ -362,9 +357,9 @@ int Dci_Bsf_ProcessReceivedData( Dci_Bsf *pfmttr,
 			idxChecksum	= (short)(pfmttr->pNext - pfmttr->pBuff -2);
 			chksumCalc  = Dci_Bsf_CalcChecksum( pfmttr->pBuff, idxChecksum);
 #if 1
-			chksumRx    = (short) pfmttr->pBuff[idxChecksum];
+			chksumRx    = ((short) pfmttr->pBuff[idxChecksum]);
 			chksumRx  <<= 8;
-			chksumRx   |= (short) pfmttr->pBuff[idxChecksum+1];
+			chksumRx   |= ((short) pfmttr->pBuff[idxChecksum+1]);
 #else
 			chksumRx    = ((short)(((short) pfmttr->pBuff[idxChecksum]) << 8)) | ((short) pfmttr->pBuff[idxChecksum+1]);
 #endif
