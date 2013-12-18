@@ -31,8 +31,6 @@
 #include <string.h>
 #include <time.h>
 
-
-
 #include <stdexcept>
 #include <vector>
 
@@ -168,20 +166,20 @@ int main(int argc, char** argv) {
 		}
 
 		//Validate file type.
-		std::string filename(s_fileName);
-		std::string::size_type idx;
-		idx = filename.rfind('.');
-		std::string sext = "";
-		if(idx != std::string::npos) {
-			sext  = filename.substr(idx+1);
-		}
-
-		if( sext.size() == 0 || sext !=  s_pOp->szFileExt)
-		{
+		std::string filename(s_fileName);
+		std::string::size_type idx;
+		idx = filename.rfind('.');
+		std::string sext = "";
+		if(idx != std::string::npos) {
+			sext  = filename.substr(idx+1);
+		}
+
+		if( sext.size() == 0 || sext !=  s_pOp->szFileExt)
+		{
 			printf("\nError: Provided filename ('%s') does not have the correct file extension: %s\n",
 				s_fileName, s_pOp->szFileExt);
 			PrintUsage();
-			return -4;
+			return -4;
 		}
 
 		//Now run the Update operation.
@@ -289,6 +287,7 @@ static int DoUpdateFirmware()
 	}
 	return retval;
 }
+
 static int DoBitTransferFlash()
 {
 	byte buff[MAX_MSG_SIZE];
@@ -327,7 +326,6 @@ static int DoBitTransferFlash()
 			{
 				Dci_DebugMsg* plog = (Dci_DebugMsg*)( pMsg);
 				std::string smsg = TransportDci::DebugMsgToString( plog);
-				
 				puts( smsg.c_str());
 				putc( '\n', stdout);
 			}
@@ -337,14 +335,12 @@ static int DoBitTransferFlash()
 			printf("  Unhandled Dci message: %04X.\n", idMsg);
 			break;
 		}
-	} 
+	}
 	printf("  done.\n");
 	fflush(stdout);
 
-
-	//Proceed with standard Bit Transfer.
+	// Proceed with standard Bit Transfer.
 	return DoBitTransfer();
-
 }
 
 /**
