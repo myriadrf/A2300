@@ -18,9 +18,11 @@
 #include <Windows.h>
 #endif
 
-#include <stdio.h>
 #include <math.h>
+#include <stdio.h>
+#include <string.h>
 #include <time.h>
+
 #include <stdexcept>
 #include <vector>
 
@@ -143,9 +145,11 @@ static int DoCalibrate ()
   const size_t numRxComponents = sizeof(rxInfo) / sizeof(struct _RxInfo);
 
   // Set the RF Profile component into cache mode
+  memset(buff, 0, sizeof(buff));
   msgSize = Dci_ExecuteAction_Init (buff, DCI_MAX_MSGSIZE, WCACOMP_RFPROFILES, RFP_ACTION_CACHEDATA, 0, NULL);
   ctSent = tDci.SendMsg (buff, (size_t) msgSize, true);
   // get ack, and verify
+  memset(buff, 0, sizeof(buff));
   ctAck = tDci.ReceiveMsg (buff, DCI_MAX_MSGSIZE);
   if ((ctAck <= 0) || (ctSent != msgSize)) {
     printf ("Warning: Unable to set device into cache mode (%d, %d).\n",
@@ -158,18 +162,22 @@ static int DoCalibrate ()
     struct _RxInfo& tRxInfo = rxInfo[nn];
 
     // Reset Top-Level Calibration
+    memset(buff, 0, sizeof(buff));
     msgSize = Dci_ExecuteAction_Init (buff, DCI_MAX_MSGSIZE, RFACTION_RESETTOPCALIB, 0, 0, NULL);
     ctSent = tDci.SendMsg (buff, (size_t) msgSize, true);
     // get ack, and verify
+    memset(buff, 0, sizeof(buff));
     ctAck = tDci.ReceiveMsg (buff, DCI_MAX_MSGSIZE);
     if ((ctAck <= 0) || (ctSent != msgSize)) {
       printf ("Warning: Unable to Reset Top-Level Calibration for Rx component #%ld (%d, %d).\n", nn, ctSent, ctAck);
     }
 
     // Calibrate Top-Level
+    memset(buff, 0, sizeof(buff));
     msgSize = Dci_ExecuteAction_Init (buff, DCI_MAX_MSGSIZE, RFACTION_TOPCALIBRATE, 0, 0, NULL);
     ctSent = tDci.SendMsg (buff, (size_t) msgSize, true);
     // get ack, and verify
+    memset(buff, 0, sizeof(buff));
     ctAck = tDci.ReceiveMsg (buff, DCI_MAX_MSGSIZE);
     if ((ctAck <= 0) || (ctSent != msgSize)) {
       printf ("Warning: Unable to Calibrate Top-Level for Rx component #%ld  (%d, %d).\n", nn, ctSent, ctAck);
@@ -185,18 +193,22 @@ static int DoCalibrate ()
       cRf.RxPath(thisRxPath.Value);
 
       // Reset RX Calibration for this path
+      memset(buff, 0, sizeof(buff));
       msgSize = Dci_ExecuteAction_Init (buff, DCI_MAX_MSGSIZE, RFACTION_RESETRXCALIB, 0, 0, NULL);
       ctSent = tDci.SendMsg (buff, (size_t) msgSize, true);
       // get ack, and verify
+      memset(buff, 0, sizeof(buff));
       ctAck = tDci.ReceiveMsg (buff, DCI_MAX_MSGSIZE);
       if ((ctAck <= 0) || (ctSent != msgSize)) {
 	printf ("Warning: Unable to Reset RX Calibration for Rx%ld path %s (%d, %d).\n", nn, thisRxPath.Name, ctSent, ctAck);
       }
 
       // Calibrate this path
+      memset(buff, 0, sizeof(buff));
       msgSize = Dci_ExecuteAction_Init (buff, DCI_MAX_MSGSIZE, RFACTION_SAVERXPROFILE, 0, 0, NULL);
       ctSent = tDci.SendMsg (buff, (size_t) msgSize, true);
       // get ack, and verify
+      memset(buff, 0, sizeof(buff));
       ctAck = tDci.ReceiveMsg (buff, DCI_MAX_MSGSIZE);
       if ((ctAck <= 0) || (ctSent != msgSize)) {
 	printf ("Warning: Unable to Calibrate Rx%ld path %s (%d, %d).\n", nn, thisRxPath.Name, ctSent, ctAck);
@@ -205,9 +217,11 @@ static int DoCalibrate ()
   }
 
   // Save Cached Changes
+  memset(buff, 0, sizeof(buff));
   msgSize = Dci_ExecuteAction_Init (buff, DCI_MAX_MSGSIZE, WCACOMP_RFPROFILES, RFP_ACTION_SAVECHANGES, 0, NULL);
   ctSent = tDci.SendMsg (buff, (size_t) msgSize, true);
   // get ack, and verify
+  memset(buff, 0, sizeof(buff));
   ctAck = tDci.ReceiveMsg (buff, DCI_MAX_MSGSIZE);
   if ((ctAck <= 0) || (ctSent != msgSize)) {
     printf ("Warning: Unable to set device into cache mode (%d, %d).\n",
