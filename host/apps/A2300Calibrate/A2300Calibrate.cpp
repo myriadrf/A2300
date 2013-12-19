@@ -232,21 +232,6 @@ static int DoCalibrate ()
 
 }
 
-#if 0
-Note most of them use the DCI WCA Execute Action Message (Action Msg).
- 
-1.       Set the RF Profile component into cache mode.  Send Action Msg to component WCACOMP_RFPROFILES [0x94] action ID = 0.
-2.       For each RF Component ( 0x81, 0x82) Do the following:
-a.       Reset Top-Level Calibration: Send Action Msg (id=0x87)
-b.      Calibrate Top-Level: Send Action Msg( id =0x84)
-c.       For each RX RF Profile
- i.      Set RX Profile Path Property (propid=0x0D),  see ASR-2300 Comm Interface Specs for allowed values or  A2300InterfaceDefs.h
- ii.      Reset RX Calibration: Send Action Msg (id=0x88)
- iii.      Calibrate Top-Level: Send Action Msg ( id =0x85)
- iv.      Wait for Log Message Response, Info is ok, Err means it didn’t work.
-3.       Save Cached Changes by sending Action Msg to component 0x94 action ID=0x02.
-#endif
-
 /**
  * <summary>
  * Writes the application header information to the standard output.
