@@ -27,14 +27,16 @@
 #include <errno.h>
 #include <limits.h>
 #include <math.h>
+
 #if defined(LINUX) || defined(APPLE)
 #include <pthread.h>
 #include <signal.h>
+#include <termios.h>
 #endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <termios.h>
+
 #include <time.h>
 
 #include <stdexcept>
@@ -537,12 +539,14 @@ static void DumpDeviceInformation ()
 
 static void* KeyThreadFunc (void* /* arg */)
 {
+#if defined(LINUX) || defined(APPLE)
   struct termios saveTermios;
   setCbreak (saveTermios);
   s_bKeyHit = false;
   getchar();
   unsetCbreak (saveTermios);
   s_bKeyHit = true;
+#endif
   return NULL;
 }
 
@@ -555,6 +559,7 @@ static void* KeyThreadFunc (void* /* arg */)
 
 static bool setCbreak (struct termios& saveTermios)
 {
+#if defined(LINUX) || defined(APPLE)
   // Remove line buffering from stdin
   if (setvbuf (stdin, NULL, _IONBF, 0) != 0) {
     return false;
@@ -575,11 +580,13 @@ static bool setCbreak (struct termios& saveTermios)
   if (tcsetattr (0, TCSAFLUSH, &buf) < 0) {
     return false;
   }
+#endif
   return true;
 }
 
 static bool unsetCbreak (struct termios& savedTermios)
 {
+#if defined(LINUX) || defined(APPLE)
   // Return line buffering to stdin
   if (setvbuf (stdin, NULL, _IOLBF, 0) != 0) {
     return false;
@@ -589,6 +596,6 @@ static bool unsetCbreak (struct termios& savedTermios)
   if (tcsetattr (0, TCSAFLUSH, &savedTermios) < 0) {
     return false;
   }
-
+#endif
   return true;
 }
