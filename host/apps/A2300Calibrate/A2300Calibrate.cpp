@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 
 #include <stdexcept>
 #include <vector>
@@ -144,7 +145,16 @@ static int DoCalibrate ()
   };
   const size_t numRxComponents = sizeof(rxInfo) / sizeof(struct _RxInfo);
 
+  // disable both Tx and Rx paths
+  s_cfgDevice.RF0().TxPath(TX0DPE_Disabled);
+  s_cfgDevice.RF1().TxPath(TX1DPE_Disabled);
+  s_cfgDevice.RF0().RxPath(RX0DPE_Disabled);
+  s_cfgDevice.RF1().RxPath(RX1DPE_Disabled);
+
+  sleep(1);
+
   // Set the RF Profile component into cache mode
+  printf ("Setting the RF Profile component into cache mode ...\n");
   memset(buff, 0, sizeof(buff));
   msgSize = Dci_ExecuteAction_Init (buff, DCI_MAX_MSGSIZE, WCACOMP_RFPROFILES, RFP_ACTION_CACHEDATA, 0, NULL);
   ctSent = tDci.SendMsg (buff, (size_t) msgSize, true);
@@ -154,69 +164,130 @@ static int DoCalibrate ()
   if ((ctAck <= 0) || (ctSent != msgSize)) {
     printf ("Warning: Unable to set device into cache mode (%d, %d).\n",
 	    ctSent, ctAck);
+    printf ("  Proceeding anyway.");
   }
+  // print received ack info
+  if (Dci_Hdr_MessageId((Dci_Hdr*) buff) == Dci_DebugMsg_Id) {
+    Dci_Hdr* pMsg = (Dci_Hdr*) buff;
+    Dci_DebugMsg* plog = (Dci_DebugMsg*)( pMsg);
+    std::string smsg = TransportDci::DebugMsgToString( plog);
+    puts( smsg.c_str());
+    putc( '\n', stdout);
+  }
+  sleep(1);
+  printf ("Done.\n");
 
-  for (size_t nn = 0; nn < numRxComponents; ++nn) {
+  for (byte nn = 0; nn < (byte) numRxComponents; ++nn) {
 
     // calibrate profiles for this Rx component
     struct _RxInfo& tRxInfo = rxInfo[nn];
 
     // Reset Top-Level Calibration
+    printf ("Resetting Top-Level Calibration for Rx component %d ...\n", (nn+1));
+
     memset(buff, 0, sizeof(buff));
-    msgSize = Dci_ExecuteAction_Init (buff, DCI_MAX_MSGSIZE, RFACTION_RESETTOPCALIB, 0, 0, NULL);
+    msgSize = Dci_ExecuteAction_Init (buff, DCI_MAX_MSGSIZE, tRxInfo.cRf.componentId(), RFACTION_RESETTOPCALIB, 0, NULL);
     ctSent = tDci.SendMsg (buff, (size_t) msgSize, true);
     // get ack, and verify
     memset(buff, 0, sizeof(buff));
     ctAck = tDci.ReceiveMsg (buff, DCI_MAX_MSGSIZE);
     if ((ctAck <= 0) || (ctSent != msgSize)) {
-      printf ("Warning: Unable to Reset Top-Level Calibration for Rx component #%ld (%d, %d).\n", nn, ctSent, ctAck);
+      printf ("Warning: Unable to Reset Top-Level Calibration for Rx component #%d (%d, %d).\n", nn, ctSent, ctAck);
+      printf ("  Proceeding anyway.");
     }
+    // print received ack info
+    if (Dci_Hdr_MessageId((Dci_Hdr*) buff) == Dci_DebugMsg_Id) {
+      Dci_Hdr* pMsg = (Dci_Hdr*) buff;
+      Dci_DebugMsg* plog = (Dci_DebugMsg*)( pMsg);
+      std::string smsg = TransportDci::DebugMsgToString( plog);
+      puts( smsg.c_str());
+      putc( '\n', stdout);
+    }
+    sleep(1);
+    printf ("Done.\n");
 
     // Calibrate Top-Level
+    printf ("Calibration Top-Level for Rx component %d ...\n", (nn+1));
     memset(buff, 0, sizeof(buff));
-    msgSize = Dci_ExecuteAction_Init (buff, DCI_MAX_MSGSIZE, RFACTION_TOPCALIBRATE, 0, 0, NULL);
+    msgSize = Dci_ExecuteAction_Init (buff, DCI_MAX_MSGSIZE, tRxInfo.cRf.componentId(), RFACTION_TOPCALIBRATE, 0, NULL);
     ctSent = tDci.SendMsg (buff, (size_t) msgSize, true);
     // get ack, and verify
     memset(buff, 0, sizeof(buff));
     ctAck = tDci.ReceiveMsg (buff, DCI_MAX_MSGSIZE);
     if ((ctAck <= 0) || (ctSent != msgSize)) {
-      printf ("Warning: Unable to Calibrate Top-Level for Rx component #%ld  (%d, %d).\n", nn, ctSent, ctAck);
+      printf ("Warning: Unable to Calibrate Top-Level for Rx component #%d  (%d, %d).\n", nn, ctSent, ctAck);
+      printf ("  Proceeding anyway.");
     }
+    // print received ack info
+    if (Dci_Hdr_MessageId((Dci_Hdr*) buff) == Dci_DebugMsg_Id) {
+      Dci_Hdr* pMsg = (Dci_Hdr*) buff;
+      Dci_DebugMsg* plog = (Dci_DebugMsg*)( pMsg);
+      std::string smsg = TransportDci::DebugMsgToString( plog);
+      puts( smsg.c_str());
+      putc( '\n', stdout);
+    }
+    sleep(1);
+    printf ("Done.\n");
 
     ConfigRf& cRf = tRxInfo.cRf;
 
     // calibrate all Rx paths, one at a time
-    for (size_t mm = 0; mm < tRxInfo.numPaths; ++mm) {
+    for (byte mm = 0; mm < tRxInfo.numPaths; ++mm) {
 
       // Set RX Path to Calibrate
       struct _rxPath& thisRxPath = tRxInfo.rxPaths[mm];
       cRf.RxPath(thisRxPath.Value);
 
       // Reset RX Calibration for this path
+      printf ("Resetting Calibration for Rx component %d path %d (%s) ...\n", (nn+1), (mm+1), thisRxPath.Name);
       memset(buff, 0, sizeof(buff));
-      msgSize = Dci_ExecuteAction_Init (buff, DCI_MAX_MSGSIZE, RFACTION_RESETRXCALIB, 0, 0, NULL);
+      msgSize = Dci_ExecuteAction_Init (buff, DCI_MAX_MSGSIZE, tRxInfo.cRf.componentId(), RFACTION_RESETRXCALIB, 0, NULL);
       ctSent = tDci.SendMsg (buff, (size_t) msgSize, true);
       // get ack, and verify
       memset(buff, 0, sizeof(buff));
       ctAck = tDci.ReceiveMsg (buff, DCI_MAX_MSGSIZE);
       if ((ctAck <= 0) || (ctSent != msgSize)) {
-	printf ("Warning: Unable to Reset RX Calibration for Rx%ld path %s (%d, %d).\n", nn, thisRxPath.Name, ctSent, ctAck);
+	printf ("Warning: Unable to Reset RX Calibration for Rx%d path %s (%d, %d).\n", nn, thisRxPath.Name, ctSent, ctAck);
+	printf ("  Proceeding anyway.");
       }
+      // print received ack info
+      if (Dci_Hdr_MessageId((Dci_Hdr*) buff) == Dci_DebugMsg_Id) {
+	Dci_Hdr* pMsg = (Dci_Hdr*) buff;
+	Dci_DebugMsg* plog = (Dci_DebugMsg*)( pMsg);
+	std::string smsg = TransportDci::DebugMsgToString( plog);
+	puts( smsg.c_str());
+	putc( '\n', stdout);
+      }
+      sleep(1);
+      printf ("Done.\n");
 
       // Calibrate this path
+      printf ("Calibrating Rx component %d path %d (%s) ...\n", (nn+1), (mm+1), thisRxPath.Name);
       memset(buff, 0, sizeof(buff));
-      msgSize = Dci_ExecuteAction_Init (buff, DCI_MAX_MSGSIZE, RFACTION_SAVERXPROFILE, 0, 0, NULL);
+      msgSize = Dci_ExecuteAction_Init (buff, DCI_MAX_MSGSIZE, tRxInfo.cRf.componentId(), RFACTION_SAVERXPROFILE, 0, NULL);
       ctSent = tDci.SendMsg (buff, (size_t) msgSize, true);
       // get ack, and verify
       memset(buff, 0, sizeof(buff));
       ctAck = tDci.ReceiveMsg (buff, DCI_MAX_MSGSIZE);
       if ((ctAck <= 0) || (ctSent != msgSize)) {
-	printf ("Warning: Unable to Calibrate Rx%ld path %s (%d, %d).\n", nn, thisRxPath.Name, ctSent, ctAck);
+	printf ("Warning: Unable to Calibrate Rx%d path %s (%d, %d).\n", nn, thisRxPath.Name, ctSent, ctAck);
+	printf ("  Proceeding anyway.");
       }
+      // print received ack info
+      if (Dci_Hdr_MessageId((Dci_Hdr*) buff) == Dci_DebugMsg_Id) {
+	Dci_Hdr* pMsg = (Dci_Hdr*) buff;
+	Dci_DebugMsg* plog = (Dci_DebugMsg*)( pMsg);
+	std::string smsg = TransportDci::DebugMsgToString( plog);
+	puts( smsg.c_str());
+	putc( '\n', stdout);
+      }
+      sleep(1);
+      printf ("Done.\n");
     }
   }
 
   // Save Cached Changes
+  printf ("Saving all cached calibrations ...\n");
   memset(buff, 0, sizeof(buff));
   msgSize = Dci_ExecuteAction_Init (buff, DCI_MAX_MSGSIZE, WCACOMP_RFPROFILES, RFP_ACTION_SAVECHANGES, 0, NULL);
   ctSent = tDci.SendMsg (buff, (size_t) msgSize, true);
@@ -226,10 +297,25 @@ static int DoCalibrate ()
   if ((ctAck <= 0) || (ctSent != msgSize)) {
     printf ("Warning: Unable to set device into cache mode (%d, %d).\n",
 	    ctSent, ctAck);
+    printf ("  Proceeding anyway.");
   }
+  // print received ack info
+  if (Dci_Hdr_MessageId((Dci_Hdr*) buff) == Dci_DebugMsg_Id) {
+    Dci_Hdr* pMsg = (Dci_Hdr*) buff;
+    Dci_DebugMsg* plog = (Dci_DebugMsg*)( pMsg);
+    std::string smsg = TransportDci::DebugMsgToString( plog);
+    puts( smsg.c_str());
+    putc( '\n', stdout);
+  }
+  printf ("Done.\n");
+
+  // disable both Tx and Rx paths
+  s_cfgDevice.RF0().TxPath(TX0DPE_Disabled);
+  s_cfgDevice.RF1().TxPath(TX1DPE_Disabled);
+  s_cfgDevice.RF0().RxPath(RX0DPE_Disabled);
+  s_cfgDevice.RF1().RxPath(RX1DPE_Disabled);
 
   return 0;
-
 }
 
 /**
