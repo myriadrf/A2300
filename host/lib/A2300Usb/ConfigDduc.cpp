@@ -61,8 +61,7 @@ void ConfigDduc::Reset( double uiSamplingRateHz)
 void ConfigDduc::Mode( byte modeFlags)
 {
 	m_byteMode = modeFlags;
-	byte flags = ((m_bEnable) ? DSP_DDUC_CTRL_ENABLED : DSP_DDUC_CTRL_DISABLED)
-		|  m_byteMode  |  ((m_byteMode & BypassCic) ? DSP_DDUC_CTRL_BYPASSCICSTROBE : 0);
+	byte flags = ((m_bEnable) ? DSP_DDUC_CTRL_ENABLED : DSP_DDUC_CTRL_DISABLED) | m_byteMode | ((m_byteMode & ((byte) BypassCic)) ? DSP_DDUC_CTRL_BYPASSCICSTROBE : (byte) 0);
 
 	TransportDci& td = m_pDevice->Dci0Transport();
 	td.SetProperty<byte>(m_idComponent, DSP_DDUC_CTRL,flags );
@@ -114,7 +113,7 @@ std::string ConfigDduc::name()
 {
 	return m_sName;
 }
-int  ConfigDduc::componentId()
+byte ConfigDduc::componentId()
 {
 	return m_idComponent;
 }
