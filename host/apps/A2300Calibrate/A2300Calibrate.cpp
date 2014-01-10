@@ -22,12 +22,22 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
-#include <unistd.h>
 
 #include <stdexcept>
 #include <vector>
 
 #include <A2300/ConfigDevice.h>
+
+//Include sleep functionality and homogenize api.
+#ifdef WIN32
+#define _CRT_SECURE_NO_WARNINGS
+#define WIN32_LEAN_AND_MEAN 
+	#include<windows.h>
+	#define SLEEP_SEC(a)  Sleep((a)*1000)
+#else
+	#include <unistd.h>
+	#define SLEEP_SEC(a) sleep((a))
+#endif 
 
 using namespace A2300;
 
@@ -151,7 +161,7 @@ static int DoCalibrate ()
   s_cfgDevice.RF0().RxPath(RX0DPE_Disabled);
   s_cfgDevice.RF1().RxPath(RX1DPE_Disabled);
 
-  sleep(1);
+  SLEEP_SEC(1);
 
   // Set the RF Profile component into cache mode
   printf ("Setting the RF Profile component into cache mode ...\n");
@@ -174,7 +184,7 @@ static int DoCalibrate ()
     puts( smsg.c_str());
     putc( '\n', stdout);
   }
-  sleep(1);
+  SLEEP_SEC(1);
   printf ("Done.\n");
 
   for (byte nn = 0; nn < (byte) numRxComponents; ++nn) {
@@ -203,7 +213,7 @@ static int DoCalibrate ()
       puts( smsg.c_str());
       putc( '\n', stdout);
     }
-    sleep(1);
+    SLEEP_SEC(1);
     printf ("Done.\n");
 
     // Calibrate Top-Level
@@ -226,7 +236,7 @@ static int DoCalibrate ()
       puts( smsg.c_str());
       putc( '\n', stdout);
     }
-    sleep(1);
+    SLEEP_SEC(1);
     printf ("Done.\n");
 
     ConfigRf& cRf = tRxInfo.cRf;
@@ -258,7 +268,7 @@ static int DoCalibrate ()
 	puts( smsg.c_str());
 	putc( '\n', stdout);
       }
-      sleep(1);
+      SLEEP_SEC(1);
       printf ("Done.\n");
 
       // Calibrate this path
@@ -281,7 +291,7 @@ static int DoCalibrate ()
 	puts( smsg.c_str());
 	putc( '\n', stdout);
       }
-      sleep(1);
+      SLEEP_SEC(1);
       printf ("Done.\n");
     }
   }
