@@ -37,6 +37,15 @@ int A2300::UsbDevice::InitializeUsb( )
 	return OpenDevice(m_vendorId, m_productId, m_usbAddress);
 }
 
+/**
+* Tests to see if device driver is started.
+*/
+bool A2300::UsbDevice::IsStarted()
+{
+	return m_pDevHandle != null;
+}
+
+
 /*
 * Starts the device
 */

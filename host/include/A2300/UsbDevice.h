@@ -48,6 +48,7 @@ namespace A2300
 		virtual ~UsbDevice();
 
 	public:
+
 		/**
 		* <summary>
 		* Initializes the driver, User can specify specific address or driver
@@ -57,6 +58,13 @@ namespace A2300
 		* </summary>
 		*/
 		virtual int Initialize( int addr=A2300_ADDR_UNDEF );
+
+		/**
+		* Tests to see if device driver is started.
+		*/
+		virtual bool IsStarted();
+
+
 		/**
 		* <summary>
 		* Starts the driver after being initialized.
