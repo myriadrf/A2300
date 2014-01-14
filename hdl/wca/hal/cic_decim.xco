@@ -1,0 +1,75 @@
+##############################################################
+#
+# Xilinx Core Generator version 14.3
+# Date: Thu Sep 26 06:04:37 2013
+#
+##############################################################
+#
+#  This file contains the customisation parameters for a
+#  Xilinx CORE Generator IP GUI. It is strongly recommended
+#  that you do not manually alter this file as it may cause
+#  unexpected and unsupported behavior.
+#
+##############################################################
+#
+#  Generated from component: xilinx.com:ip:cic_compiler:2.0
+#
+##############################################################
+#
+# BEGIN Project Options
+SET addpads = false
+SET asysymbol = true
+SET busformat = BusFormatAngleBracketNotRipped
+SET createndf = false
+SET designentry = Verilog
+SET device = xc6slx45
+SET devicefamily = spartan6
+SET flowvendor = Other
+SET formalverification = false
+SET foundationsym = false
+SET implementationfiletype = Ngc
+SET package = csg484
+SET removerpms = false
+SET simulationfiles = Behavioral
+SET speedgrade = -3
+SET verilogsim = true
+SET vhdlsim = false
+# END Project Options
+# BEGIN Select
+SELECT CIC_Compiler xilinx.com:ip:cic_compiler:2.0
+# END Select
+# BEGIN Parameters
+CSET ce=false
+CSET clock_frequency=128
+CSET component_name=cic_decim
+CSET differential_delay=1
+CSET filter_type=Decimation
+CSET fixed_or_initial_rate=2048
+CSET gui_behaviour=Coregen
+CSET hardwareoversamplingrate=1
+CSET input_data_width=12
+CSET input_sample_frequency=32
+CSET maximum_rate=4096
+CSET minimum_rate=4
+CSET nd=true
+CSET number_of_channels=1
+CSET number_of_stages=4
+CSET output_data_width=16
+CSET passband_max=0.2
+CSET passband_min=0.0
+CSET quantization=Truncation
+CSET ratespecification=Frequency_Specification
+CSET response_magnitude=Normalized
+CSET sample_rate_changes=Programmable
+CSET sampleperiod=1
+CSET sclr=true
+CSET stopband_max=0.5
+CSET stopband_min=0.2
+CSET use_streaming_interface=false
+CSET use_xtreme_dsp_slice=true
+# END Parameters
+# BEGIN Extra information
+MISC pkg_timestamp=2012-10-13T03:07:00Z
+# END Extra information
+GENERATE
+# CRC: 3dadd9ce

@@ -1,0 +1,70 @@
+##############################################################
+#
+# Xilinx Core Generator version 14.3
+# Date: Mon Jun 17 17:44:04 2013
+#
+##############################################################
+#
+#  This file contains the customisation parameters for a
+#  Xilinx CORE Generator IP GUI. It is strongly recommended
+#  that you do not manually alter this file as it may cause
+#  unexpected and unsupported behavior.
+#
+##############################################################
+#
+#  Generated from component: xilinx.com:ip:c_counter_binary:11.0
+#
+##############################################################
+#
+# BEGIN Project Options
+SET addpads = false
+SET asysymbol = true
+SET busformat = BusFormatAngleBracketNotRipped
+SET createndf = false
+SET designentry = Verilog
+SET device = xc6slx45
+SET devicefamily = spartan6
+SET flowvendor = Other
+SET formalverification = false
+SET foundationsym = false
+SET implementationfiletype = Ngc
+SET package = csg484
+SET removerpms = false
+SET simulationfiles = Behavioral
+SET speedgrade = -3
+SET verilogsim = true
+SET vhdlsim = false
+# END Project Options
+# BEGIN Select
+SELECT Binary_Counter xilinx.com:ip:c_counter_binary:11.0
+# END Select
+# BEGIN Parameters
+CSET ainit_value=0
+CSET ce=false
+CSET component_name=DspCounter24
+CSET count_mode=UPDOWN
+CSET fb_latency=0
+CSET fb_latency_configuration=Manual
+CSET final_count_value=1
+CSET implementation=DSP48
+CSET increment_value=1
+CSET latency=1
+CSET latency_configuration=Manual
+CSET load=true
+CSET load_sense=Active_High
+CSET output_width=24
+CSET restrict_count=false
+CSET sclr=false
+CSET sinit=false
+CSET sinit_value=0
+CSET sset=false
+CSET sync_ce_priority=Sync_Overrides_CE
+CSET sync_threshold_output=false
+CSET syncctrlpriority=Reset_Overrides_Set
+CSET threshold_value=1
+# END Parameters
+# BEGIN Extra information
+MISC pkg_timestamp=2012-08-28T14:50:53Z
+# END Extra information
+GENERATE
+# CRC: 6db4efcf

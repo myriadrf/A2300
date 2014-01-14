@@ -1,0 +1,31 @@
+SET_PARAMETER filter_type Decimation
+SET_PARAMETER input_data_width 12
+SET_PARAMETER sample_rate_changes Programmable
+SET_PARAMETER ce false
+SET_PARAMETER gui_behaviour Coregen
+SET_PARAMETER response_magnitude Normalized
+SET_PARAMETER number_of_stages 4
+SET_PARAMETER quantization Truncation
+SET_PARAMETER maximum_rate 4096
+SET_PARAMETER nd true
+SET_PARAMETER hardwareoversamplingrate 1
+SET_PARAMETER output_data_width 16
+SET_PARAMETER clock_frequency 128
+SET_PARAMETER number_of_channels 1
+SET_PARAMETER ratespecification Frequency_Specification
+SET_PARAMETER passband_max 0.2
+SET_PARAMETER stopband_max 0.5
+SET_PARAMETER sampleperiod 1
+SET_PARAMETER component_name cic_decim
+SET_PARAMETER sclr true
+SET_PARAMETER input_sample_frequency 32
+SET_PARAMETER fixed_or_initial_rate 2048
+SET_PARAMETER use_xtreme_dsp_slice true
+SET_PARAMETER passband_min 0.0
+SET_PARAMETER stopband_min 0.2
+SET_PARAMETER minimum_rate 4
+SET_PARAMETER use_streaming_interface false
+SET_PARAMETER differential_delay 1
+SET_ERROR_CODE 2
+SET_ERROR_MSG  CANCEL: Customization cancelled.
+SET_ERROR_TEXT Finished initializing IP model.	
