@@ -69,10 +69,21 @@ To execute the applications in the debugger you will need to define several envi
    * LD_LIBRARY_PATH -- Define path to UHD if not in standard location.
    * UHD_MODULE_PATH -- Define path to A2300 UhdAdaptor shared library e.g. <installdir>/A2300/host/lib/UhdAdaptor/Debug/libUhdAdaptor.so.
 
+## Installing ASR-2300 Windows USB Drivers
+ 1) Download and unzip the latest Windows USB drivers located in the tools section of the ASR-2300 Support Page.
+ 2) Start the Windows Device Manager
+ 3) Plug in the ASR-2300 device and power it on
+ 4) Look for the unknown device or FX3 device added to the Device Manager.
+ 5) Right Click on the device and select ‘Update Driver Software’
+ 6) Select ‘Browse my computer…’ option.
+ 7) Click ‘Browse’ and locate the particular version of Windows and processing platform (e.g. Win7 X64) in the unzipped driver folders.
+ 8) Click ‘Next’ and the Device Manager will attempt to install the driver.
+ 9) Windows will notify you that the driver is not signed. Click ok to proceed.
+ 10) If it worked, Windows will indicate that it found the ASR-2300 device.
 
 ##Building the A2300 API and Tools Using Visual Studio
 
-TBS 
+Coming soon.
 
 --
 ## Non-cmake, Manually Create lisusb_ext.h Source
