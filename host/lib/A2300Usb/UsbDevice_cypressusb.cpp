@@ -72,6 +72,16 @@ int A2300::UsbDevice::OpenDevice(uint16 vid, uint16 pid, uint16 usbAddress)
 }
 
 
+/**
+* Tests to see if device driver is started.
+*/
+bool A2300::UsbDevice::IsStarted()
+{
+	return m_pCypressDevice != NULL && m_pCypressDevice->IsOpen();
+}
+
+
+
 /*
 * Starts the device
 */

@@ -1,0 +1,16 @@
+# Output products list for <halfband_decim>
+_xmsgs\pn_parser.xmsgs
+halfband_decim.asy
+halfband_decim.gise
+halfband_decim.mif
+halfband_decim.ngc
+halfband_decim.sym
+halfband_decim.v
+halfband_decim.veo
+halfband_decim.xco
+halfband_decim.xise
+halfband_decimCOEFF_auto0_0.mif
+halfband_decim_flist.txt
+halfband_decim_readme.txt
+halfband_decim_xmdf.tcl
+halfband_decimfilt_decode_rom.mif

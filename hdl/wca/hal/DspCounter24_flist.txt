@@ -1,0 +1,16 @@
+# Output products list for <DspCounter24>
+DspCounter24.asy
+DspCounter24.gise
+DspCounter24.ngc
+DspCounter24.sym
+DspCounter24.v
+DspCounter24.veo
+DspCounter24.xco
+DspCounter24.xise
+DspCounter24\doc\c_counter_binary_v11_0_readme.txt
+DspCounter24\doc\c_counter_binary_v11_0_vinfo.html
+DspCounter24\doc\ds215_counter.pdf
+DspCounter24_flist.txt
+DspCounter24_xmdf.tcl
+core_resources.txt
+gui_latency.txt

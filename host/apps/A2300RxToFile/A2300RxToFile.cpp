@@ -319,8 +319,8 @@ static int DoRxToFile ()
 #elif defined(WIN32)
 	      //Windows implementation does not have a PollAsynchronous Data method.
 	      //Instead, we wait for events on each port.
-	      BulkDataPort::TransferContext& ctxt = portData.WaitForReadTransferEvent( 1000);
-	      retval = ctxt.status;
+	      BulkDataPort::TransferContext* pctxt = portData.WaitForReadTransferEvent( 1000);
+	      retval = pctxt->status;
 #endif
 	    }
 	} else {
@@ -334,8 +334,8 @@ static int DoRxToFile ()
 #elif defined(WIN32)
 	      //Windows implementation does not have a PollAsynchronous Data method.
 	      //Instead, we wait for events on each port.
-	      BulkDataPort::TransferContext& ctxt = portData.WaitForReadTransferEvent( 1000);
-	      retval = ctxt.status;
+	      BulkDataPort::TransferContext* pctxt = portData.WaitForReadTransferEvent( 1000);
+	      retval = pctxt->status;
 #endif
 	    }
 	}
@@ -358,7 +358,7 @@ static int DoRxToFile ()
 	//12) Cancel all transfer operations.
 	BulkDataPort::TransferContextList::iterator iter;
 	for( iter = listContext.begin(); iter != listContext.end(); iter++)
-		(*iter)->Cancel();
+		(*iter)->Cancel(1000);
 
 	//Wait for the transfer cancellations to complete.
 	time_t ttCur, ttEnd;
@@ -488,7 +488,7 @@ static int ValidateArgs()
  * </summary>
  */
 
-static void WriteHeader() {
+static void  () {
 	printf(
 		"*********************************************************************\n"
 		"* ASR-2300 RxToFile\n"

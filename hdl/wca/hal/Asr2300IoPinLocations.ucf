@@ -1,0 +1,415 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+NET "rf1_txd[7]" LOC = T5;
+NET "rf1_txd[6]" LOC = T6;
+#NET "rf1_txiqsel" LOC = R8
+NET "rf1_txiqsel" LOC = R8;
+NET "rf2_rxd[2]" LOC = W18;
+NET "rf2_txd[9]" LOC = U17;
+NET "rf2_txd[3]" LOC = T16;
+NET "rf2_txd[2]" LOC = U16;
+
+
+
+
+NET "cpu_dbus[7]" IOSTANDARD = LVCMOS33;
+NET "cpu_dbus[6]" IOSTANDARD = LVCMOS33;
+NET "cpu_dbus[5]" IOSTANDARD = LVCMOS33;
+NET "cpu_dbus[4]" IOSTANDARD = LVCMOS33;
+NET "cpu_dbus[3]" IOSTANDARD = LVCMOS33;
+NET "cpu_dbus[2]" IOSTANDARD = LVCMOS33;
+NET "cpu_dbus[1]" IOSTANDARD = LVCMOS33;
+NET "cpu_dbus[0]" IOSTANDARD = LVCMOS33;
+NET "cpu_astrobe" IOSTANDARD = LVCMOS33;
+NET "cpu_clock" IOSTANDARD = LVCMOS33;
+NET "cpu_interrupt" IOSTANDARD = LVCMOS33;
+NET "cpu_reset" IOSTANDARD = LVCMOS33;
+NET "cpu_rstrobe" IOSTANDARD = LVCMOS33;
+NET "cpu_wstrobe" IOSTANDARD = LVCMOS33;
+NET "fx3_data[31]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[30]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[29]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[28]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[27]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[26]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[25]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[24]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[23]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[22]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[21]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[20]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[19]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[18]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[17]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[16]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[15]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[14]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[13]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[12]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[11]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[10]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[9]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[8]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[7]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[6]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[5]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[4]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[3]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[2]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[1]" IOSTANDARD = LVCMOS18;
+NET "fx3_data[0]" IOSTANDARD = LVCMOS18;
+NET "fx3_gpio[3]" IOSTANDARD = LVCMOS18;
+NET "fx3_gpio[2]" IOSTANDARD = LVCMOS18;
+NET "fx3_gpio[1]" IOSTANDARD = LVCMOS18;
+NET "fx3_gpio[0]" IOSTANDARD = LVCMOS18;
+NET "rf1_rxd[11]" IOSTANDARD = LVCMOS33;
+NET "rf1_rxd[10]" IOSTANDARD = LVCMOS33;
+NET "rf1_rxd[9]" IOSTANDARD = LVCMOS33;
+NET "rf1_rxd[8]" IOSTANDARD = LVCMOS33;
+NET "rf1_rxd[7]" IOSTANDARD = LVCMOS33;
+NET "rf1_rxd[6]" IOSTANDARD = LVCMOS33;
+NET "rf1_rxd[5]" IOSTANDARD = LVCMOS33;
+NET "rf1_rxd[4]" IOSTANDARD = LVCMOS33;
+NET "rf1_rxd[3]" IOSTANDARD = LVCMOS33;
+NET "rf1_rxd[2]" IOSTANDARD = LVCMOS33;
+NET "rf1_rxd[1]" IOSTANDARD = LVCMOS33;
+NET "rf1_rxd[0]" IOSTANDARD = LVCMOS33;
+NET "rf1_txd[11]" IOSTANDARD = LVCMOS33;
+NET "rf1_txd[10]" IOSTANDARD = LVCMOS33;
+NET "rf1_txd[9]" IOSTANDARD = LVCMOS33;
+NET "rf1_txd[8]" IOSTANDARD = LVCMOS33;
+NET "rf1_txd[7]" IOSTANDARD = LVCMOS33;
+NET "rf1_txd[6]" IOSTANDARD = LVCMOS33;
+NET "rf1_txd[5]" IOSTANDARD = LVCMOS33;
+NET "rf1_txd[4]" IOSTANDARD = LVCMOS33;
+NET "rf1_txd[3]" IOSTANDARD = LVCMOS33;
+NET "rf1_txd[2]" IOSTANDARD = LVCMOS33;
+NET "rf1_txd[1]" IOSTANDARD = LVCMOS33;
+NET "rf1_txd[0]" IOSTANDARD = LVCMOS33;
+NET "rf2_rxd[11]" IOSTANDARD = LVCMOS33;
+NET "rf2_rxd[10]" IOSTANDARD = LVCMOS33;
+NET "rf2_rxd[9]" IOSTANDARD = LVCMOS33;
+NET "rf2_rxd[8]" IOSTANDARD = LVCMOS33;
+NET "rf2_rxd[7]" IOSTANDARD = LVCMOS33;
+NET "rf2_rxd[6]" IOSTANDARD = LVCMOS33;
+NET "rf2_rxd[5]" IOSTANDARD = LVCMOS33;
+NET "rf2_rxd[4]" IOSTANDARD = LVCMOS33;
+NET "rf2_rxd[3]" IOSTANDARD = LVCMOS33;
+NET "rf2_rxd[2]" IOSTANDARD = LVCMOS33;
+NET "rf2_rxd[1]" IOSTANDARD = LVCMOS33;
+NET "rf2_rxd[0]" IOSTANDARD = LVCMOS33;
+NET "rf2_txd[11]" IOSTANDARD = LVCMOS33;
+NET "rf2_txd[10]" IOSTANDARD = LVCMOS33;
+NET "rf2_txd[9]" IOSTANDARD = LVCMOS33;
+NET "rf2_txd[8]" IOSTANDARD = LVCMOS33;
+NET "rf2_txd[7]" IOSTANDARD = LVCMOS33;
+NET "rf2_txd[6]" IOSTANDARD = LVCMOS33;
+NET "rf2_txd[5]" IOSTANDARD = LVCMOS33;
+NET "rf2_txd[4]" IOSTANDARD = LVCMOS33;
+NET "rf2_txd[3]" IOSTANDARD = LVCMOS33;
+NET "rf2_txd[2]" IOSTANDARD = LVCMOS33;
+NET "rf2_txd[1]" IOSTANDARD = LVCMOS33;
+NET "rf2_txd[0]" IOSTANDARD = LVCMOS33;
+
+#########################################
+#FX3 -- 5 bit addressing Mode.
+#NET "fx3_addr[4]" IOSTANDARD = LVCMOS18;
+#NET "fx3_addr[3]" IOSTANDARD = LVCMOS18;
+#NET "fx3_addr[2]" IOSTANDARD = LVCMOS18;
+#NET "fx3_addr[1]" IOSTANDARD = LVCMOS18;
+#NET "fx3_addr[0]" IOSTANDARD = LVCMOS18;
+#NET "fx3_flagA" IOSTANDARD = LVCMOS18;
+#NET "fx3_flagB" IOSTANDARD = LVCMOS18;
+#NET "fx3_nEpSwitch" IOSTANDARD = LVCMOS18;
+
+#FX3 -- 2 bit addressing mode.
+NET "fx3_addr[1]" IOSTANDARD = LVCMOS18;
+NET "fx3_addr[0]" IOSTANDARD = LVCMOS18;
+NET "fx3_flagA" IOSTANDARD = LVCMOS18;
+NET "fx3_flagB" IOSTANDARD = LVCMOS18;
+NET "fx3_flagC" IOSTANDARD = LVCMOS18;
+NET "fx3_flagD" IOSTANDARD = LVCMOS18;
+#########################################
+
+NET "fx3_clk" IOSTANDARD = LVCMOS18;
+
+NET "fx3_nPktEnd" IOSTANDARD = LVCMOS18;
+NET "fx3_nSlcs" IOSTANDARD = LVCMOS18;
+NET "fx3_nSlOe" IOSTANDARD = LVCMOS18;
+NET "fx3_nSlRd" IOSTANDARD = LVCMOS18;
+NET "fx3_nSlWr" IOSTANDARD = LVCMOS18;
+
+
+
+
+NET "rf1_rxclk" IOSTANDARD = LVCMOS33;
+NET "rf1_rxen" IOSTANDARD = LVCMOS33;
+NET "rf1_rxiqsel" IOSTANDARD = LVCMOS33;
+NET "rf1_txclk" IOSTANDARD = LVCMOS33;
+NET "rf1_txen" IOSTANDARD = LVCMOS33;
+NET "rf1_txiqsel" IOSTANDARD = LVCMOS33;
+NET "rf2_rxclk" IOSTANDARD = LVCMOS33;
+NET "rf2_rxen" IOSTANDARD = LVCMOS33;
+NET "rf2_rxiqsel" IOSTANDARD = LVCMOS33;
+NET "rf2_txclk" IOSTANDARD = LVCMOS33;
+NET "rf2_txen" IOSTANDARD = LVCMOS33;
+NET "rf2_txiqsel" IOSTANDARD = LVCMOS33;
+NET "ep_io[7]" IOSTANDARD = LVCMOS33;
+NET "ep_io[6]" IOSTANDARD = LVCMOS33;
+NET "ep_io[5]" IOSTANDARD = LVCMOS33;
+NET "ep_io[4]" IOSTANDARD = LVCMOS33;
+NET "ep_io[3]" IOSTANDARD = LVCMOS33;
+NET "ep_io[2]" IOSTANDARD = LVCMOS33;
+NET "ep_io[1]" IOSTANDARD = LVCMOS33;
+NET "ep_io[0]" IOSTANDARD = LVCMOS33;
+
+
+NET "cpu_interrupt" LOC = C9;
+NET "cpu_reset" LOC = D10;
+NET "cpu_wstrobe" LOC = C5;
+NET "cpu_rstrobe" LOC = C11;
+NET "cpu_astrobe" LOC = B6;
+
+
+NET "clkref1" IOSTANDARD = LVCMOS33;
+NET "clkref2" IOSTANDARD = LVCMOS33;
+NET "clkref3" IOSTANDARD = LVCMOS33;
+
+
+NET "fx3_nSlcs" LOC = AB14;
+NET "fx3_nSlOe" LOC = U14;
+NET "fx3_nSlWr" LOC = AB11;
+NET "fx3_nPktEnd" LOC = V15;
+NET "rf1_txclk" LOC = AB19;
+NET "rf2_txclk" LOC = P16;
+NET "rf1_rxclk" LOC = P17;
+NET "rf2_rxclk" LOC = AA22;
+NET "rf2_rxiqsel" LOC = L20;
+NET "rf1_txiqsel" LOC = P19;
+NET "rf2_txiqsel" LOC = AB21;
+NET "rf1_rxen" LOC = AB20;
+NET "rf2_rxen" LOC = AA21;
+NET "rf1_txen" LOC = P20;
+NET "rf2_txen" LOC = P15;
+NET "rf1_rxiqsel" LOC = L22;
+
+NET "fx3_nSlRd" LOC = AA14;
+#pin2ucf - Tue Feb 12 22:57:04 2013
+#The following constraints were newly added
+NET "fx3_data[15]" LOC = W13;
+NET "fx3_data[20]" LOC = AB13;
+NET "rf2_rxd[5]" LOC = F21;
+NET "ep_io[5]" LOC = A7;
+NET "fx3_data[16]" LOC = Y16;
+NET "fx3_data[21]" LOC = T11;
+NET "rf2_rxd[6]" LOC = K16;
+NET "ep_io[6]" LOC = A6;
+NET "rf2_rxd[7]" LOC = L15;
+NET "fx3_data[17]" LOC = Y14;
+NET "fx3_data[22]" LOC = U10;
+NET "ep_io[7]" LOC = A5;
+NET "rf1_rxd[0]" LOC = F15;
+NET "fx3_data[18]" LOC = AB12;
+NET "fx3_data[23]" LOC = V9;
+NET "rf2_rxd[8]" LOC = H14;
+NET "rf1_rxd[1]" LOC = F16;
+NET "fx3_data[19]" LOC = AB10;
+NET "fx3_data[24]" LOC = AB9;
+NET "rf2_rxd[9]" LOC = H13;
+NET "rf1_rxd[2]" LOC = F13;
+NET "fx3_data[25]" LOC = W8;
+NET "fx3_data[30]" LOC = Y10;
+NET "rf1_rxd[3]" LOC = F14;
+NET "fx3_data[26]" LOC = T14;
+NET "fx3_data[27]" LOC = Y11;
+NET "rf1_rxd[6]" LOC = D19;
+NET "rf1_rxd[7]" LOC = D20;
+NET "rf1_rxd[8]" LOC = C18;
+NET "rf1_rxd[9]" LOC = C19;
+NET "cpu_dbus[0]" LOC = C17;
+NET "cpu_dbus[1]" LOC = A18;
+NET "cpu_dbus[2]" LOC = C14;
+NET "cpu_dbus[3]" LOC = C12;
+NET "cpu_dbus[4]" LOC = A10;
+NET "cpu_dbus[5]" LOC = D8;
+
+#########################################
+#########################################
+
+# FX3 - 5 bit Addressing mode
+#NET "fx3_addr[4]" LOC = AB6;
+#NET "fx3_addr[3]" LOC = Y6;
+#NET "fx3_addr[2]" LOC = Y8;
+#NET "fx3_addr[1]" LOC = W10;
+#NET "fx3_addr[0]" LOC = Y12;
+#NET "fx3_flagA" LOC = AB7;
+#NET "fx3_flagB" LOC = AB17;
+#NET "fx3_nEpSwitch" LOC = AB15;
+
+#FX3 - 2 bit Addressing mode
+NET "fx3_addr[1]" LOC = W10;
+NET "fx3_addr[0]" LOC = Y12;
+NET "fx3_flagA" LOC = AB7;
+NET "fx3_flagB" LOC = AB17;
+NET "fx3_flagC" LOC = AB15;
+NET "fx3_flagD" LOC = AB6;
+
+
+#######################################
+#######################################
+
+
+
+NET "rf1_txd[10]" LOC = A21;
+NET "fx3_data[0]" LOC = AA18;
+NET "rf1_txd[0]" LOC = G13;
+NET "cpu_dbus[6]" LOC = C8;
+NET "fx3_data[1]" LOC = AA16;
+NET "rf1_txd[11]" LOC = B20;
+NET "rf1_txd[1]" LOC = H12;
+NET "cpu_dbus[7]" LOC = C6;
+NET "rf2_rxd[10]" LOC = H16;
+NET "fx3_data[2]" LOC = V13;
+NET "rf1_txd[2]" LOC = F20;
+NET "rf2_rxd[11]" LOC = J16;
+NET "fx3_data[3]" LOC = W15;
+NET "rf1_rxd[10]" LOC = G17;
+NET "rf1_txd[3]" LOC = F19;
+NET "fx3_data[4]" LOC = W14;
+NET "rf1_rxd[11]" LOC = G19;
+NET "rf1_txd[4]" LOC = K22;
+NET "fx3_data[5]" LOC = Y13;
+NET "rf1_txd[5]" LOC = M22;
+NET "fx3_data[6]" LOC = R11;
+NET "rf1_txd[6]" LOC = A20;
+NET "fx3_data[7]" LOC = T10;
+NET "rf1_txd[7]" LOC = A19;
+NET "fx3_gpio[0]" LOC = W9;
+NET "fx3_data[8]" LOC = U9;
+NET "rf1_txd[8]" LOC = F18;
+NET "fx3_gpio[1]" LOC = AA8;
+NET "fx3_data[9]" LOC = Y9;
+NET "rf1_txd[9]" LOC = F17;
+NET "fx3_gpio[2]" LOC = W6;
+NET "fx3_gpio[3]" LOC = AA6;
+NET "rf2_rxd[0]" LOC = E22;
+NET "fx3_data[10]" LOC = V7;
+NET "ep_io[0]" LOC = A16;
+NET "rf2_rxd[1]" LOC = E20;
+NET "fx3_data[11]" LOC = Y7;
+NET "clkref1" LOC = M19;
+NET "ep_io[1]" LOC = A15;
+NET "rf2_rxd[2]" LOC = H20;
+NET "ep_io[2]" LOC = A14;
+NET "rf2_rxd[3]" LOC = H19;
+NET "fx3_data[13]" LOC = AB18;
+NET "ep_io[3]" LOC = A13;
+NET "fx3_data[14]" LOC = AB16;
+NET "rf2_rxd[4]" LOC = F22;
+NET "ep_io[4]" LOC = A8;
+
+
+NET "clkref2" LOC = L19;
+NET "clkref3" LOC = M18;
+NET "fx3_clk" LOC = AA10;
+
+
+NET "u_WcaSdramIF/memc3_infrastructure_inst/sys_clk_ibufg" KEEP = "TRUE";
+
+
+CONFIG PROHIBIT = Y18;
+CONFIG PROHIBIT = Y17;
+CONFIG PROHIBIT = U15;
+CONFIG PROHIBIT = W17;
+CONFIG PROHIBIT = Y5;
+NET "fx3_data[29]" LOC = V11;
+NET "fx3_data[28]" LOC = W12;
+NET "fx3_data[31]" LOC = AB8;
+NET "fx3_data[12]" LOC = AA12;
+
+
+NET "rf_Gps_DcBiasSelect" IOSTANDARD = LVCMOS33;
+NET "rf_Gps_ExtSelect" IOSTANDARD = LVCMOS33;
+NET "rf_Ism_ExtSelect" IOSTANDARD = LVCMOS33;
+NET "rf_Ism_TxSelect" IOSTANDARD = LVCMOS33;
+NET "rf_Wb1_RxSelect" IOSTANDARD = LVCMOS33;
+NET "rf_Wb2_RxSelect" IOSTANDARD = LVCMOS33;
+
+
+
+
+NET "led_3" LOC = R16;
+NET "led_2" LOC = R17;
+NET "led_1" LOC = R19;
+NET "led_0" LOC = V19;
+
+
+NET "rf_Gps_nExtSelect" IOSTANDARD = LVCMOS33;
+NET "rf_Ism_nExtSelect" IOSTANDARD = LVCMOS33;
+NET "rf_Ism_nTxSelect" IOSTANDARD = LVCMOS33;
+NET "rf_Wb1_nRxSelect" IOSTANDARD = LVCMOS33;
+NET "rf_Wb2_nRxSelect" IOSTANDARD = LVCMOS33;
+
+
+NET "rf_Gps_ExtSelect" LOC = T21;
+NET "rf_Wb1_nRxSelect" LOC = U22;
+NET "rf_Ism_ExtSelect" LOC = R22;
+NET "rf_Ism_TxSelect" LOC = R20;
+NET "rf_Gps_nExtSelect" LOC = N22;
+NET "rf_Wb2_RxSelect" LOC = P21;
+NET "rf_Ism_nExtSelect" LOC = N20;
+NET "rf_Wb2_nRxSelect" LOC = U20;
+
+
+NET "led_0" IOSTANDARD = LVCMOS33;
+NET "led_1" IOSTANDARD = LVCMOS33;
+NET "led_2" IOSTANDARD = LVCMOS33;
+NET "led_3" IOSTANDARD = LVCMOS33;
+
+
+NET "rf1_rxd[4]" LOC = M21;
+NET "rf1_rxd[5]" LOC = T20;
+NET "rf_Gps_DcBiasSelect" LOC = L17;
+NET "rf_Wb1_RxSelect" LOC = W20;
+NET "rf2_txd[2]" LOC = C22;
+NET "rf2_txd[9]" LOC = J21;
+NET "rf2_txd[5]" LOC = B21;
+NET "rf2_txd[1]" LOC = C20;
+NET "rf2_txd[8]" LOC = J19;
+NET "rf2_txd[0]" LOC = K17;
+NET "rf2_txd[11]" LOC = H22;
+NET "rf2_txd[7]" LOC = J17;
+NET "rf2_txd[3]" LOC = K18;
+NET "rf2_txd[10]" LOC = J22;
+NET "rf2_txd[6]" LOC = B22;
+NET "rf2_txd[4]" LOC = M16;
+NET "rf_Ism_nTxSelect" LOC = K21;
+
+
+NET "cpu_clock" LOC = B12;
+
+# PlanAhead Generated physical constraints 
+# Not used currently 11/4/13 MBM
+#NET "led_green" LOC = T18;
+#NET "led_red" LOC = T17;
+
+# PlanAhead Generated IO constraints 
+# Not used currently 11/4/13 MBM
+#NET "led_green" IOSTANDARD = LVCMOS33;
+#NET "led_red" IOSTANDARD = LVCMOS33;

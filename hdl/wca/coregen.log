@@ -1,0 +1,5 @@
+INFO:sim:172 - Generating IP...
+WARNING:sim - Verilog simulation file type 'Behavioral' is not valid for this
+   core. Overriding with simulation file type 'Structural'.
+Cancelled executing Tcl generator.
+Wrote CGP file for project 'WcaDspCounter24'.

@@ -1,0 +1,15 @@
+# Output products list for <cic_decim>
+_xmsgs\pn_parser.xmsgs
+cic_decim.asy
+cic_decim.gise
+cic_decim.ngc
+cic_decim.sym
+cic_decim.v
+cic_decim.veo
+cic_decim.xco
+cic_decim.xise
+cic_decim\doc\cic_compiler_ds613.pdf
+cic_decim\doc\cic_compiler_v2_0_vinfo.html
+cic_decim_flist.txt
+cic_decim_readme.txt
+cic_decim_xmdf.tcl

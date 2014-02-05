@@ -355,7 +355,7 @@ void A2300::ArgParser::WriteDescriptions()
 void WriteEntryFields( ArgParser::Entry& entry)
 {
 	char buff[512];
-	int nLen;
+	size_t nLen;
 	if( entry.group != "global") {
 		nLen = sprintf( buff, "%10s - [%s] [%s] %s", entry.keyName.c_str(), entry.defaultValue.c_str(),
 			entry.group.c_str(), entry.description.c_str());
@@ -365,7 +365,7 @@ void WriteEntryFields( ArgParser::Entry& entry)
 	}
 
 	//Break into nicely formatted lines.
-	int ct = 0;
+	size_t ct = 0;
 	while( nLen > 0 )
 	{
 		size_t ctWrite = std::min((size_t) 79, (size_t) nLen);
