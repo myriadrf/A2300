@@ -76,6 +76,7 @@ namespace A2300
 	class BulkDataPort : public PortBase
 	{
 	public:
+		
 		class TransferContext
 		{
 			friend class BulkDataPort;
@@ -142,32 +143,10 @@ namespace A2300
 					CloseHandle(overlap.hEvent);
 			}
 
-			inline ULONG Submit( int size)
-			{
-				context = pep->BeginDataXfer( bufFrame, size, &overlap);
-				return ( pep->NtStatus || pep->UsbdStatus )? pep->NtStatus : 0;
-			}
-
-			inline ULONG Submit( )
-			{
-				return Submit( nFrameSize);
-			}
-
-			inline bool Cancel()
-			{
-                pep->Abort();
-                if (pep->LastError == ERROR_IO_PENDING)
-                    WaitForSingleObject(overlap.hEvent,2000);
-				
-				LONG size = (LONG) nFrameSize;
-				bool bResult = pep->FinishDataXfer(bufFrame, size, &overlap, context);
-				return bResult;
-			}
-
-			inline void Destroy()
-			{
-				delete this;
-			}
+			inline ULONG Submit( int size);
+			inline ULONG Submit( );
+			inline bool Cancel(int msecTimeout);
+			inline void Destroy();
 		protected:
 			bool WaitForTransfer(int msecTimeout)
 			{
@@ -235,15 +214,32 @@ namespace A2300
 		int Write(byte * pdata, int ctBytes, int msecTimeout );
 
 #ifdef WIN32
+
+		/**
+		* Function returns true if there are write transfers waiting.
+		*/
+		bool  HaveWriteTransfers() { return !m_listWriteContexts.empty(); }
 		/**
 		* Win32 interface, waits for a read transfer event and initiates callbacks 
 		*/
-		TransferContext&  WaitForReadTransferEvent(int msecTimeout);
+		TransferContext*  WaitForReadTransferEvent(int msecTimeout);
 
 		/**
 		* Win32 interface, waits for a write transfer event and initiates callbacks 
 		*/
-		TransferContext&  WaitForWriteTransferEvent(int msecTimeout);
+		TransferContext*  WaitForWriteTransferEvent(int msecTimeout);
+
+		/**
+		* Win32 interface, cancels current read transfer if active.  Returns
+		* cancelled transfer context, or NULL if no activity.
+		*/
+		TransferContext*  CancelReadTransfer( int msecTimeout);
+
+		/**
+		* Win32 interface, cancles current write transfer if active.  Returns
+		* cancelled transfer context, or NULL If no activity.
+		*/
+		TransferContext*  CancelWriteTransfer( int msecTimeout);
 #endif
 	protected:
 		virtual void* OnGetInterface() { return this;}
@@ -252,7 +248,7 @@ namespace A2300
 		int OnInit();
 
 		// reference to UsbDriver instance mostly used for logging
-
+		uint		  m_timeout;
 		TransferEvent m_evtRead;
 		TransferEvent m_evtWrite;
 #ifdef HAVE_LIBUSB		
@@ -268,13 +264,49 @@ namespace A2300
 #elif defined(WIN32)
 		TransferContextList m_listReadContexts;
 		TransferContextList m_listWriteContexts;
-		TransferContextList::iterator m_iterNextRead;
-		TransferContextList::iterator m_iterNextWrite;
 		CCyUSBDevice * 		m_pCypressDevice;
 		CCyBulkEndPoint* 	m_pEndPointIn;
 		CCyBulkEndPoint* 	m_pEndPointOut;
 #endif
 	};
+
+
+#ifdef WIN32
+	
+			inline ULONG BulkDataPort::TransferContext::Submit( int size)
+			{
+				context = pep->BeginDataXfer( bufFrame, size, &overlap);
+
+				//Queue the transfer in the port so we can wait for it to be done.
+				if( pSrc->m_pEndPointIn == pep)
+					pSrc->m_listReadContexts.push_back( this);
+				else
+					pSrc->m_listWriteContexts.push_back(this);
+
+				return ( pep->NtStatus || pep->UsbdStatus )? pep->NtStatus : 0;
+			}
+
+			inline ULONG BulkDataPort::TransferContext::Submit( )
+			{
+				return Submit( (ULONG)nFrameSize);
+			}
+
+			inline bool BulkDataPort::TransferContext::Cancel(int msecTimeout)
+			{
+                pep->Abort();
+                if (pep->LastError == ERROR_IO_PENDING)
+                    WaitForSingleObject(overlap.hEvent,msecTimeout);
+				
+				LONG size = (LONG) nFrameSize;
+				bool bResult = pep->FinishDataXfer(bufFrame, size, &overlap, context);
+				return bResult;
+			}
+
+			inline void BulkDataPort::TransferContext::Destroy()
+			{
+				delete this;
+			}
+#endif
 }
 
 #endif /* A2300_BULK_DATAPORT_H */

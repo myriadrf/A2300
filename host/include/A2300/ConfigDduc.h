@@ -50,7 +50,7 @@ public:
 
 	/* Define IConfigComponent interface*/
 	virtual std::string name();
-	virtual int  componentId();
+	virtual byte componentId();
 	virtual void Reset();
 	virtual void Synch();
 

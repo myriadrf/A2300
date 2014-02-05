@@ -138,8 +138,8 @@ enum Rx1DefaultProfilesEnum
 	RX1DPE_Disabled = 0xC0,
 	RX1DPE_UhfExt   = 0xC1,
 	RX1DPE_IsmInt   = 0xC2,
-	RX1DPE_IsmExt   = 0x43,
-	RX1DPE_Wideband = 0x44
+	RX1DPE_IsmExt   = 0xC3,
+	RX1DPE_Wideband = 0xC4
 };
 
 //These are actually half-bandwidth values as defined by the Lime Processor.  The effective

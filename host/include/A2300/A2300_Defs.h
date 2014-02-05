@@ -17,6 +17,8 @@
 #ifndef A2300_DEFS_H_
 #define A2300_DEFS_H_
 
+#include <System/DataTypes.h>
+
 #include <string>
 #include <list>
 
@@ -61,7 +63,7 @@
 struct IConfigComponent
 {
 	virtual std::string name() = 0;
-	virtual int  componentId() = 0;
+	virtual byte componentId() = 0;
 	virtual void Reset()= 0;
 	virtual void Synch() = 0;
 };

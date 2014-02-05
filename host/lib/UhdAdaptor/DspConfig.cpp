@@ -37,6 +37,7 @@ template <class T> T ceil_log2(T num){
 
 DspConfig::DspConfig()
     :
+         m_initialized(false), 
     	 m_idDsp(-1),
     	 m_idComponent(0),
     	 m_tick_rate(A2300_DEFAULT_TICK_RATE),
@@ -94,6 +95,7 @@ void DspConfig::Initialize(
         .subscribe(boost::bind(&DspConfig::IssueStreamCommand, this, _1));
 
     this->UpdateScalar();
+    m_initialized = true;
 }
 
 void DspConfig::ConfigStreaming(const uhd::stream_args_t &stream_args)
@@ -236,7 +238,7 @@ byte DspConfig::SetConfiguration( const byte config)
 
 void DspConfig::IssueStreamCommand( const uhd::stream_cmd_t &stream_cmd)
 {
-	if ( this->m_idComponent < 0)
+	if ( this->m_initialized == false)
 	{
 		UHD_MSG(warning) << "ASR-2300 DSP Configuration not setup yet!";
 		return;
