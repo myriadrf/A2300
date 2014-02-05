@@ -488,7 +488,7 @@ static int ValidateArgs()
  * </summary>
  */
 
-static void  () {
+static void  WriteHeader() {
 	printf(
 		"*********************************************************************\n"
 		"* ASR-2300 RxToFile\n"
