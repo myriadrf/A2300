@@ -15,40 +15,62 @@
 
 module WcaUpConverter
 (
-	input              clock,
-	input              reset,
-	input              enable,
-	input              dstrobe_out,
-	input              dstrobe_in,
-	input   wire	[31:0] iq_in,
-	output  wire	[23:0] iq_out,
+	//General functions.
+	input              	clock,
+	input              	reset,
+	input              	enable,
+
+	//Lines from DDUC Controller.
+	input  	wire [7:0]  	cfg,				//Configuration lines. 
+	input  	wire [12:0] 	rate_interp,	//Interpolation rate output required by DUC block.
+	input    wire				rate_interp_we,//Rate input write enable.
+	input  	wire       		strobe_cic,   	//CIC interpolation strobe 
+	input  	wire 				strobe_bb,    	//Baseband data strobe
+	input  	wire [31:0] 	phase_cordic, 	//Generated Cordic phase.
+	input		wire [3:0]  	log2_rate,
+	
+	//Data I/O.
+	input	  wire			strobe_if,
+	input   wire	[31:0] iq_bb_in,
+	output  wire	[23:0] iq_if_out,
 	
    //CPU Interface.
 	input   wire  [11:0] rbusCtrl,  // Address and control lines(12 total) { addr[7:0], readEnable, writeEnable, dataStrobe, clkbus}
 	inout   wire  [7:0]  rbusData	// Tri-state I/O data.
-
   );
-   parameter IF_FREQ_ADDR 		= 0;
-   parameter INTEG_RATE_ADDR 	= 1;
+  parameter MODE  =  4'hF; 		//Dynamic configuration enabled by default.
 
-   parameter CORDIC_ENABLE = 1; 		// CORDIC Enable/Disable.
-   parameter CIC_ENABLE 	= 1;     // CIC Decimator Enable/Disable..
-   parameter HBF_ENABLE 	= 1;     // Half-Band Filter Enable/Disable.
-   
-	wire [15:0] ihb_in = iq_in[15:0];
-	wire [15:0] qhb_in = iq_in[31:16];
-	wire [15:0] ihb_out;
-	wire [15:0] qhb_out;
-	wire [11:0] icic_out;
-	wire [11:0] qcic_out;
-	//wire hbstrobe_out;
+	//DDC Configuration Mode flags:
+	`define CORDIC_ENABLED 3'h1
+	`define CIC_ENABLED 3'h2
+	`define HBF_ENABLED 3'h4
+	`define DYNAMIC_CONFIG 4'h8
+	
+	wire [15:0] ihb_in = iq_bb_in[15:0];
+	wire [15:0] qhb_in = iq_bb_in[31:16];
+	
+	wire [11:0] icor_in;
+	wire [11:0] qcor_in;
+	
+	wire [15:0] icic_in;
+	wire [15:0] qcic_in;
+	wire [15:0] icic_out;
+   wire [15:0] qcic_out;
 
+	
+	wire hb_strobe_out;
+	wire cic_strobe_out;
+	
 //*****************************************************  
 // Halfband filter 
 //*****************************************************
-generate if( HBF_ENABLE == 1)
+generate if( MODE & `HBF_ENABLED )
   begin
-   
+  
+  wire [15:0] ihbout_internal;
+  wire [15:0] qhbout_internal;
+  	wire [15:0] ihb_out;
+	wire [15:0] qhb_out; 
 	//Implement strobe that tighens up when data is ready so we don't
 	//double clock.
 	/*
@@ -61,96 +83,87 @@ generate if( HBF_ENABLE == 1)
 	end
 	assign dstrobe_out = hbstrobeout;
 	*/
-	 halfband_decim hb_i (
+	
+	// xbh_in --> |halfband interp|-->  xhb_out
+	// where x is 'i' or 'q'
+	 halfband_interp hb_i (
 		.clk(clock), 				// input clk
-		.nd(hbstrobe_in), 		// input nd
+		.nd(strobe_bb), 		// input nd
 		.rfd(), 						// output rfd
-		.rdy(dstrobe_out), 		// output rdy
+		.rdy(), 						// output rdy
 		.din(ihb_in), 				// input [15 : 0] din
-		.dout(iq_out[15:0])); 	// output [15 : 0] dout 
+		.dout(ihbout_internal)); 			// output [15 : 0] dout 
 	  
-	 halfband_decim hb_q(
+	 halfband_interp hb_q(
 		.clk(clock), 		    	// input clk
-		.nd(hbstrobe_in),     	// input nd
+		.nd(strobe_bb),     	// input nd
 		.rfd(), 				    	// output rfd
 		.rdy(), 	 					// output rdy
 		.din(qhb_in), 			 	// input [15 : 0] din
-		.dout(iq_out[31:16])); 	// output [15 : 0] dout 
+		.dout(qhbout_internal)); 			// output [15 : 0] dout 
+		
+		
+	//Enable dynamic selection of bypass if DYNAMIC_CONFIG ENABLED, otherwise hardwire.
+	wire bypassHbf    	= MODE[3] & cfg[5];
+	assign icic_in 		= (bypassHbf) ? ihb_in : ihbout_internal;
+	assign qcic_in 		= (bypassHbf) ? qhb_in : qhbout_internal;	 		
   end
 else
   begin
-    assign ihb_out 		= ihb_in; 
-    assign qhb_out 		= qhb_in;
-	 //assign hbstrobe_out = hbstrobe_in;
+    assign icic_in 		= ihb_in; 
+    assign qcic_in 		= qhb_in;
   end
 endgenerate
 	
 //*****************************************************  
-// CIC Decimator 
+// CIC Interpolator
 //*****************************************************
-generate if( CIC_ENABLE == 1)
+generate if( MODE & `CIC_ENABLED)
   begin
-
-  wire [12:0] integ_rate;
-  reg   rnd; 
-  wire  newRateData;
   
-	//24bit Data Rate Configuration Register.
-	WcaWriteWordReg #(INTEG_RATE_ADDR) reg_integ_rate
-	(.reset(reset), .out( integ_rate), .nd(newRateData),
-	 .rbusCtrl(rbusCtrl), .rbusData(rbusData) );	
+	WcaCicInterp cic_i (
+	 .clock(clock), 
+    .reset(reset), 
+    .enable(enable), 
+    .strobe_cic(strobe_cic), 
+    .strobe_if(strobe_if), 
+    .log2_rate(log2_rate), 
+    .data_in(icic_in), 
+    .data_out(icic_out)
+    );
 
-	//Synch the newRateData clock to a one pulse.
-	always @(posedge clock)
-	begin
-		if( reset) rnd <= 1'b0;
-		else rnd <= (~rnd & newRateData);
-	end
+	WcaCicInterp cic_q (
+    .clock(clock), 
+    .reset(reset), 
+    .enable(enable), 
+    .strobe_cic(strobe_cic), 
+    .strobe_if(strobe_if), 
+    .log2_rate(log2_rate), 
+    .data_in(qcic_in), 
+    .data_out(qcic_out)
+    );
+		
+	//Enable dynamic selection of bypass if DYNAMIC_CONFIG ENABLED, otherwise hardwire.
+	wire bypassCic    	=  MODE[3] & cfg[3];
+   assign icor_in 		= (bypassCic) ? icic_in[15:4] : icic_out[15:4];
+	assign qcor_in 		= (bypassCic) ? qcic_in[15:4] : qcic_out[15:4] ;
 
-	cic_decim cic_i (
-	.sclr(reset),				// resets
-	.din(icic_in), 		// input [11 : 0] din
-	.nd(dstrobe_in),		// input nd
-	.rate(integ_rate), 	// input [12 : 0] rate
-	.rate_we(rnd), 		// input rate_we
-	.clk(clock), 			// input clk
-	.dout(ihb_in), 		// output [15 : 0] dout
-	.rdy(hbstrobe_in), 	// output rdy
-	.rfd()); 				// output rfd
-
-	cic_decim cic_q (
-	.sclr(reset),				// resets
-	.din(qcic_in), 	 	// input [11 : 0] din
-	.nd(dstrobe_in),		// input nd
-	.rate(integ_rate), 	// input [12 : 0] rate
-	.rate_we(rnd), 		// input rate_we
-	.clk(clock), 			// input clk
-	.dout(qhb_in), 		// output [15 : 0] dout
-	.rdy(), 					// output rdy
-	.rfd()); 				// output rfd
 	end
 else 
- begin
-    assign icic_out 			= ihb_out[15:4];
-    assign qcic_out 			= qhb_out[15:4];
+ begin 
+    assign icor_in 			= icic_in[15:4] ;
+    assign qcor_in 			= qcic_in[15:4] ;
   end   
 endgenerate
 
 //*****************************************************  
 // CORDIC Frequency Up/Down Conversion
 //*****************************************************
-generate if( CORDIC_ENABLE == 1)
+generate if( MODE & `CORDIC_ENABLED)
   begin
-	wire [31:0] phase;
-
-    //Generate Phase for frequency translation.
-    WcaPhaseGen #(IF_FREQ_ADDR, 32) phase_generator
-    (
-      .clock(clock), .reset(reset), .aclr(1'b0), .enable(enable), .strobe(dstrobe_out),
-      .rbusCtrl(rbusCtrl), .rbusData(rbusData), 
-      .phase(phase)
-    );
-	 
+  wire [11:0] icordicout_internal;
+  wire [11:0] qcordicout_internal;
+  
     //Down conversion frequency must be in the 1Qn format (see cordic doc below).  2^n-1 = pi/2 and -2^n-1 = -pi/2
     //The Cordic only supports values between this range so the phase accumulator must produce values within this range.
     //We rotate quadrants and adjust phase to make work.
@@ -159,24 +172,24 @@ generate if( CORDIC_ENABLE == 1)
     reg [11:0] A0;
 
     always @(posedge clock) 
-     case(phase[31:30])
+     case(phase_cordic[31:30])
        2'b01 :  //pi/2 to pi   
         begin            
-            X0 <= #1 -qcic_out;
-            Y0 <= #1 icic_out;
-            A0 <= #1 phase[31:20] - 12'h400;                    
+            X0 <= #1 -qcor_in;
+            Y0 <= #1 icor_in;
+            A0 <= #1 phase_cordic[31:20] - 12'h400;                    
         end
        2'b10 : //-pi/2 to -pi
         begin
-            X0 <= #1 qcic_out;
-            Y0 <= #1 -icic_out;
-            A0 <= #1 phase[31:20] + 12'h400;                    
+            X0 <= #1 qcor_in;
+            Y0 <= #1 -icor_in;
+            A0 <= #1 phase_cordic[31:20] + 12'h400;                    
         end
        default:
         begin
-            X0 <= #1 icic_out;
-            Y0 <= #1 qcic_out;
-            A0 <= #1 phase [31:20];
+            X0 <= #1 icor_in;
+            Y0 <= #1 qcor_in;
+            A0 <= #1 phase_cordic [31:20];
         end
     endcase
 
@@ -194,15 +207,21 @@ generate if( CORDIC_ENABLE == 1)
     //
     WcaCordic12  #(12,12,0) cordic
     ( 
-       .ngreset(1'b1), .clock(clock),.reset(reset), .strobeData( dstrobe_out),
+       .ngreset(1'b1), .clock(clock),.reset(reset), .strobeData(strobe_if),
        .X0(X0), .Y0(Y0),.A0(A0),
-       .XN(iq_out[11:0]), .YN(iq_out[23:12]), .AN() 
+       .XN(icordicout_internal), .YN(qcordicout_internal), .AN() 
     );	 
+	 
+	//Enable dynamic selection of bypass if DYNAMIC_CONFIG ENABLED, otherwise hardwire.
+	wire bypassCordic    = MODE[3] & cfg[2];
+	assign iq_if_out[11:0]  = (bypassCordic) ? icor_in : icordicout_internal;
+	assign iq_if_out[23:12] = (bypassCordic) ? qcor_in : qcordicout_internal;
+
   end
 else // bypass
   begin
-    assign iq_out[11:0]  = icic_out;
-    assign iq_out[23:12] = qcic_out;
+    assign iq_if_out[11:0]  = icor_in;
+    assign iq_if_out[23:12] = qcor_in;
   end
 endgenerate 
 
