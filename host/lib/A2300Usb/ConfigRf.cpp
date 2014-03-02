@@ -171,7 +171,7 @@ std::string ConfigRf::name()
 {
 	return m_sName;
 }
-int  ConfigRf::componentId()
+byte  ConfigRf::componentId()
 {
 	return m_idComponent;
 }

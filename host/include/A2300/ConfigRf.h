@@ -19,7 +19,6 @@
 
 #include <A2300/A2300_Defs.h>
 #include <A2300/A2300InterfaceDefs.h>
-#include <System/DataTypes.h>
 #include <string>
 
 namespace A2300
@@ -34,7 +33,7 @@ public:
 
 	/* Define IConfigComponent interface*/
 	virtual std::string name();
-	virtual int  componentId();
+	virtual byte componentId();
 	virtual void Reset();
 	virtual void Synch();
 

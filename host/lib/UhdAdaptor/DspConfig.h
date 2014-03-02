@@ -62,6 +62,7 @@ protected:
 
 private:
 
+    bool   m_initialized;
     int    m_idDsp;
     byte   m_idComponent;
     bool   m_bContinuousStreaming;
