@@ -4,3 +4,8 @@ Win64
 Debug
 Release
 *.tmp
+hdl/FpgaCore/
+*.user
+host/include/A2300/libusb_ext.h
+host/A2300HostVstudioBuild.ncb
+host/A2300HostVstudioBuild.suo

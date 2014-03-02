@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9.00"
 	Name="A2300Demo"
-	ProjectGUID="{A93A8C1F-867E-4510-A4AF-78FCA6DB3B42}"
+	ProjectGUID="{C4603ED6-B498-4768-8A0F-6D81361E9085}"
 	RootNamespace="A2300Identify"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="0"

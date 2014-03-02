@@ -75,6 +75,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_54F63946717A48368A0A600C4698B16B"
+        "OwnerKey" = "8:_D828C7CD763240B7A5DD8D38452C12CE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_5A4D8384ED7E42F586FBB7E8FD7B070D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -95,6 +101,18 @@
         {
         "MsmKey" = "8:_6EBC6661D01940469F78ED0AA72919CF"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_763CFAD4A08D3FB1D37B3BF09AAA6905"
+        "OwnerKey" = "8:_4BD440CC38044D08A064023B13DFFCC4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_763CFAD4A08D3FB1D37B3BF09AAA6905"
+        "OwnerKey" = "8:_F6A2E8CC04FA4CBF89A1BBAC14DD1BEE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -153,8 +171,14 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_DC51F7E525AA4D7EA4E483895F6B8BE9"
-        "OwnerKey" = "8:_UNDEFINED"
+        "MsmKey" = "8:_D828C7CD763240B7A5DD8D38452C12CE"
+        "OwnerKey" = "8:_4BD440CC38044D08A064023B13DFFCC4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D828C7CD763240B7A5DD8D38452C12CE"
+        "OwnerKey" = "8:_F6A2E8CC04FA4CBF89A1BBAC14DD1BEE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -522,6 +546,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_763CFAD4A08D3FB1D37B3BF09AAA6905"
+            {
+            "SourcePath" = "8:SETUPAPI.dll"
+            "TargetName" = "8:SETUPAPI.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_104C90EEFBD74B8585745C115D0769F4"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:TRUE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9710C72FA06C4DBCBA9AF27756EB0FFA"
             {
             "SourcePath" = "8:..\\..\\..\\common\\System\\ArgParser.hpp"
@@ -646,26 +690,6 @@
             {
             "SourcePath" = "8:..\\..\\include\\A2300\\UsbDevice.h"
             "TargetName" = "8:UsbDevice.h"
-            "Tag" = "8:"
-            "Folder" = "8:_E3F44315498C4AB79DC0D7C203BD4018"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DC51F7E525AA4D7EA4E483895F6B8BE9"
-            {
-            "SourcePath" = "8:..\\..\\include\\A2300\\libusb_ext.h"
-            "TargetName" = "8:libusb_ext.h"
             "Tag" = "8:"
             "Folder" = "8:_E3F44315498C4AB79DC0D7C203BD4018"
             "Condition" = "8:"
@@ -1013,7 +1037,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:A2300Win32ApiSetup"
         "ProductCode" = "8:{3FE82D2A-7F6A-4491-A644-57ACBB70ECF0}"
-        "PackageCode" = "8:{ADC85CD9-342F-4049-A722-82498D98B069}"
+        "PackageCode" = "8:{FA0B0975-90D4-4200-ACD6-09338C91D3C8}"
         "UpgradeCode" = "8:{3A9BE8F2-E779-41EC-B698-32AE7361CA81}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
@@ -1528,12 +1552,40 @@
         }
         "MergeModule"
         {
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_54F63946717A48368A0A600C4698B16B"
+            {
+            "UseDynamicProperties" = "11:TRUE"
+            "IsDependency" = "11:TRUE"
+            "SourcePath" = "8:microsoft_vc90_debugcrt_x86.msm"
+                "Properties"
+                {
+                }
+            "LanguageId" = "3:0"
+            "Exclude" = "11:FALSE"
+            "Folder" = "8:"
+            "Feature" = "8:"
+            "IsolateTo" = "8:"
+            }
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_D828C7CD763240B7A5DD8D38452C12CE"
+            {
+            "UseDynamicProperties" = "11:TRUE"
+            "IsDependency" = "11:TRUE"
+            "SourcePath" = "8:policy_9_0_Microsoft_VC90_DebugCRT_x86.msm"
+                "Properties"
+                {
+                }
+            "LanguageId" = "3:0"
+            "Exclude" = "11:FALSE"
+            "Folder" = "8:"
+            "Feature" = "8:"
+            "IsolateTo" = "8:"
+            }
         }
         "ProjectOutput"
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_0D6F6AC73C3943CDA26583D517F46097"
             {
-            "SourcePath" = "8:..\\..\\lib\\A2300Usb\\Debug\\A2300Usb.lib"
+            "SourcePath" = "8:..\\..\\lib\\A2300Usb\\Win32\\Debug\\A2300Usb.lib"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_3767872FEBCC41508D7F611EC54ACDA8"
@@ -1561,7 +1613,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_4BD440CC38044D08A064023B13DFFCC4"
             {
-            "SourcePath" = "8:..\\A2300Update\\Release\\A2300Update.exe"
+            "SourcePath" = "8:..\\A2300Update\\Debug\\A2300Update.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_104C90EEFBD74B8585745C115D0769F4"
@@ -1589,7 +1641,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_5AFD5DD320B341B4842BFF458EFAF84F"
             {
-            "SourcePath" = "8:..\\..\\..\\common\\Debug\\A2300Common.lib"
+            "SourcePath" = "8:..\\..\\..\\common\\Win32\\Debug\\A2300Common.lib"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_3767872FEBCC41508D7F611EC54ACDA8"
@@ -1617,7 +1669,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_7FE6FEA795B142EF9A516CFCBF7154D5"
             {
-            "SourcePath" = "8:..\\..\\..\\common\\Release\\A2300Common.lib"
+            "SourcePath" = "8:..\\..\\..\\common\\Win32\\Release\\A2300Common.lib"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_E096B3A7373C44C8A9062216E7527BE2"
@@ -1645,7 +1697,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_89C358E0CDF8415D82BFB6E1E1CF9832"
             {
-            "SourcePath" = "8:..\\A2300RxToFile\\Release\\A2300RxToFile.exe"
+            "SourcePath" = "8:..\\A2300RxToFile\\Debug\\A2300RxToFile.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_104C90EEFBD74B8585745C115D0769F4"
@@ -1673,7 +1725,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_EFE6302BEEDC4524BC2CE844AE4071C9"
             {
-            "SourcePath" = "8:..\\..\\lib\\A2300Usb\\Release\\A2300Usb.lib"
+            "SourcePath" = "8:..\\..\\lib\\A2300Usb\\Win32\\Release\\A2300Usb.lib"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_E096B3A7373C44C8A9062216E7527BE2"
@@ -1701,7 +1753,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_F6A2E8CC04FA4CBF89A1BBAC14DD1BEE"
             {
-            "SourcePath" = "8:..\\A2300Identify\\Release\\A2300Identify.exe"
+            "SourcePath" = "8:..\\A2300Identify\\Debug\\A2300Identify.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_104C90EEFBD74B8585745C115D0769F4"
