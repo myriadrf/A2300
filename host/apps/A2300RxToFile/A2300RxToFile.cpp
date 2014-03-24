@@ -17,11 +17,11 @@
 #ifdef WIN32
 #define _CRT_SECURE_NO_WARNINGS
 #define WIN32_LEAN_AND_MEAN 
-	#include<windows.h>
-	#define SLEEP_SEC(a)  Sleep((a)*1000)
+#include<windows.h>
+#define SLEEP_SEC(a)  Sleep((a)*1000)
 #else
-	#include <unistd.h>
-	#define SLEEP_SEC(a) sleep((a))
+#include <unistd.h>
+#define SLEEP_SEC(a) sleep((a))
 #endif
 
 #include <errno.h>
@@ -50,8 +50,8 @@
 using namespace A2300;
 
 /******************************************************************
- * Declarations
- *****************************************************************/
+* Declarations
+*****************************************************************/
 struct RxConfig {
 	const char* szPath;
 	const char* szDescr;
@@ -72,30 +72,30 @@ struct UserParams {
 };
 
 /******************************************************************
- * Static Data
- *****************************************************************/
+* Static Data
+*****************************************************************/
 
 ARGPARSER_BEGIN_MAP( s_argmap ) 
 ARGPARSER_PARAM( "filename", "", "Output file name.")
 ARGPARSER_VAR( "path", ArgParser::Entry::DOUBLE, "pcs",
 			  "Receiver path to use. Choose from \"gpsant\", \"gpsext\", \"pcs\","
 			  "\"wideband0\", \"uhf\", \"ism_ant\", \"ism_ext\", \"wideband1\"")
-ARGPARSER_VAR( "freq", ArgParser::Entry::DOUBLE, "1970", "Receiver center frequency in MHz. Valid range is between 300 MHz to 3.8 MHz")
-ARGPARSER_VAR( "gain", ArgParser::Entry::LONG,   "9",    "Receiver gain in dB. Valid range is between 0 dB to 60 dB")
-ARGPARSER_VAR( "bw",   ArgParser::Entry::DOUBLE, "5",    "Receiver front-end bandwidth in MHz. Valid range is 1.5 MHz to 28 MHz.")
-ARGPARSER_VAR( "rate", ArgParser::Entry::DOUBLE, "2",    "Host sample rate in MS/s. Valid range is 3.90625 kS/s to 32 MS/s.")
-ARGPARSER_VAR( "num",  ArgParser::Entry::LONG,   "0",    "Number of samples to collect.  Default (0) is infinite.")
-ARGPARSER_END_MAP
+			  ARGPARSER_VAR( "freq", ArgParser::Entry::DOUBLE, "1970", "Receiver center frequency in MHz. Valid range is between 300 MHz to 3.8 MHz")
+			  ARGPARSER_VAR( "gain", ArgParser::Entry::LONG,   "9",    "Receiver gain in dB. Valid range is between 0 dB to 60 dB")
+			  ARGPARSER_VAR( "bw",   ArgParser::Entry::DOUBLE, "5",    "Receiver front-end bandwidth in MHz. Valid range is 1.5 MHz to 28 MHz.")
+			  ARGPARSER_VAR( "rate", ArgParser::Entry::DOUBLE, "2",    "Host sample rate in MS/s. Valid range is 3.90625 kS/s to 32 MS/s.")
+			  ARGPARSER_VAR( "num",  ArgParser::Entry::LONG,   "0",    "Number of samples to collect.  Default (0) is infinite.")
+			  ARGPARSER_END_MAP
 
-static const RxConfig s_config[] = {
-	{ "gpsant",		"GPS L1 Internal Antenna",	0x88,  WCACOMP_RF0, WCACOMP_DSP_DDC0, RX0DPE_GpsL1Int },
-	{ "gpsext",		"GPS L1 External Input",	0x88,  WCACOMP_RF0, WCACOMP_DSP_DDC0, RX0DPE_GpsL1Ext },
-	{ "pcs",		"PCS Input",				0x88,  WCACOMP_RF0, WCACOMP_DSP_DDC0, RX0DPE_PcsExt },
-	{ "wideband0",  "RF0 Wideband Input",		0x88,  WCACOMP_RF0, WCACOMP_DSP_DDC0, RX0DPE_Wideband },
-	{ "uhf",		"UHF External Input",		0x89,  WCACOMP_RF1, WCACOMP_DSP_DDC1, RX1DPE_UhfExt },
-	{ "ism_ant",	"ISM 2.4 GHz Antenna",		0x89,  WCACOMP_RF1, WCACOMP_DSP_DDC1, RX1DPE_IsmInt },
-	{ "ism_ext",	"ISM 2.4 GHz Ext. Input",	0x89,  WCACOMP_RF1, WCACOMP_DSP_DDC1, RX1DPE_IsmExt },
-	{ "wideband1",	"RF1 Wideband Input",		0x89,  WCACOMP_RF1, WCACOMP_DSP_DDC1, RX1DPE_Wideband }
+			  static const RxConfig s_config[] = {
+				  { "gpsant",		"GPS L1 Internal Antenna",	0x88,  WCACOMP_RF0, WCACOMP_DSP_DDC0, RX0DPE_GpsL1Int },
+				  { "gpsext",		"GPS L1 External Input",	0x88,  WCACOMP_RF0, WCACOMP_DSP_DDC0, RX0DPE_GpsL1Ext },
+				  { "pcs",		"PCS Input",				0x88,  WCACOMP_RF0, WCACOMP_DSP_DDC0, RX0DPE_PcsExt },
+				  { "wideband0",  "RF0 Wideband Input",		0x88,  WCACOMP_RF0, WCACOMP_DSP_DDC0, RX0DPE_Wideband },
+				  { "uhf",		"UHF External Input",		0x89,  WCACOMP_RF1, WCACOMP_DSP_DDC1, RX1DPE_UhfExt },
+				  { "ism_ant",	"ISM 2.4 GHz Antenna",		0x89,  WCACOMP_RF1, WCACOMP_DSP_DDC1, RX1DPE_IsmInt },
+				  { "ism_ext",	"ISM 2.4 GHz Ext. Input",	0x89,  WCACOMP_RF1, WCACOMP_DSP_DDC1, RX1DPE_IsmExt },
+				  { "wideband1",	"RF1 Wideband Input",		0x89,  WCACOMP_RF1, WCACOMP_DSP_DDC1, RX1DPE_Wideband }
 };
 const static int COUNT_CONFIG = 8;
 static UserParams s_params = { "", 2, 9, 1970.0, 5.0, 2.0, 0};
@@ -116,8 +116,8 @@ static bool			s_bRunning = false;
 static bool			s_bKeyHit = false;
 
 /******************************************************************
- * Forward Declarations.
- *****************************************************************/
+* Forward Declarations.
+*****************************************************************/
 
 static int Run ();
 static int ValidateArgs();
@@ -133,14 +133,14 @@ static bool setCbreak (struct termios& saveTermios);
 static bool unsetCbreak (struct termios& savedTermios);
 
 /******************************************************************
- * Functions.
- *****************************************************************/
+* Functions.
+*****************************************************************/
 
 /**
- * <summary>
- * Main Program Entry Point.
- * </summary>
- */
+* <summary>
+* Main Program Entry Point.
+* </summary>
+*/
 int main(int argc, const char** argv) {
 	int retval = 0;
 
@@ -162,7 +162,7 @@ int main(int argc, const char** argv) {
 		s_fileStream = fopen(s_params.sfile.c_str(), "wb");
 		if (!s_fileStream) {
 			printf("\nError: Provided filename ('%s') cannot be "
-					"accessed.\n", s_params.sfile.c_str());
+				"accessed.\n", s_params.sfile.c_str());
 			PrintUsage();
 			return -3;
 		}
@@ -183,10 +183,10 @@ int main(int argc, const char** argv) {
 }
 
 /**
- * <summary>
- * Primary entry point for running this executable.
- * </summary>
- */
+* <summary>
+* Primary entry point for running this executable.
+* </summary>
+*/
 
 static int Run() {
 	int retval = 0;
@@ -194,8 +194,8 @@ static int Run() {
 	try {
 		// Find the list of addresses at the specified VID/PID.
 		printf("\n"
-				"Enumerating ASR-2300 devices...\n"
-				"--------------------------------------\n");
+			"Enumerating ASR-2300 devices...\n"
+			"--------------------------------------\n");
 
 		int addr = s_cfgDevice.Attach();
 
@@ -217,11 +217,11 @@ static int Run() {
 }
 
 /**
- * <summary>
- * Function configures the ASR-2300 to receive a specified frequency
- * and then streams the data to the host via BulkDataPort interface.
- * </summary>
- */
+* <summary>
+* Function configures the ASR-2300 to receive a specified frequency
+* and then streams the data to the host via BulkDataPort interface.
+* </summary>
+*/
 
 static int DoRxToFile ()
 {
@@ -256,7 +256,7 @@ static int DoRxToFile ()
 	//4) Open the port, attach callback function to receive data as it comes in.
 	portData.Open();
 	portData.ReadTransfer() = BulkDataPort::TransferEvent
-	  (NULL, &OnFrameReady);
+		(NULL, &OnFrameReady);
 
 	//5) Initialize the buffers and queue for processing.
 	s_bRunning = true;
@@ -285,10 +285,13 @@ static int DoRxToFile ()
 	printf("RX Frequency:  %0.3f MHz\n",  s_params.freq);
 	printf("RX Bandwidth:  %0.3lf MHz\n", s_params.bandwidth);
 	printf("Host Rate:     %0.3lf MHz\n", s_params.samprate);
-	if (s_params.numsamples == 0) {
-	  printf("Duration:      infinite samples\n");
-	} else {
-	  printf("Duration:      %ld samples, %0.02lf sec, %lu frames\n", s_params.numsamples, dt, totalFrames);
+	if (s_params.numsamples == 0) 
+	{
+		printf("Duration:      infinite samples\n");
+	} 
+	else 
+	{
+		printf("Duration:      %ld samples, %0.02lf sec, %lu frames\n", s_params.numsamples, dt, totalFrames);
 	}
 
 	//8) Process until finished
@@ -300,44 +303,46 @@ static int DoRxToFile ()
 #if defined(LINUX) || defined(APPLE)
 	pthread_t keyThread;
 	if (pthread_create (&keyThread, NULL, KeyThreadFunc, NULL) != 0) {
-	  printf ("Error creating key entry thread; use ^C to exit data connection if necessary.\n");
+		printf ("Error creating key entry thread; use ^C to exit data connection if necessary.\n");
 	}
 #endif
 
-	if (s_params.numsamples != 0) {
+	if (s_params.numsamples != 0) 
+	{
 
-	  printf("Wait for finish, or hit any key to stop data collection ...\n");
+		printf("Wait for finish, or hit any key to stop data collection ...\n");
 
-	  s_numBytesToCollect = s_params.numsamples * cs_BytesPerSample;
-	  s_numBytesCollected = 0;
+		s_numBytesToCollect = s_params.numsamples * cs_BytesPerSample;
+		s_numBytesCollected = 0;
 
-	  while ((retval == 0) && (!s_bKeyHit) &&
-		 (s_numBytesCollected < s_numBytesToCollect))
-	    {
+		while ((retval == 0) && (!s_bKeyHit) &&
+			(s_numBytesCollected < s_numBytesToCollect))
+		{
 #if defined(HAVE_LIBUSB)
-	      retval= device.PollAsynchronousEvents();
+			retval= device.PollAsynchronousEvents();
 #elif defined(WIN32)
-	      //Windows implementation does not have a PollAsynchronous Data method.
-	      //Instead, we wait for events on each port.
-	      BulkDataPort::TransferContext* pctxt = portData.WaitForReadTransferEvent( 1000);
-	      retval = pctxt->status;
+			//Windows implementation does not have a PollAsynchronous Data method.
+			//Instead, we wait for events on each port.
+			BulkDataPort::TransferContext* pctxt = portData.WaitForReadTransferEvent( 1000);
+			retval = pctxt->status;
 #endif
-	    }
-	} else {
+		}
+	} 
+	else 
+	{
+		printf("Hit any key to stop data collection ...\n");
 
-	  printf("Hit any key to stop data collection ...\n");
-
-	  while ((retval == 0) && (!s_bKeyHit))
-	    {
+		while ((retval == 0) && (!s_bKeyHit))
+		{
 #if defined(HAVE_LIBUSB)
-	      retval= device.PollAsynchronousEvents();
+			retval= device.PollAsynchronousEvents();
 #elif defined(WIN32)
-	      //Windows implementation does not have a PollAsynchronous Data method.
-	      //Instead, we wait for events on each port.
-	      BulkDataPort::TransferContext* pctxt = portData.WaitForReadTransferEvent( 1000);
-	      retval = pctxt->status;
+			//Windows implementation does not have a PollAsynchronous Data method.
+			//Instead, we wait for events on each port.
+			BulkDataPort::TransferContext* pctxt = portData.WaitForReadTransferEvent( 1000);
+			retval = pctxt->status;
 #endif
-	    }
+		}
 	}
 
 	// check for USB error
@@ -385,7 +390,7 @@ static int DoRxToFile ()
 	// join the keyboard entry thread
 #if defined(LINUX) || defined(APPLE)
 	if (!s_bKeyHit) {
-	  pthread_kill (keyThread, SIGINT);
+		pthread_kill (keyThread, SIGINT);
 	}
 	pthread_join (keyThread, NULL);
 #endif
@@ -394,63 +399,63 @@ static int DoRxToFile ()
 }
 
 /**
- * <summary>
- * Callback issued when data is ready.
- * </summary>
- */
+* <summary>
+* Callback issued when data is ready.
+* </summary>
+*/
 
 static void OnFrameReady (void* /* arg */, BulkDataPort::TransferContext* pctxt)
 {
 	// if the status is OK (0)
 	if (pctxt->status == 0)
 	{
-	  // common functionality
-	  ++s_ctPackets;
-	  s_ctData += pctxt->nActualLength;
-	  pctxt->Submit();
+		// common functionality
+		++s_ctPackets;
+		s_ctData += pctxt->nActualLength;
+		pctxt->Submit();
 
-	  if (s_params.numsamples == 0) {
-	    // Save data to disk
-	    size_t nWritten = fwrite (pctxt->bufFrame, 1, pctxt->nActualLength, s_fileStream);
-	    if (nWritten != pctxt->nActualLength) {
-	      printf ("\nWarning: Some data failed to write to the selected file ('%s').\n", s_params.sfile.c_str());
-	      printf ("  Ignoring and hoping for the best.\n");
-	    }
+		if (s_params.numsamples == 0) {
+			// Save data to disk
+			size_t nWritten = fwrite (pctxt->bufFrame, 1, pctxt->nActualLength, s_fileStream);
+			if (nWritten != pctxt->nActualLength) {
+				printf ("\nWarning: Some data failed to write to the selected file ('%s').\n", s_params.sfile.c_str());
+				printf ("  Ignoring and hoping for the best.\n");
+			}
 
-	    // Print progress '.'
-	    if ((s_ctPackets % 488) == 0)
-	      {
-		putc('.', stdout);
-		fflush(stdout);
-	      }
-	  } else {
+			// Print progress '.'
+			if ((s_ctPackets % 488) == 0)
+			{
+				putc('.', stdout);
+				fflush(stdout);
+			}
+		} else {
 
-	    size_t nToWrite = s_numBytesToCollect - s_numBytesCollected;
-	    if (nToWrite > pctxt->nActualLength) {
-	      nToWrite = pctxt->nActualLength;
-	    }
+			size_t nToWrite = s_numBytesToCollect - s_numBytesCollected;
+			if (nToWrite > pctxt->nActualLength) {
+				nToWrite = pctxt->nActualLength;
+			}
 
-	    // Save data to disk
-	    size_t nWritten = fwrite (pctxt->bufFrame, 1, nToWrite, s_fileStream);
-	    if (nWritten != nToWrite) {
-	      printf ("\nWarning: Some data failed to write to the selected file ('%s').\n", s_params.sfile.c_str());
-	      printf ("  Ignoring and hoping for the best.\n");
-	    }
+			// Save data to disk
+			size_t nWritten = fwrite (pctxt->bufFrame, 1, nToWrite, s_fileStream);
+			if (nWritten != nToWrite) {
+				printf ("\nWarning: Some data failed to write to the selected file ('%s').\n", s_params.sfile.c_str());
+				printf ("  Ignoring and hoping for the best.\n");
+			}
 
-	    size_t oldNumBytesCollected = s_numBytesCollected;
-	    s_numBytesCollected += nWritten;
+			size_t oldNumBytesCollected = s_numBytesCollected;
+			s_numBytesCollected += nWritten;
 
-	    // 60 dots is complete; figure out how far along and if
-	    // another dot needs to be printed.
+			// 60 dots is complete; figure out how far along and if
+			// another dot needs to be printed.
 
-	    float dotByteLen = ((float) s_numBytesToCollect) / ((float) 60);
-	    if ((size_t)(((float) oldNumBytesCollected) / dotByteLen) !=
-		(size_t)(((float) s_numBytesCollected) / dotByteLen))
-	      {
-		putc('.', stdout);
-		fflush(stdout);
-	      }
-	  }
+			float dotByteLen = ((float) s_numBytesToCollect) / ((float) 60);
+			if ((size_t)(((float) oldNumBytesCollected) / dotByteLen) !=
+				(size_t)(((float) s_numBytesCollected) / dotByteLen))
+			{
+				putc('.', stdout);
+				fflush(stdout);
+			}
+		}
 	}
 }
 
@@ -483,10 +488,10 @@ static int ValidateArgs()
 }
 
 /**
- * <summary>
- * Writes the application header information to the standard output.
- * </summary>
- */
+* <summary>
+* Writes the application header information to the standard output.
+* </summary>
+*/
 
 static void  WriteHeader() {
 	printf(
@@ -499,22 +504,22 @@ static void  WriteHeader() {
 }
 
 /**
- * <summary>
- * Prints usage of this program, on command line parsing error.
- * </summary>
- */
+* <summary>
+* Prints usage of this program, on command line parsing error.
+* </summary>
+*/
 static void PrintUsage() {
 	printf( "\nUsage for A2300RxToFile:\n\n"
-			"  A2300RxToFile filename [[<var>=<value>] ...]\n\n");
+		"  A2300RxToFile filename [[<var>=<value>] ...]\n\n");
 
 	s_args.WriteDescriptions();
 }
 
 /**
- * <summary>
- * Print out Device information.
- * </summary>
- */
+* <summary>
+* Print out Device information.
+* </summary>
+*/
 
 static void DumpDeviceInformation ()
 {
@@ -532,70 +537,70 @@ static void DumpDeviceInformation ()
 }
 
 /**
- * <summary>
- * Thread to get key hit, unbuffered but blocking, to stop data collection
- * </summary>
- */
+* <summary>
+* Thread to get key hit, unbuffered but blocking, to stop data collection
+* </summary>
+*/
 
 static void* KeyThreadFunc (void* /* arg */)
 {
 #if defined(LINUX) || defined(APPLE)
-  struct termios saveTermios;
-  setCbreak (saveTermios);
-  s_bKeyHit = false;
-  getchar();
-  unsetCbreak (saveTermios);
-  s_bKeyHit = true;
+	struct termios saveTermios;
+	setCbreak (saveTermios);
+	s_bKeyHit = false;
+	getchar();
+	unsetCbreak (saveTermios);
+	s_bKeyHit = true;
 #endif
-  return NULL;
+	return NULL;
 }
 
 /**
- * <summary>
- * Set terminal character mode to unbuffered, read at will; returns
- * true on success, false on failure (for any reason).
- * </summary>
- */
+* <summary>
+* Set terminal character mode to unbuffered, read at will; returns
+* true on success, false on failure (for any reason).
+* </summary>
+*/
 
 static bool setCbreak (struct termios& saveTermios)
 {
 #if defined(LINUX) || defined(APPLE)
-  // Remove line buffering from stdin
-  if (setvbuf (stdin, NULL, _IONBF, 0) != 0) {
-    return false;
-  }
+	// Remove line buffering from stdin
+	if (setvbuf (stdin, NULL, _IONBF, 0) != 0) {
+		return false;
+	}
 
-  // Store previous terminal settings
-  if (tcgetattr (0, &saveTermios)) {
-    return false;
-  }
+	// Store previous terminal settings
+	if (tcgetattr (0, &saveTermios)) {
+		return false;
+	}
 
-  // Modify terminal settings, using a copy of the previous settings
-  struct termios buf = saveTermios;
-  buf.c_lflag &= ~(ECHO|ICANON);
-  buf.c_cc[VMIN] = 1;
-  buf.c_cc[VTIME] = 0;
+	// Modify terminal settings, using a copy of the previous settings
+	struct termios buf = saveTermios;
+	buf.c_lflag &= ~(ECHO|ICANON);
+	buf.c_cc[VMIN] = 1;
+	buf.c_cc[VTIME] = 0;
 
-  // Set new terminal settings
-  if (tcsetattr (0, TCSAFLUSH, &buf) < 0) {
-    return false;
-  }
+	// Set new terminal settings
+	if (tcsetattr (0, TCSAFLUSH, &buf) < 0) {
+		return false;
+	}
 #endif
-  return true;
+	return true;
 }
 
 static bool unsetCbreak (struct termios& savedTermios)
 {
 #if defined(LINUX) || defined(APPLE)
-  // Return line buffering to stdin
-  if (setvbuf (stdin, NULL, _IOLBF, 0) != 0) {
-    return false;
-  }
+	// Return line buffering to stdin
+	if (setvbuf (stdin, NULL, _IOLBF, 0) != 0) {
+		return false;
+	}
 
-  // Return original terminal settings
-  if (tcsetattr (0, TCSAFLUSH, &savedTermios) < 0) {
-    return false;
-  }
+	// Return original terminal settings
+	if (tcsetattr (0, TCSAFLUSH, &savedTermios) < 0) {
+		return false;
+	}
 #endif
-  return true;
+	return true;
 }

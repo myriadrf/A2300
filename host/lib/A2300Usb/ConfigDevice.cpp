@@ -25,6 +25,7 @@ namespace A2300 {
 ConfigDevice::ConfigDevice()
 	: m_bCreated(false), m_pDevice( NULL),
 	  m_dci0(A2300_DciIdc0_EpIn, A2300_DciIdc0_EpOut),
+	  m_dci1(A2300_DciIdc1_EpIn, A2300_DciIdc1_EpOut),
 	  m_timeoutDefault(A2300_WAIT_TIME ),
 	  m_rf0( WCACOMP_RF0, "RF0", this),
 	  m_rf1( WCACOMP_RF1, "RF1", this)
@@ -34,6 +35,27 @@ ConfigDevice::~ConfigDevice()
 {
 	Detach();
 }
+
+/**
+ * Property gets the DCI Conversation ID 1 transport (asynchronous Data I/O).  Use this
+ * transport to send/receive data with the ASR-2300.  This conversation should be used
+ * in a way that supports multiple interactions simultaneously.  Recommend you do not block
+ * (wait) for receives on this transport unless you are sure you are the only user.
+ */
+TransportDci& ConfigDevice::Dci1Transport()
+{
+	//Initialize using latebinding.
+	if( !m_dci1.IsInitialized() && m_pDevice != NULL)
+	{
+		if( m_pDevice == NULL)
+			std::runtime_error("Cannot provide DCI 1 Transport.  No Device attached.");
+
+		m_dci1.Init( *m_pDevice, 1,m_timeoutDefault);
+	}
+
+	return m_dci1.transport;
+}
+
 
 std::string ConfigDevice::IdentifyDevice()
 {

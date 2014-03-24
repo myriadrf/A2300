@@ -161,7 +161,8 @@ int Dci_ExecuteAction_Init( void* buff, uint16 sizeBuff,
 		pmsg->idComponent  = idComponent;
 		pmsg->idAction  = idAction;
 		pmsg->lenData   = lenData;
-		memcpy( ((byte*)buff+lenHdr), pdata, (size_t) lenData);
+		if( pdata != NULL)
+			memcpy( ((byte*)buff+lenHdr), pdata, (size_t) lenData);
 		return(lenMsg);
 	}
 	return(0);

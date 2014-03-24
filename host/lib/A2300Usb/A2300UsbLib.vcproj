@@ -82,7 +82,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release|Win32"
+			Name="Debug|x64"
 			OutputDirectory="$(ProjectDir)\$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(ProjectDir)\$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="4"
@@ -101,15 +101,16 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
+				TargetEnvironment="3"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="3"
-				InlineFunctionExpansion="2"
-				FavorSizeOrSpeed="1"
+				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\common;..\..\extern\CypressFx3UsbDriver\include;..\..\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS"
-				RuntimeLibrary="2"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS"
+				MinimalRebuild="true"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="false"
@@ -144,7 +145,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug|x64"
+			Name="Release|Win32"
 			OutputDirectory="$(ProjectDir)\$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(ProjectDir)\$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="4"
@@ -163,16 +164,15 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TargetEnvironment="3"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
+				Optimization="3"
+				InlineFunctionExpansion="2"
+				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="..\..\..\common;..\..\extern\CypressFx3UsbDriver\include;..\..\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS"
+				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="false"
@@ -307,6 +307,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\A2300\ConfigSensor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\A2300\libusb_ext.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\include\A2300\TransportDci.h"
 				>
 			</File>
@@ -344,6 +352,10 @@
 			</File>
 			<File
 				RelativePath=".\ConfigRf.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ConfigSensor.cpp"
 				>
 			</File>
 			<File
