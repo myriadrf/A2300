@@ -58,7 +58,7 @@ extern tQuatPacket qData;
 */
 float four_bytes(byte d1,byte d2,byte d3,byte d4)
 {
-	 float  d = d1*(1<<24) + d2*(1<<16) + d3*(1<<8) + d4;
+	 float  d = (float)d1*(1<<24) + (float)d2*(1<<16) + (float)d3*(1<<8) + (float)d4;
 	 if (d > 2147483648)
 		 d-= 4294967296;
 	return d;
