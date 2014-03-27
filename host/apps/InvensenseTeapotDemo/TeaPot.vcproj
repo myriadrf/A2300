@@ -1,12 +1,12 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="A2300Demo"
-	ProjectGUID="{C4603ED6-B498-4768-8A0F-6D81361E9085}"
-	RootNamespace="A2300Identify"
+	Name="TeaPotDemo"
+	ProjectGUID="{8A4E2057-262C-4B47-B1BC-FED11B766EED}"
+	RootNamespace="Pointer"
 	Keyword="Win32Proj"
-	TargetFrameworkVersion="0"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -24,6 +24,7 @@
 			OutputDirectory="$(SolutionDir)\bin\$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(ProjectDir)\obj\$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -43,13 +44,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\..\common&quot;;&quot;$(ProjectDir)\..\..\extern\CypressFx3UsbDriver\include&quot;;&quot;$(ProjectDir)\..\..\A2300Usb&quot;;&quot;$(ProjectDir)\..\..\include&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;"
+				AdditionalIncludeDirectories="gl; &quot;$(ProjectDir)\..\..\..\common&quot;;&quot;$(ProjectDir)\..\..\extern\CypressFx3UsbDriver\include&quot;;&quot;$(ProjectDir)\..\..\A2300Usb&quot;;&quot;$(ProjectDir)\..\..\include&quot;"
+				PreprocessorDefinitions="_DEBUG;WIN32;_CRT_SECURE_NO_WARNINGS;ML_DATA_LOG;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
-				WarningLevel="4"
+				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
 			/>
@@ -64,12 +65,15 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="A2300Usb.lib A2300Common.lib CyAPI.lib Setupapi.lib"
+				AdditionalDependencies="glut32.lib User32.lib A2300Common.lib A2300Usb.lib CyAPI.lib Setupapi.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\lib\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(ProjectDir)/../../extern/CypressFx3UsbDriver/lib/x86&quot;"
+				AdditionalLibraryDirectories="&quot;$(ProjectDir)/gl&quot;;&quot;$(SolutionDir)\lib\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(ProjectDir)/../../extern/CypressFx3UsbDriver/lib/x86&quot;"
+				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames="LIBC;LIBCMT"
 				GenerateDebugInformation="true"
 				SubSystem="1"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -99,6 +103,9 @@
 			OutputDirectory="$(SolutionDir)\bin\$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(ProjectDir)\obj\$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
+			UseOfMFC="0"
+			CharacterSet="1"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -118,8 +125,9 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\..\common&quot;;&quot;$(ProjectDir)\..\..\extern\CypressFx3UsbDriver\include&quot;;&quot;$(ProjectDir)\..\..\A2300Usb&quot;;&quot;$(ProjectDir)\..\..\include&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;"
+				WholeProgramOptimization="true"
+				AdditionalIncludeDirectories="gl; &quot;$(ProjectDir)\..\..\..\common&quot;;&quot;$(ProjectDir)\..\..\extern\CypressFx3UsbDriver\include&quot;;&quot;$(ProjectDir)\..\..\A2300Usb&quot;;&quot;$(ProjectDir)\..\..\include&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CRT_SECURE_NO_WARNINGS;ML_DATA_LOG;_CRT_SECURE_NO_DEPRECATE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -137,14 +145,18 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="A2300Common.lib A2300Usb.lib CyAPI.lib Setupapi.lib"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\lib\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(ProjectDir)/../../extern/CypressFx3UsbDriver/lib/x86&quot;"
-				IgnoreDefaultLibraryNames="LIBC;LIBCMT"
+				AdditionalDependencies="glut32.lib  A2300Common.lib A2300Usb.lib CyAPI.lib Setupapi.lib"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(ProjectDir)/gl&quot;;&quot;$(SolutionDir)\lib\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(ProjectDir)/../../extern/CypressFx3UsbDriver/lib/x86&quot;"
+				IgnoreAllDefaultLibraries="false"
+				IgnoreDefaultLibraryNames="LIBC;LIBCMT;"
+				DelayLoadDLLs="$(NOINHERIT)"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -152,6 +164,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				EmbedManifest="true"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -174,6 +187,7 @@
 			OutputDirectory="$(SolutionDir)\bin\$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(ProjectDir)\obj\$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -194,13 +208,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\..\common&quot;;&quot;$(ProjectDir)\..\..\extern\CypressFx3UsbDriver\include&quot;;&quot;$(ProjectDir)\..\..\A2300Usb&quot;;&quot;$(ProjectDir)\..\..\include&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;"
+				AdditionalIncludeDirectories="gl; &quot;$(ProjectDir)\..\..\..\common&quot;;&quot;$(ProjectDir)\..\..\extern\CypressFx3UsbDriver\include&quot;;&quot;$(ProjectDir)\..\..\A2300Usb&quot;;&quot;$(ProjectDir)\..\..\include&quot;"
+				PreprocessorDefinitions="_DEBUG;WIN32;_CRT_SECURE_NO_WARNINGS;ML_DATA_LOG;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
-				WarningLevel="4"
+				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 			/>
@@ -215,12 +229,15 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="A2300Usb.lib A2300Common.lib CyAPI.lib Setupapi.lib"
+				AdditionalDependencies="glut64.lib A2300Common.lib A2300Usb.lib CyAPI.lib Setupapi.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\lib\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(ProjectDir)/../../extern/CypressFx3UsbDriver/lib/x64&quot;"
+				AdditionalLibraryDirectories="&quot;$(ProjectDir)/gl&quot;;&quot;$(SolutionDir)\lib\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(ProjectDir)/../../extern/CypressFx3UsbDriver/lib/x64&quot;"
+				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames="LIBC;LIBCMT"
 				GenerateDebugInformation="true"
 				SubSystem="1"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -250,6 +267,9 @@
 			OutputDirectory="$(SolutionDir)\bin\$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(ProjectDir)\obj\$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
+			UseOfMFC="0"
+			CharacterSet="1"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -269,9 +289,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="3"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\..\common&quot;;&quot;$(ProjectDir)\..\..\extern\CypressFx3UsbDriver\include&quot;;&quot;$(ProjectDir)\..\..\A2300Usb&quot;;&quot;$(ProjectDir)\..\..\include&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;"
+				AdditionalIncludeDirectories="gl; &quot;$(ProjectDir)\..\..\..\common&quot;;&quot;$(ProjectDir)\..\..\extern\CypressFx3UsbDriver\include&quot;;&quot;$(ProjectDir)\..\..\A2300Usb&quot;;&quot;$(ProjectDir)\..\..\include&quot;"
+				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_WARNINGS;ML_DATA_LOG;_CRT_SECURE_NO_DEPRECATE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -289,14 +308,18 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="A2300Common.lib A2300Usb.lib CyAPI.lib Setupapi.lib"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\lib\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(ProjectDir)/../../extern/CypressFx3UsbDriver/lib/x64&quot;"
+				AdditionalDependencies="glut64.lib A2300Common.lib A2300Usb.lib CyAPI.lib Setupapi.lib"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(ProjectDir)/gl&quot;;&quot;$(SolutionDir)\lib\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(ProjectDir)/../../extern/CypressFx3UsbDriver/lib/x64&quot;"
+				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames="LIBC;LIBCMT"
+				DelayLoadDLLs="$(NOINHERIT)"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -304,6 +327,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				EmbedManifest="true"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -326,26 +350,54 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
-			>
-		</Filter>
-		<Filter
-			Name="Resource Files"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
-			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
-			>
-		</Filter>
-		<Filter
 			Name="Source Files"
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\A2300Demo.cpp"
+				RelativePath=".\Asr2300Io.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\main.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\main.h"
+				>
+			</File>
+			<File
+				RelativePath=".\mlDataLog.c"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl;inc;xsd"
+			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+			>
+			<File
+				RelativePath=".\Asr2300Io.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ctypes.h"
+				>
+			</File>
+			<File
+				RelativePath=".\gridGesture.h"
+				>
+			</File>
+			<File
+				RelativePath=".\mlDataLog.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
+			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
+			>
 		</Filter>
 	</Files>
 	<Globals>

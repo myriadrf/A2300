@@ -17,7 +17,7 @@ The A2300 supports UHD and GnuRadio functions if these capabilities are desired.
 
 For native C/C++ development, the A2300 API is available for development with projects for Eclipse and Visual Studio.
 
-##Installation Using Git and CMake
+##Installation Using Git and CMake on LINUX and Apple IOS
 
 Open a Terminal window and Enter the following commands.  
 
@@ -26,6 +26,18 @@ Open a Terminal window and Enter the following commands.
     mkdir build
     cd build
     cmake ..
+
+Now build the project and install it.
+
+    make
+    sudo make install
+
+To test that A2300 API and tools were installed correctly.  Plug in your device and type the following command.
+
+    A2300Identify
+
+To test that the UHD Adaptor was installed correctly.  Run the following UHD application.
+
     UHD_MODULE_PATH=./host/lib/UhdAdaptor/libA2300UhdAdapter.dylib uhd_fft --args "type=a2300" -A Wideband -f 890.4M -s 1M --spec "A:0" -g 0 <click "Average"> <click "Autoscale" twice (or as needed)>
   
 
@@ -36,7 +48,7 @@ platforms to communicate with the ASR-2300 via USB interface.
 Procedures for Windows and Linux are somewhat different.  On Linux platforms, libusb is used, Cypress FX-3 driver is used on Windows platforms.
 
 
-##Building A2300 API and Tools Using Eclipse
+##Building A2300 API and Tools Using Eclipse on LINUX
 
 In a terminal, change to a directory that will contain the A2300 code.  Download the code `git clone https://github.com/myriadrf/A2300.git`.
 

@@ -34,6 +34,7 @@ IF(ENABLE_A2300USB)
         ${CMAKE_CURRENT_SOURCE_DIR}/ConfigDduc.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/ConfigDevice.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/ConfigRf.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/ConfigSensor.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/PortBase.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/TransportDci.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/UsbDevice_core.cpp

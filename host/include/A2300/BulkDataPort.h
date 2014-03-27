@@ -113,7 +113,7 @@ namespace A2300
 				return libusb_submit_transfer(lut);
 			}
 
-			inline int Cancel()
+			inline int Cancel(int /*msectimeout*/)
 			{
 				return libusb_cancel_transfer(lut);
 			}
@@ -145,7 +145,7 @@ namespace A2300
 
 			inline ULONG Submit( int size);
 			inline ULONG Submit( );
-			inline bool Cancel(int msecTimeout);
+			inline int Cancel(int msecTimeout);
 			inline void Destroy();
 		protected:
 			bool WaitForTransfer(int msecTimeout)

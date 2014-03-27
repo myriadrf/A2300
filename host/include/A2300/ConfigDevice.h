@@ -52,6 +52,14 @@ public:
 	 * with the ASR-2300 device controller.
 	 */
 	TransportDci& Dci0Transport() { return m_dci0.transport;}
+	
+	/**
+	 * Property gets the DCI Conversation ID 1 transport (asynchronous Data I/O).  Use this
+	 * transport to send/receive data with the ASR-2300.  This conversation should be used
+	 * in a way that supports multiple interactions simultaneously.  Recommend you do not block
+	 * (wait) for receives on this transport unless you are sure you are the only user.
+	 */
+	TransportDci& Dci1Transport();
 
 	std::string IdentifyDevice();
 	std::string FirmwareVersion( int idWhich);
@@ -98,6 +106,7 @@ protected:
 		DciCtrl( byte epidIn, byte epidOut)
 		: port( epidIn, epidOut) {}
 
+		bool IsInitialized() { return transport.Port() != NULL;}
 		void Init( UsbDevice& device, int idc, double timeout);
 		void Term();
 	};
@@ -105,6 +114,7 @@ private:
 	bool 				m_bCreated;
 	UsbDevice*			m_pDevice;
 	DciCtrl	 			m_dci0;
+	DciCtrl				m_dci1;
 	double				m_timeoutDefault;
 
 	ConfigRf			m_rf0;

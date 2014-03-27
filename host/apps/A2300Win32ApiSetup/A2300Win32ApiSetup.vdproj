@@ -3,7 +3,7 @@
 "VSVersion" = "3:800"
 "ProjectType" = "8:{978C614F-708E-4E1A-B201-565925725DBA}"
 "IsWebType" = "8:FALSE"
-"ProjectName" = "8:A2300Win32ApiSetup"
+"ProjectName" = "8:A2300ApiSetup"
 "LanguageId" = "3:1033"
 "CodePage" = "3:1252"
 "UILanguageId" = "3:1033"
@@ -15,13 +15,91 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_03E8B0F244374A50AEEF3599FDB1343A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_072CA24E99FF44F49781687E424DB1E5"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_09751CE628E348869D4A3245D06F0199"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_0AEB99EFB16D46C4A23BC697EAAE30DF"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_0D6F6AC73C3943CDA26583D517F46097"
+        "MsmKey" = "8:_0D1BB39A3C1A4A3E96AE2BF1A838D25F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_0D75BA626784430DBB146EF4A439EC0C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_11234ECA899C4DACBBE2B8B6733C720E"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_114127B916534F84B34EE81C3FC683DD"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_122496BC2F98494CBD34F38BC232D075"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_144BFCCCC52040948FB2F07653534616"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_180BA8EE6B2841B3BF41E02E958A820D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_1B2C78CC316B4240949EBEF85F55AA54"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_1B9A04BEACBA40A693B5F89A7C73FF20"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_1C0F89CB135D42DCBAB11B6D6101AAC5"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_1F9F9D72E9064A28B55C7CDA55CD8A21"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -45,7 +123,49 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_2971D5AD87ED4FF683E034805AE8F93D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2A631EA0F46C40B2BDD5E26E2CA07064"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_31CC573BF0714D329D06CFCEC2FE24C3"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3528D5DFCE1C4CE2874FF912897DC2C2"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_353F5BBC874944CF859B6E2B3EF7D1AF"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_37AB2631390F4911823A425EFD738202"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_38A9B77FE5F44595A32AC99D279123A6"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_39A061098F25488D9BF42BBE0A165919"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -63,6 +183,24 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_3E022CFFB3E34118925B549B59C908C4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_42EA3D592A434AB2943780D71D685663"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_49F88E5E9E964164B98CC5ED5B96B829"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_4BD440CC38044D08A064023B13DFFCC4"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -75,19 +213,37 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_54F63946717A48368A0A600C4698B16B"
-        "OwnerKey" = "8:_D828C7CD763240B7A5DD8D38452C12CE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_5A4D8384ED7E42F586FBB7E8FD7B070D"
+        "MsmKey" = "8:_4F78DDCF66E14D41ADF95A643D2C5784"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_5AFD5DD320B341B4842BFF458EFAF84F"
+        "MsmKey" = "8:_51DCE39344994D46B559B2D716EFDA52"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_53C34734770643E1A1420979D1186F84"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_54D5040BACE2470789230E6061F8B2B7"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_589AFB8EF0D64B298DF7D41C6BBB879F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5A4D8384ED7E42F586FBB7E8FD7B070D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -99,7 +255,31 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_65254ACFEB51431A94673A5D7B77F81E"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_67565682F7B44D40AA6F4243199F82DC"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_686F0669104E4E959BA6AEA1E25C4EC7"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_6EBC6661D01940469F78ED0AA72919CF"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_73FE460BB78F4036BEB5CFF060FACD42"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -112,12 +292,18 @@
         "Entry"
         {
         "MsmKey" = "8:_763CFAD4A08D3FB1D37B3BF09AAA6905"
-        "OwnerKey" = "8:_F6A2E8CC04FA4CBF89A1BBAC14DD1BEE"
+        "OwnerKey" = "8:_89C358E0CDF8415D82BFB6E1E1CF9832"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_7FE6FEA795B142EF9A516CFCBF7154D5"
+        "MsmKey" = "8:_7C7D8C9763414CDC9F31C32B8C723CA8"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_82F42BB3919246A8995EBF0360164CE4"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -129,7 +315,37 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_900F419E834E437ABE54CC6DB16086E9"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_90527AF15F1C4F4EA3939189DC989925"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_9710C72FA06C4DBCBA9AF27756EB0FFA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9D30C0EE063B4EB5820470294D7B035D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A1C79C9DFD5E434BBC7F38A3895A8F60"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A805A74DE1CF447889D90195C59CE4A1"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -153,8 +369,44 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_C2FCE05AD35642BBABAD03448663708C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_C5E9F9BC6AB6449582E2F64097062E64"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C9761C61B2A644B0AFC64B64697E8C43"
+        "OwnerKey" = "8:_CF58552BE80B4B7EBA9EEC11A619AF95"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C9E1C86BB921473D88B495AC37C59069"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CAE6F520843E46D4AC70D5BACA4B23C4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CF58552BE80B4B7EBA9EEC11A619AF95"
+        "OwnerKey" = "8:_4BD440CC38044D08A064023B13DFFCC4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CF58552BE80B4B7EBA9EEC11A619AF95"
+        "OwnerKey" = "8:_89C358E0CDF8415D82BFB6E1E1CF9832"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -171,19 +423,37 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_D828C7CD763240B7A5DD8D38452C12CE"
-        "OwnerKey" = "8:_4BD440CC38044D08A064023B13DFFCC4"
+        "MsmKey" = "8:_D4B9B725C44B45D4A70B452944C6359E"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_D828C7CD763240B7A5DD8D38452C12CE"
-        "OwnerKey" = "8:_F6A2E8CC04FA4CBF89A1BBAC14DD1BEE"
+        "MsmKey" = "8:_D52D12150A47404C8CDDC108B699C4CF"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_DDCC3D88E41E406F9A3F41861F215171"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_E4DEDEE5710D4DD1B6DB72AB0160F81F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E5007EFD9BB6499BB992B56ACA817C7C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E514BE1AC46B42C393E872173B78EA32"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -207,7 +477,25 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_EFE6302BEEDC4524BC2CE844AE4071C9"
+        "MsmKey" = "8:_E97A92429D3F44918E21BA00B2744CCC"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F2B977C61A98472CA23697E341DD87B0"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F3587E7A99CA4ED694ADD2AB59E6CCEA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F438CD174D9A4A68BEB2C2D4E987019F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -219,13 +507,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_F6A2E8CC04FA4CBF89A1BBAC14DD1BEE"
+        "MsmKey" = "8:_F8866CD82CFF42EEBEBB951575EEDB74"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_F8866CD82CFF42EEBEBB951575EEDB74"
+        "MsmKey" = "8:_F9FEA9D1B1304BAE9A2ABB714B3E0457"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -274,7 +562,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:Release\\A2300Win32ApiSetup.msi"
+        "OutputFilename" = "8:Release\\A2300ApiSetup.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -293,6 +581,11 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Visual.C++.9.0.x64"
+                    {
+                    "Name" = "8:Visual C++ Runtime Libraries (x64)"
+                    "ProductCode" = "8:Microsoft.Visual.C++.9.0.x64"
+                    }
                     "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Visual.C++.9.0.x86"
                     {
                     "Name" = "8:Visual C++ Runtime Libraries (x86)"
@@ -326,12 +619,272 @@
         }
         "File"
         {
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_03E8B0F244374A50AEEF3599FDB1343A"
+            {
+            "SourcePath" = "8:..\\..\\bin\\Win32\\Release\\A2300Demo.exe"
+            "TargetName" = "8:A2300Demo.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_AF773D72A0CE488CADF059D5742D5A86"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_072CA24E99FF44F49781687E424DB1E5"
+            {
+            "SourcePath" = "8:..\\..\\bin\\Win32\\Release\\A2300SensorDemo.exe"
+            "TargetName" = "8:A2300SensorDemo.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_AF773D72A0CE488CADF059D5742D5A86"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_09751CE628E348869D4A3245D06F0199"
+            {
+            "SourcePath" = "8:..\\..\\bin\\Win32\\Debug\\A2300Demo.exe"
+            "TargetName" = "8:A2300Demo.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_8E535D9695D3401DB389013287500069"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0AEB99EFB16D46C4A23BC697EAAE30DF"
             {
             "SourcePath" = "8:..\\..\\..\\common\\Dci\\DciMsg.h"
             "TargetName" = "8:DciMsg.h"
             "Tag" = "8:"
             "Folder" = "8:_F5B9E31E3C8D473CA7F5D34AFC82227D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0D1BB39A3C1A4A3E96AE2BF1A838D25F"
+            {
+            "SourcePath" = "8:..\\..\\bin\\x64\\Debug\\TeaPotDemo.exe"
+            "TargetName" = "8:TeaPotDemo.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_3FF5322F739A4AC5ADE5FB3A590ED9B1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0D75BA626784430DBB146EF4A439EC0C"
+            {
+            "SourcePath" = "8:..\\..\\bin\\Win32\\Debug\\A2300SensorDemo.exe"
+            "TargetName" = "8:A2300SensorDemo.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_8E535D9695D3401DB389013287500069"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_11234ECA899C4DACBBE2B8B6733C720E"
+            {
+            "SourcePath" = "8:..\\..\\bin\\x64\\Release\\A2300Update.exe"
+            "TargetName" = "8:A2300Update.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_3C195422C02D4DE58E9E743C8FCA8F7A"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_114127B916534F84B34EE81C3FC683DD"
+            {
+            "SourcePath" = "8:..\\..\\bin\\x64\\Release\\TeaPotDemo.exe"
+            "TargetName" = "8:TeaPotDemo.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_3C195422C02D4DE58E9E743C8FCA8F7A"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_122496BC2F98494CBD34F38BC232D075"
+            {
+            "SourcePath" = "8:..\\..\\bin\\x64\\Debug\\A2300RxToFile.exe"
+            "TargetName" = "8:A2300RxToFile.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_3FF5322F739A4AC5ADE5FB3A590ED9B1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_144BFCCCC52040948FB2F07653534616"
+            {
+            "SourcePath" = "8:..\\..\\bin\\Win32\\Debug\\A2300RxToFile.exe"
+            "TargetName" = "8:A2300RxToFile.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_8E535D9695D3401DB389013287500069"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1B2C78CC316B4240949EBEF85F55AA54"
+            {
+            "SourcePath" = "8:..\\..\\bin\\Win32\\Debug\\A2300Update.exe"
+            "TargetName" = "8:A2300Update.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_8E535D9695D3401DB389013287500069"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1B9A04BEACBA40A693B5F89A7C73FF20"
+            {
+            "SourcePath" = "8:..\\..\\extern\\CypressFx3UsbDriver\\lib\\x64\\CyAPI.lib"
+            "TargetName" = "8:CyAPI.lib"
+            "Tag" = "8:"
+            "Folder" = "8:_C2A3A13BB5FE4AE983090E6E4B677F95"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1C0F89CB135D42DCBAB11B6D6101AAC5"
+            {
+            "SourcePath" = "8:..\\..\\bin\\Win32\\Debug\\A2300Identify.exe"
+            "TargetName" = "8:A2300Identify.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_8E535D9695D3401DB389013287500069"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1F9F9D72E9064A28B55C7CDA55CD8A21"
+            {
+            "SourcePath" = "8:..\\InvensenseTeapotDemo\\gl\\glut64.dll"
+            "TargetName" = "8:glut64.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_3C195422C02D4DE58E9E743C8FCA8F7A"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -406,12 +959,112 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2971D5AD87ED4FF683E034805AE8F93D"
+            {
+            "SourcePath" = "8:..\\..\\bin\\x64\\Release\\A2300Demo.exe"
+            "TargetName" = "8:A2300Demo.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_3C195422C02D4DE58E9E743C8FCA8F7A"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2A631EA0F46C40B2BDD5E26E2CA07064"
+            {
+            "SourcePath" = "8:..\\..\\extern\\CypressFx3UsbDriver\\include\\cyioctl.h"
+            "TargetName" = "8:cyioctl.h"
+            "Tag" = "8:"
+            "Folder" = "8:_DCEA553B46824968B62C0D1BF4DB1298"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3528D5DFCE1C4CE2874FF912897DC2C2"
+            {
+            "SourcePath" = "8:..\\..\\bin\\Win32\\Release\\A2300RxToFile.exe"
+            "TargetName" = "8:A2300RxToFile.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_AF773D72A0CE488CADF059D5742D5A86"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_353F5BBC874944CF859B6E2B3EF7D1AF"
             {
             "SourcePath" = "8:..\\..\\docs\\Device Communications Interface Protocol Specification (V1.0).pdf"
             "TargetName" = "8:Device Communications Interface Protocol Specification (V1.0).pdf"
             "Tag" = "8:"
             "Folder" = "8:_93FEFCE9EE0649D09BB7CAE4E0704D15"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_37AB2631390F4911823A425EFD738202"
+            {
+            "SourcePath" = "8:..\\..\\extern\\CypressFx3UsbDriver\\include\\usb100.h"
+            "TargetName" = "8:usb100.h"
+            "Tag" = "8:"
+            "Folder" = "8:_DCEA553B46824968B62C0D1BF4DB1298"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_38A9B77FE5F44595A32AC99D279123A6"
+            {
+            "SourcePath" = "8:..\\..\\bin\\x64\\Debug\\A2300Identify.exe"
+            "TargetName" = "8:A2300Identify.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_3FF5322F739A4AC5ADE5FB3A590ED9B1"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -466,12 +1119,132 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3E022CFFB3E34118925B549B59C908C4"
+            {
+            "SourcePath" = "8:..\\..\\extern\\CypressFx3UsbDriver\\include\\UsbdStatus.h"
+            "TargetName" = "8:UsbdStatus.h"
+            "Tag" = "8:"
+            "Folder" = "8:_DCEA553B46824968B62C0D1BF4DB1298"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_42EA3D592A434AB2943780D71D685663"
+            {
+            "SourcePath" = "8:..\\..\\bin\\Win32\\Debug\\A2300SensorDemo.pdb"
+            "TargetName" = "8:A2300SensorDemo.pdb"
+            "Tag" = "8:"
+            "Folder" = "8:_8E535D9695D3401DB389013287500069"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_49F88E5E9E964164B98CC5ED5B96B829"
+            {
+            "SourcePath" = "8:..\\..\\bin\\Win32\\Release\\A2300Identify.exe"
+            "TargetName" = "8:A2300Identify.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_AF773D72A0CE488CADF059D5742D5A86"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4DD4AEEACE1640ABA783B4C74E2C0554"
             {
             "SourcePath" = "8:..\\..\\include\\A2300\\BitUtil.h"
             "TargetName" = "8:BitUtil.h"
             "Tag" = "8:"
             "Folder" = "8:_E3F44315498C4AB79DC0D7C203BD4018"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4F78DDCF66E14D41ADF95A643D2C5784"
+            {
+            "SourcePath" = "8:..\\..\\extern\\CypressFx3UsbDriver\\lib\\x86\\CyAPI.lib"
+            "TargetName" = "8:CyAPI.lib"
+            "Tag" = "8:"
+            "Folder" = "8:_1058DBF2DB4847B6AD16D9C7E388F68A"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_51DCE39344994D46B559B2D716EFDA52"
+            {
+            "SourcePath" = "8:..\\..\\bin\\x64\\Debug\\A2300SensorDemo.exe"
+            "TargetName" = "8:A2300SensorDemo.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_3FF5322F739A4AC5ADE5FB3A590ED9B1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_589AFB8EF0D64B298DF7D41C6BBB879F"
+            {
+            "SourcePath" = "8:..\\..\\extern\\CypressFx3UsbDriver\\include\\usb200.h"
+            "TargetName" = "8:usb200.h"
+            "Tag" = "8:"
+            "Folder" = "8:_DCEA553B46824968B62C0D1BF4DB1298"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -526,12 +1299,92 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_65254ACFEB51431A94673A5D7B77F81E"
+            {
+            "SourcePath" = "8:..\\InvensenseTeapotDemo\\gl\\glut64.dll"
+            "TargetName" = "8:glut64.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_3FF5322F739A4AC5ADE5FB3A590ED9B1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_67565682F7B44D40AA6F4243199F82DC"
+            {
+            "SourcePath" = "8:..\\..\\bin\\x64\\Debug\\A2300Update.exe"
+            "TargetName" = "8:A2300Update.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_3FF5322F739A4AC5ADE5FB3A590ED9B1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_686F0669104E4E959BA6AEA1E25C4EC7"
+            {
+            "SourcePath" = "8:..\\..\\bin\\x64\\Release\\A2300Identify.exe"
+            "TargetName" = "8:A2300Identify.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_3C195422C02D4DE58E9E743C8FCA8F7A"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6EBC6661D01940469F78ED0AA72919CF"
             {
             "SourcePath" = "8:..\\..\\..\\common\\Dci\\InfrastructureMsgs.h"
             "TargetName" = "8:InfrastructureMsgs.h"
             "Tag" = "8:"
             "Folder" = "8:_F5B9E31E3C8D473CA7F5D34AFC82227D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_73FE460BB78F4036BEB5CFF060FACD42"
+            {
+            "SourcePath" = "8:..\\..\\extern\\CypressFx3UsbDriver\\include\\VersionNo.h"
+            "TargetName" = "8:VersionNo.h"
+            "Tag" = "8:"
+            "Folder" = "8:_DCEA553B46824968B62C0D1BF4DB1298"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -566,12 +1419,112 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_82F42BB3919246A8995EBF0360164CE4"
+            {
+            "SourcePath" = "8:..\\..\\bin\\Win32\\Debug\\TeaPotDemo.pdb"
+            "TargetName" = "8:TeaPotDemo.pdb"
+            "Tag" = "8:"
+            "Folder" = "8:_8E535D9695D3401DB389013287500069"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_900F419E834E437ABE54CC6DB16086E9"
+            {
+            "SourcePath" = "8:..\\InvensenseTeapotDemo\\gl\\glut32.dll"
+            "TargetName" = "8:glut32.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8E535D9695D3401DB389013287500069"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9710C72FA06C4DBCBA9AF27756EB0FFA"
             {
             "SourcePath" = "8:..\\..\\..\\common\\System\\ArgParser.hpp"
             "TargetName" = "8:ArgParser.hpp"
             "Tag" = "8:"
             "Folder" = "8:_18175FBC6BFE42B4B975A7826EBEF113"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9D30C0EE063B4EB5820470294D7B035D"
+            {
+            "SourcePath" = "8:..\\InvensenseTeapotDemo\\gl\\glut32.dll"
+            "TargetName" = "8:glut32.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_AF773D72A0CE488CADF059D5742D5A86"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A1C79C9DFD5E434BBC7F38A3895A8F60"
+            {
+            "SourcePath" = "8:..\\..\\bin\\x64\\Debug\\A2300Demo.exe"
+            "TargetName" = "8:A2300Demo.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_3FF5322F739A4AC5ADE5FB3A590ED9B1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A805A74DE1CF447889D90195C59CE4A1"
+            {
+            "SourcePath" = "8:..\\..\\extern\\CypressFx3UsbDriver\\lib\\x64\\CyAPI.lib"
+            "TargetName" = "8:CyAPI.lib"
+            "Tag" = "8:"
+            "Folder" = "8:_449D3D839B0C48129C5BE761769968A7"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -646,12 +1599,72 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C2FCE05AD35642BBABAD03448663708C"
+            {
+            "SourcePath" = "8:..\\..\\bin\\Win32\\Debug\\A2300RxToFile.pdb"
+            "TargetName" = "8:A2300RxToFile.pdb"
+            "Tag" = "8:"
+            "Folder" = "8:_8E535D9695D3401DB389013287500069"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C5E9F9BC6AB6449582E2F64097062E64"
             {
             "SourcePath" = "8:..\\..\\include\\A2300\\BulkDataPort.h"
             "TargetName" = "8:BulkDataPort.h"
             "Tag" = "8:"
             "Folder" = "8:_E3F44315498C4AB79DC0D7C203BD4018"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C9E1C86BB921473D88B495AC37C59069"
+            {
+            "SourcePath" = "8:..\\..\\extern\\CypressFx3UsbDriver\\include\\CyUSB30_def.h"
+            "TargetName" = "8:CyUSB30_def.h"
+            "Tag" = "8:"
+            "Folder" = "8:_DCEA553B46824968B62C0D1BF4DB1298"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CAE6F520843E46D4AC70D5BACA4B23C4"
+            {
+            "SourcePath" = "8:..\\..\\bin\\Win32\\Release\\TeaPotDemo.exe"
+            "TargetName" = "8:TeaPotDemo.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_AF773D72A0CE488CADF059D5742D5A86"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -706,12 +1719,92 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D4B9B725C44B45D4A70B452944C6359E"
+            {
+            "SourcePath" = "8:..\\..\\bin\\Win32\\Debug\\A2300Identify.pdb"
+            "TargetName" = "8:A2300Identify.pdb"
+            "Tag" = "8:"
+            "Folder" = "8:_8E535D9695D3401DB389013287500069"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D52D12150A47404C8CDDC108B699C4CF"
+            {
+            "SourcePath" = "8:..\\..\\extern\\CypressFx3UsbDriver\\lib\\x86\\CyAPI.lib"
+            "TargetName" = "8:CyAPI.lib"
+            "Tag" = "8:"
+            "Folder" = "8:_B094714255BF4BAEAF8CC367F1087605"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E4DEDEE5710D4DD1B6DB72AB0160F81F"
             {
             "SourcePath" = "8:..\\..\\..\\common\\Dci\\StandardMsgs.h"
             "TargetName" = "8:StandardMsgs.h"
             "Tag" = "8:"
             "Folder" = "8:_F5B9E31E3C8D473CA7F5D34AFC82227D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E5007EFD9BB6499BB992B56ACA817C7C"
+            {
+            "SourcePath" = "8:..\\..\\bin\\x64\\Release\\A2300RxToFile.exe"
+            "TargetName" = "8:A2300RxToFile.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_3C195422C02D4DE58E9E743C8FCA8F7A"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E514BE1AC46B42C393E872173B78EA32"
+            {
+            "SourcePath" = "8:..\\..\\bin\\Win32\\Debug\\A2300Demo.pdb"
+            "TargetName" = "8:A2300Demo.pdb"
+            "Tag" = "8:"
+            "Folder" = "8:_8E535D9695D3401DB389013287500069"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -786,6 +1879,86 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E97A92429D3F44918E21BA00B2744CCC"
+            {
+            "SourcePath" = "8:..\\..\\extern\\CypressFx3UsbDriver\\include\\CyAPI.h"
+            "TargetName" = "8:CyAPI.h"
+            "Tag" = "8:"
+            "Folder" = "8:_DCEA553B46824968B62C0D1BF4DB1298"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F2B977C61A98472CA23697E341DD87B0"
+            {
+            "SourcePath" = "8:..\\..\\bin\\x64\\Release\\A2300SensorDemo.exe"
+            "TargetName" = "8:A2300SensorDemo.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_3C195422C02D4DE58E9E743C8FCA8F7A"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F3587E7A99CA4ED694ADD2AB59E6CCEA"
+            {
+            "SourcePath" = "8:..\\..\\bin\\Win32\\Debug\\A2300Update.pdb"
+            "TargetName" = "8:A2300Update.pdb"
+            "Tag" = "8:"
+            "Folder" = "8:_8E535D9695D3401DB389013287500069"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F438CD174D9A4A68BEB2C2D4E987019F"
+            {
+            "SourcePath" = "8:..\\..\\bin\\Win32\\Debug\\TeaPotDemo.exe"
+            "TargetName" = "8:TeaPotDemo.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_8E535D9695D3401DB389013287500069"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F43F9F614D404D7B92B46B1602A2E64C"
             {
             "SourcePath" = "8:..\\..\\..\\common\\Dci\\WcaMsgs.h"
@@ -812,6 +1985,26 @@
             "TargetName" = "8:ConfigRf.h"
             "Tag" = "8:"
             "Folder" = "8:_E3F44315498C4AB79DC0D7C203BD4018"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F9FEA9D1B1304BAE9A2ABB714B3E0457"
+            {
+            "SourcePath" = "8:..\\..\\bin\\Win32\\Release\\A2300Update.exe"
+            "TargetName" = "8:A2300Update.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_AF773D72A0CE488CADF059D5742D5A86"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -884,6 +2077,72 @@
                     "Property" = "8:_22BF82716A8D48749DB559DFD3519570"
                         "Folders"
                         {
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_6FC66ADB1F5A460BB0A969C46E102269"
+                            {
+                            "Name" = "8:x64"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_50E777B8FC994EEFA50F2E9E459AAE86"
+                                "Folders"
+                                {
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_3C195422C02D4DE58E9E743C8FCA8F7A"
+                                    {
+                                    "Name" = "8:release"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_628653BAE2654D9683228E819BC2489A"
+                                        "Folders"
+                                        {
+                                        }
+                                    }
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_3FF5322F739A4AC5ADE5FB3A590ED9B1"
+                                    {
+                                    "Name" = "8:debug"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_1D7E5667C95B427CB57E46567847A847"
+                                        "Folders"
+                                        {
+                                        }
+                                    }
+                                }
+                            }
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_D4D38BAFF5B74D35B2496B7545D84487"
+                            {
+                            "Name" = "8:Win32"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_A860463F8EA247D1B74D8D6C611AE6FB"
+                                "Folders"
+                                {
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_8E535D9695D3401DB389013287500069"
+                                    {
+                                    "Name" = "8:debug"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_0B95949B97454C5FAB110C125D663DD8"
+                                        "Folders"
+                                        {
+                                        }
+                                    }
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_AF773D72A0CE488CADF059D5742D5A86"
+                                    {
+                                    "Name" = "8:release"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_2A5D2303D99F418EB6B246825273DAF5"
+                                        "Folders"
+                                        {
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                     "{9EF0B969-E518-4E46-987F-47570745A589}:_93FEFCE9EE0649D09BB7CAE4E0704D15"
@@ -917,26 +2176,70 @@
                     "Property" = "8:_B71045C35220417AB4F627CC1FEC629B"
                         "Folders"
                         {
-                            "{9EF0B969-E518-4E46-987F-47570745A589}:_3767872FEBCC41508D7F611EC54ACDA8"
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_88AD2BD108174C57B0727D69325A9A8A"
                             {
-                            "Name" = "8:Debug"
+                            "Name" = "8:x64"
                             "AlwaysCreate" = "11:FALSE"
                             "Condition" = "8:"
                             "Transitive" = "11:FALSE"
-                            "Property" = "8:_725C80EC80DA4E0B90C1CDCCF6DD36C8"
+                            "Property" = "8:_80DE7AA593CC490DA3F0CBB2931B99A9"
                                 "Folders"
                                 {
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_449D3D839B0C48129C5BE761769968A7"
+                                    {
+                                    "Name" = "8:debug"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_FF1B63CB6BBD49D3B8C2699674A8A79E"
+                                        "Folders"
+                                        {
+                                        }
+                                    }
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_C2A3A13BB5FE4AE983090E6E4B677F95"
+                                    {
+                                    "Name" = "8:release"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_FA8080E73A1146B0B9E5D4345C89F74F"
+                                        "Folders"
+                                        {
+                                        }
+                                    }
                                 }
                             }
-                            "{9EF0B969-E518-4E46-987F-47570745A589}:_E096B3A7373C44C8A9062216E7527BE2"
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_AB6B4E65EAD34C86A0ABB2E1D475BDAC"
                             {
-                            "Name" = "8:Release"
+                            "Name" = "8:Win32"
                             "AlwaysCreate" = "11:FALSE"
                             "Condition" = "8:"
                             "Transitive" = "11:FALSE"
-                            "Property" = "8:_E45D63273C204E19BAC74FC58B72C0B2"
+                            "Property" = "8:_DC4AFBE583514EA99C51D996DE76219B"
                                 "Folders"
                                 {
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_1058DBF2DB4847B6AD16D9C7E388F68A"
+                                    {
+                                    "Name" = "8:debug"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_6D984AE5BC564EF18B50ED108F712EC3"
+                                        "Folders"
+                                        {
+                                        }
+                                    }
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_B094714255BF4BAEAF8CC367F1087605"
+                                    {
+                                    "Name" = "8:release"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_CB558CB9B3DA4BF2B8EBC019898EC8E1"
+                                        "Folders"
+                                        {
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -1035,15 +2338,15 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:A2300Win32ApiSetup"
+        "ProductName" = "8:A2300API"
         "ProductCode" = "8:{3FE82D2A-7F6A-4491-A644-57ACBB70ECF0}"
-        "PackageCode" = "8:{FA0B0975-90D4-4200-ACD6-09338C91D3C8}"
+        "PackageCode" = "8:{5195BE37-2227-4E09-9AB9-D6F5B36BF262}"
         "UpgradeCode" = "8:{3A9BE8F2-E779-41EC-B698-32AE7361CA81}"
         "RestartWWWService" = "11:FALSE"
-        "RemovePreviousVersions" = "11:FALSE"
+        "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:FALSE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.0"
+        "ProductVersion" = "8:1.0.1"
         "Manufacturer" = "8:Loctronix"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:http://www.loctronix.com/support"
@@ -1057,7 +2360,7 @@
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
         "UseSystemSearchPath" = "11:TRUE"
-        "TargetPlatform" = "3:0"
+        "TargetPlatform" = "3:1"
         "PreBuildEvent" = "8:"
         "PostBuildEvent" = "8:"
         "RunPostBuildEvent" = "3:0"
@@ -1552,11 +2855,11 @@
         }
         "MergeModule"
         {
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_54F63946717A48368A0A600C4698B16B"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_C9761C61B2A644B0AFC64B64697E8C43"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:microsoft_vc90_debugcrt_x86.msm"
+            "SourcePath" = "8:microsoft_vc90_crt_x86.msm"
                 "Properties"
                 {
                 }
@@ -1566,11 +2869,11 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_D828C7CD763240B7A5DD8D38452C12CE"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_CF58552BE80B4B7EBA9EEC11A619AF95"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:policy_9_0_Microsoft_VC90_DebugCRT_x86.msm"
+            "SourcePath" = "8:policy_9_0_Microsoft_VC90_CRT_x86.msm"
                 "Properties"
                 {
                 }
@@ -1583,12 +2886,40 @@
         }
         "ProjectOutput"
         {
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_0D6F6AC73C3943CDA26583D517F46097"
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_180BA8EE6B2841B3BF41E02E958A820D"
             {
-            "SourcePath" = "8:..\\..\\lib\\A2300Usb\\Win32\\Debug\\A2300Usb.lib"
+            "SourcePath" = "8:..\\..\\lib\\Win32\\Release\\A2300Common.lib"
             "TargetName" = "8:"
             "Tag" = "8:"
-            "Folder" = "8:_3767872FEBCC41508D7F611EC54ACDA8"
+            "Folder" = "8:_B094714255BF4BAEAF8CC367F1087605"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:Release|Win32"
+            "OutputGroupCanonicalName" = "8:Built"
+            "OutputProjectGuid" = "8:{DCFDE6F1-2FF1-4118-8CBB-178579CA0783}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_31CC573BF0714D329D06CFCEC2FE24C3"
+            {
+            "SourcePath" = "8:..\\..\\lib\\Win32\\Debug\\A2300Usb.lib"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_1058DBF2DB4847B6AD16D9C7E388F68A"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1611,9 +2942,37 @@
                 {
                 }
             }
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_39A061098F25488D9BF42BBE0A165919"
+            {
+            "SourcePath" = "8:..\\..\\lib\\x64\\Debug\\A2300Common.lib"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_449D3D839B0C48129C5BE761769968A7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:Debug|x64"
+            "OutputGroupCanonicalName" = "8:Built"
+            "OutputProjectGuid" = "8:{DCFDE6F1-2FF1-4118-8CBB-178579CA0783}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_4BD440CC38044D08A064023B13DFFCC4"
             {
-            "SourcePath" = "8:..\\A2300Update\\Debug\\A2300Update.exe"
+            "SourcePath" = "8:..\\..\\bin\\Win32\\Release\\A2300Update.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_104C90EEFBD74B8585745C115D0769F4"
@@ -1639,12 +2998,68 @@
                 {
                 }
             }
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_5AFD5DD320B341B4842BFF458EFAF84F"
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_53C34734770643E1A1420979D1186F84"
             {
-            "SourcePath" = "8:..\\..\\..\\common\\Win32\\Debug\\A2300Common.lib"
+            "SourcePath" = "8:..\\..\\lib\\x64\\Debug\\A2300Usb.lib"
             "TargetName" = "8:"
             "Tag" = "8:"
-            "Folder" = "8:_3767872FEBCC41508D7F611EC54ACDA8"
+            "Folder" = "8:_449D3D839B0C48129C5BE761769968A7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:Debug|x64"
+            "OutputGroupCanonicalName" = "8:Built"
+            "OutputProjectGuid" = "8:{88183079-7867-4C3F-9887-65D0003E325C}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_54D5040BACE2470789230E6061F8B2B7"
+            {
+            "SourcePath" = "8:..\\..\\lib\\x64\\Release\\A2300Common.lib"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_C2A3A13BB5FE4AE983090E6E4B677F95"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:Release|x64"
+            "OutputGroupCanonicalName" = "8:Built"
+            "OutputProjectGuid" = "8:{DCFDE6F1-2FF1-4118-8CBB-178579CA0783}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_7C7D8C9763414CDC9F31C32B8C723CA8"
+            {
+            "SourcePath" = "8:..\\..\\lib\\Win32\\Debug\\A2300Common.lib"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_1058DBF2DB4847B6AD16D9C7E388F68A"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1667,37 +3082,9 @@
                 {
                 }
             }
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_7FE6FEA795B142EF9A516CFCBF7154D5"
-            {
-            "SourcePath" = "8:..\\..\\..\\common\\Win32\\Release\\A2300Common.lib"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_E096B3A7373C44C8A9062216E7527BE2"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:Release|Win32"
-            "OutputGroupCanonicalName" = "8:Built"
-            "OutputProjectGuid" = "8:{DCFDE6F1-2FF1-4118-8CBB-178579CA0783}"
-            "ShowKeyOutput" = "11:TRUE"
-                "ExcludeFilters"
-                {
-                }
-            }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_89C358E0CDF8415D82BFB6E1E1CF9832"
             {
-            "SourcePath" = "8:..\\A2300RxToFile\\Debug\\A2300RxToFile.exe"
+            "SourcePath" = "8:..\\..\\bin\\Win32\\Release\\A2300RxToFile.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_104C90EEFBD74B8585745C115D0769F4"
@@ -1723,12 +3110,12 @@
                 {
                 }
             }
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_EFE6302BEEDC4524BC2CE844AE4071C9"
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_90527AF15F1C4F4EA3939189DC989925"
             {
-            "SourcePath" = "8:..\\..\\lib\\A2300Usb\\Win32\\Release\\A2300Usb.lib"
+            "SourcePath" = "8:..\\..\\lib\\Win32\\Release\\A2300Usb.lib"
             "TargetName" = "8:"
             "Tag" = "8:"
-            "Folder" = "8:_E096B3A7373C44C8A9062216E7527BE2"
+            "Folder" = "8:_B094714255BF4BAEAF8CC367F1087605"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1751,12 +3138,12 @@
                 {
                 }
             }
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_F6A2E8CC04FA4CBF89A1BBAC14DD1BEE"
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_DDCC3D88E41E406F9A3F41861F215171"
             {
-            "SourcePath" = "8:..\\A2300Identify\\Debug\\A2300Identify.exe"
+            "SourcePath" = "8:..\\..\\lib\\x64\\Release\\A2300Usb.lib"
             "TargetName" = "8:"
             "Tag" = "8:"
-            "Folder" = "8:_104C90EEFBD74B8585745C115D0769F4"
+            "Folder" = "8:_C2A3A13BB5FE4AE983090E6E4B677F95"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1771,9 +3158,9 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:"
+            "OutputConfiguration" = "8:Release|x64"
             "OutputGroupCanonicalName" = "8:Built"
-            "OutputProjectGuid" = "8:{A93A8C1F-867E-4510-A4AF-78FCA6DB3B42}"
+            "OutputProjectGuid" = "8:{88183079-7867-4C3F-9887-65D0003E325C}"
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {

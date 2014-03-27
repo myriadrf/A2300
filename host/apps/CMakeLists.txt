@@ -18,6 +18,9 @@
 ##############################################################
 
 ADD_SUBDIRECTORY(A2300Calibrate)
+ADD_SUBDIRECTORY(A2300CustomHdlDemo)
 ADD_SUBDIRECTORY(A2300Identify)
 ADD_SUBDIRECTORY(A2300RxToFile)
+ADD_SUBDIRECTORY(A2300SensorDemo)
 ADD_SUBDIRECTORY(A2300Update)
+

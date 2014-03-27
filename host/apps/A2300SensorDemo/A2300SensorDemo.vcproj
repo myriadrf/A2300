@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="A2300Demo"
-	ProjectGUID="{C4603ED6-B498-4768-8A0F-6D81361E9085}"
+	Name="A2300SensorDemo"
+	ProjectGUID="{A48D0290-7D77-4896-933C-D0FC6AA947EB}"
 	RootNamespace="A2300Identify"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="0"
@@ -343,7 +343,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\A2300Demo.cpp"
+				RelativePath=".\A2300SensorDemo.cpp"
 				>
 			</File>
 		</Filter>
