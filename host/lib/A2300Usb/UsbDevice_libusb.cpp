@@ -31,7 +31,7 @@ int A2300::UsbDevice::InitializeUsb( )
 	int rc = libusb_init(&m_pCtx);
 	if( rc < 0 )
 		return(rc);					// Error initializing libusb.
-	libusb_set_debug(m_pCtx, LIBUSB_LOG_LEVEL_ERROR);    // Verbosity Level.
+	libusb_set_debug(m_pCtx, 1 /*LIBUSB_LOG_LEVEL_ERROR*/);    // Verbosity Level.
 
 	// Get a list of USB devices
 	return OpenDevice(m_vendorId, m_productId, m_usbAddress);
@@ -42,7 +42,7 @@ int A2300::UsbDevice::InitializeUsb( )
 */
 bool A2300::UsbDevice::IsStarted()
 {
-	return m_pDevHandle != null;
+	return m_pDevHandle != NULL;
 }
 
 

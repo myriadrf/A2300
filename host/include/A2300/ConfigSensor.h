@@ -125,7 +125,7 @@ public:
 		Motion_RawSample Samples[6]; //Max 6 raw samples per set.
 	};
 
-#if defined( WIN32) || defined(LINUX) || defined(APPLE)
+#if defined( WIN32) || defined( WIN64) || defined(LINUX) || defined(APPLE)
 	#pragma pack(pop)
 #endif
 
