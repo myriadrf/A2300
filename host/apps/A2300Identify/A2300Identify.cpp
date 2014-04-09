@@ -64,6 +64,9 @@ int main(int, char**)
 				ConfigDevice config;
 				config.Attach(addr);
 
+				//Clear out any previous messages.
+				config.Dci0Transport().ClearReceiveQueue();
+
 				//Print out Device information
 				std::string sId 		= config.IdentifyDevice();
 				std::string sVer 		= config.FirmwareVersion(0);

@@ -93,6 +93,21 @@ int A2300::TransportDci::SendMsg( byte* pmsg, size_t lenMsg, bool bRequestAck, d
 }
 
 /**
+ * Clears out any waiting messages so we can ensure synchronous processing.  Don't
+ * use in asynchronous operations.
+ */
+void A2300::TransportDci::ClearReceiveQueue()
+{
+	byte buff[DCI_MAX_MSGSIZE];
+	int ct = 0;
+	do
+	{
+		ct = ReceiveMsg( buff, DCI_MAX_MSGSIZE, USE_DEFAULT_TIMEOUT);
+	}	while( ct > 0 );
+}
+
+
+/**
  * Receive DCI Message.
  */
 int A2300::TransportDci::ReceiveMsg( byte* pmsg, size_t lenMax, double timeout)

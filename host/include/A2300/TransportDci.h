@@ -51,6 +51,13 @@ namespace A2300
 		 */
 		int SendMsg( byte* pmsg, size_t lenMsg, bool bRequestAck, double timeout = USE_DEFAULT_TIMEOUT);
 
+
+		/**
+		 * Clears out any waiting messages so we can ensure synchronous processing.  Don't
+		 * use in asynchronous operations.
+		 */
+		void ClearReceiveQueue();
+
 		/**
 		 * Receive DCI Message.
 		 */
