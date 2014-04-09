@@ -111,6 +111,7 @@ int Dci_TypedPropertiesQuery_Init( void* buff, uint16 sizeBuff,
 	/* Copy typeids if defined. */
 	if( aTypeIds != NULL)
 	{
+		lenMsg += ctProperties;
 		if( lenMsg <= sizeBuff )
 			memcpy( ((byte*)buff) + lenHdr + ctProperties, aTypeIds, (size_t) ctProperties);
 		return(lenMsg);
