@@ -35,6 +35,8 @@ Now build the project and install it.
 To test that A2300 API and tools were installed correctly.  Plug in your device and type the following command.
 
     A2300Identify
+    
+If the program complains about USB permissions, please follow the procedures outlined in Section 4.2 in the [ASR-2300 GNU Software Document.pdf] (https://github.com/myriadrf/A2300/blob/master/host/docs/ASR-2300%20GNU%20Software%20Document.pdf?raw=true) for details on configuring user account permissions.  This will require root access.    
 
 To test that the UHD Adaptor was installed correctly.  Run the following UHD application.
 
