@@ -79,17 +79,17 @@
 
 // WCAHAL_RF0_CTRL (WcaWriteByteRegister)
 // bit#  |  Description
-// -------|----------------------------------------------------------
+//-------|----------------------------------------------------------
 //  0-1     RX Input Mode
 //           0 = tx_iq loopback 
 //           1 = rf_rxdata input (dc bias removed).
-//	     		 2 = rf_rxdata input.
-//	     		 3 = Fixed Test Pattern  i = 256, q = 256; 
+//	         2 = rf_rxdata input (raw).
+//			 3 = Fixed Test Pattern  i = 256, q = -256; 
 //  2-3     TX Ouput Mode
 //           0 = rf_rxdata loopback 
 //           1 = rf_txdata input.
-//	     		 2 = Fixed Test Pattern  i = 256, q = 256; 
-//	     		 3 = Fixed Test Pattern  i = 0, q = 0;
+//	         2 = Fixed Test Pattern  i = 256, q = -256; 
+//			 3 = Fixed Test Pattern  i = 0, q = 0;
 //  4       "rf_rxen" output line - set to 1 to enable, 0 to disable. Enables disables the 
 //          Lime chip #1 receive ADC function. 
 //
@@ -133,17 +133,17 @@
 
 // WCAHAL_RF1_CTRL (WcaWriteByteRegister)
 // bit#  |  Description
-// -------|----------------------------------------------------------
+//-------|----------------------------------------------------------
 //  0-1     RX Input Mode
 //           0 = tx_iq loopback 
 //           1 = rf_rxdata input (dc bias removed).
-//	          2 = rf_rxdata input.
-//				 3 = Fixed Test Pattern  i = 256, q = 256; 
+//	         2 = rf_rxdata input (raw).
+//			 3 = Fixed Test Pattern  i = 256, q = -256; 
 //  2-3     TX Ouput Mode
 //           0 = rf_rxdata loopback 
 //           1 = rf_txdata input.
-//	        	 2 = Fixed Test Pattern  i = 256, q = 256; 
-//			    3 = Fixed Test Pattern  i = 0, q = 0;
+//	         2 = Fixed Test Pattern  i = 256, q = -256; 
+//			 3 = Fixed Test Pattern  i = 0, q = 0;
 //  4       "rf_rxen" output line - set to 1 to enable, 0 to disable. Enables disables the 
 //          Lime chip #1 receive ADC function. 
 //
