@@ -23,8 +23,8 @@
 `include "4ChTxRxRegisterDefs.vh"
 
 `define  IDENTIFIER	16'h0002		//4 CH Transceiver Identifier.
-`define  VERSION		16'h0100		//[ver].[rev]
-`define  PORTCAPS		16'h0303		//2 RX / 2 TX porta defined.
+`define  VERSION		16'h0101		//[ver].[rev]
+`define  PORTCAPS		16'h0303		//2 RX / 2 TX ports defined.
 `define  PORT_COUNT  4
 `define  PORT0_ADDR  2'h0  //TX Port 0 is EP 8h 
 `define  PORT1_ADDR  2'h1	//Rx Port 1 is EP 88h
@@ -37,7 +37,7 @@
 //Following macros define the port mode and fixed address
 //Changing these changes what is active.
 `define PORT_MODE 		`PORT_ADDR_MODE_SEQUENTIAL
-`define PORT_FIXED_ADDR `PORT1_ADDR
+`define PORT_FIXED_ADDR `PORT0_ADDR
 
 `define TX0_MODE 4'hB // TODO: Halfband filter (IPCore) needs to be replaced. Left out for now.
 `define TX1_MODE 4'hB // TODO: Halfband filter (IPCore) needs to be replaced. Left out for now.
@@ -140,7 +140,7 @@ parameter NBITS_ADDR = 2;
 	wire  [1:0]  portCmd;	
 		
 	//Assign the LEDs to indicate which ports are enabled [ rx1, rx0, tx1, tx0]
-	assign ledSelect = { rx1_full, rx1_empty, rx0_full, rx0_empty}; 							
+	assign ledSelect = { rx1_full, tx1_empty, rx0_full, tx0_empty}; 							
 
 	//Register returns the version identifier.
 	WcaReadWordReg  #(`WCAHAL_PORTCAPS)    rr_port_caps 

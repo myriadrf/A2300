@@ -62,7 +62,7 @@ module WcaDducController(
 	// bit#  |  Description
 	// -------|----------------------------------------------------------
 	//  0	      (1)Enable / (0)Disable Component USB port streaming.
-	//  1	      Reset FIFOS. 
+	//  1	      Clear FIFOS and resets counters. 
 	//  2	   	Bypass Cordic rotation (DYNAMIC_CONFIG only)
 	//  3	 	   Bypass CIC Decimation  (DYNAMIC_CONFIG only)
 	//  4			Bypass CIC Decimation strobe (DYNAMIC_CONFIG only)
@@ -77,7 +77,7 @@ module WcaDducController(
 	//Generate Phase for frequency translation.
 	WcaPhaseGen #(IF_FREQ_ADDR, 32) phase_generator
 	(
-	.clock(clock), .reset(reset), .aclr(1'b0), .enable(enable), .strobe(strobe_if),
+	.clock(clock), .reset(reset), .aclr(cfg[1]), .enable(enable), .strobe(strobe_if),
 	.rbusCtrl(rbusCtrl), .rbusData(rbusData), 
 	.phase(phase_cordic)
 	);	 
@@ -92,7 +92,7 @@ module WcaDducController(
 	wire clear = strobeGenerator[11:2] == rate_interp[9:0];
 	always @( posedge clock)
 		begin
-			if( reset | ~enable | clear)
+			if( reset | ~enable | clear | cfg[1])
 				begin 
 					strobeGenerator <= 12'h1;
 				end

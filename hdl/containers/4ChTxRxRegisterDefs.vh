@@ -52,10 +52,10 @@
 //  0	      (1)Enable / (0)Disable Component USB port streaming.
 //  1	      Reset FIFOS. 
 //  2	   	Bypass Cordic rotation (DYNAMIC_CONFIG only)
-//  3	 	   Bypass CIC Decimation  (DYNAMIC_CONFIG only)
-//  4			Bypass CIC Decimation strobe (DYNAMIC_CONFIG only)
-//				When enabled, the decimation strobe is bypassed, and the original 
-//			   sampling strobe is used to drive down stream.  
+//  3	 	   Bypass CIC Decimation/Interpolation  (DYNAMIC_CONFIG only)
+//  4			Bypass CIC Decimation/Interpolation strobe (DYNAMIC_CONFIG only)
+//				When enabled, the decimation/interpolation strobe is bypassed, and the original 
+//			   sampling strobe is used to drive down/up stream.  
 //  5       Bypass Half band filter (DYNAMIC_CONFIG only).  
 
 

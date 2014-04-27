@@ -32,7 +32,7 @@ module WcaUpConverter
 	//Data I/O.
 	input	  wire			strobe_if,
 	input   wire	[31:0] iq_bb_in,
-	output  wire	[23:0] iq_if_out,
+	output  reg		[23:0] iq_if_out,
 	
    //CPU Interface.
 	input   wire  [11:0] rbusCtrl,  // Address and control lines(12 total) { addr[7:0], readEnable, writeEnable, dataStrobe, clkbus}
@@ -46,11 +46,14 @@ module WcaUpConverter
 	`define HBF_ENABLED 3'h4
 	`define DYNAMIC_CONFIG 4'h8
 	
+	wire  aclr = cfg[1]; // clear all registers
 	wire [15:0] ihb_in = iq_bb_in[15:0];
 	wire [15:0] qhb_in = iq_bb_in[31:16];
 	
 	wire [11:0] icor_in;
 	wire [11:0] qcor_in;
+	wire [23:0] cor_out;
+	
 	
 	wire [15:0] icic_in;
 	wire [15:0] qcic_in;
@@ -123,7 +126,7 @@ generate if( MODE & `CIC_ENABLED)
   
 	WcaCicInterp cic_i (
 	 .clock(clock), 
-    .reset(reset), 
+    .reset(reset | aclr), 
     .enable(enable), 
     .strobe_cic(strobe_cic), 
     .strobe_if(strobe_if), 
@@ -134,7 +137,7 @@ generate if( MODE & `CIC_ENABLED)
 
 	WcaCicInterp cic_q (
     .clock(clock), 
-    .reset(reset), 
+    .reset(reset | aclr), 
     .enable(enable), 
     .strobe_cic(strobe_cic), 
     .strobe_if(strobe_if), 
@@ -172,21 +175,27 @@ generate if( MODE & `CORDIC_ENABLED)
     reg [11:0] A0;
 
     always @(posedge clock) 
-     case(phase_cordic[31:30])
-       2'b01 :  //pi/2 to pi   
+     case({strobe_if, phase_cordic[31:30]})
+       3'b101 :  //pi/2 to pi   
         begin            
             X0 <= #1 -qcor_in;
             Y0 <= #1 icor_in;
             A0 <= #1 phase_cordic[31:20] - 12'h400;                    
         end
-       2'b10 : //-pi/2 to -pi
+       3'b110 : //-pi/2 to -pi
         begin
             X0 <= #1 qcor_in;
             Y0 <= #1 -icor_in;
             A0 <= #1 phase_cordic[31:20] + 12'h400;                    
         end
-       default:
-        begin
+       3'b100: // 0 to pi/2
+			begin
+            X0 <= #1 icor_in;
+            Y0 <= #1 qcor_in;
+            A0 <= #1 phase_cordic [31:20];
+        end
+       3'b111: // 0 to -pi/2
+			begin
             X0 <= #1 icor_in;
             Y0 <= #1 qcor_in;
             A0 <= #1 phase_cordic [31:20];
@@ -207,22 +216,30 @@ generate if( MODE & `CORDIC_ENABLED)
     //
     WcaCordic12  #(12,12,0) cordic
     ( 
-       .ngreset(1'b1), .clock(clock),.reset(reset), .strobeData(strobe_if),
+       .ngreset(1'b1), .clock(clock),.reset(reset | aclr), .strobeData(strobe_if),
        .X0(X0), .Y0(Y0),.A0(A0),
        .XN(icordicout_internal), .YN(qcordicout_internal), .AN() 
     );	 
 	 
 	//Enable dynamic selection of bypass if DYNAMIC_CONFIG ENABLED, otherwise hardwire.
 	wire bypassCordic    = MODE[3] & cfg[2];
-	assign iq_if_out[11:0]  = (bypassCordic) ? icor_in : icordicout_internal;
-	assign iq_if_out[23:12] = (bypassCordic) ? qcor_in : qcordicout_internal;
-
+	assign cor_out = (bypassCordic) ? {qcor_in, icor_in} : {qcordicout_internal, icordicout_internal};
+	
   end
 else // bypass
   begin
-    assign iq_if_out[11:0]  = icor_in;
-    assign iq_if_out[23:12] = qcor_in;
+    assign cor_out = {qcor_in, icor_in};
   end
 endgenerate 
 
+
+//*****************************************************  
+// Output Latch
+//*****************************************************
+	//Latch up data so timing is consistent.  
+	always @(posedge clock)
+	begin
+		if( strobe_if)	iq_if_out <= cor_out;
+	end
+	
 endmodule // WcaUpConverter
