@@ -52,7 +52,7 @@ DataStreamLogger::DataStreamLogger(size_t bytesPerSample, size_t sizeFrame, size
 : m_idxRfPath(-1), m_byteGain(0), m_dFreqRf(0),
 	m_dBandwidth( 28), m_dSampRate(2), 
 	m_pDevice(NULL), m_pRf(NULL), m_BytesPerSample(bytesPerSample),
-	m_sizeFrame(sizeFrame), m_iMaxFrames(iMaxFrames), m_ctFramesProcessed(0),
+	m_sizeFrame(sizeFrame), m_iMaxBuffs(iMaxFrames), m_ctFramesProcessed(0),
 	m_pbuff(NULL), m_file(NULL)
 {
 }
@@ -139,8 +139,8 @@ int DataStreamLogger::Init( ArgParser& args, ConfigDevice* pDevice)
 	m_pPort->ReadTransfer() = BulkDataPort::TransferEvent(this, &DataStreamLogger::OnFrameReady);
 
 	//Add buffers
-	m_pbuff = new byte[m_iMaxFrames*m_sizeFrame];
-	for( size_t nn = 0; nn < m_iMaxFrames; ++nn)
+	m_pbuff = new byte[m_iMaxBuffs*m_sizeFrame];
+	for( size_t nn = 0; nn < m_iMaxBuffs; ++nn)
 	{
 		BulkDataPort::TransferContext* pctxtRaw = m_pPort->CreateReadTransferContext(m_pbuff + (nn*m_sizeFrame), m_sizeFrame);
 		pctxtRaw->Submit();

@@ -299,7 +299,7 @@ namespace A2300
 				
 				LONG size = (LONG) nFrameSize;
 				bool bResult = pep->FinishDataXfer(bufFrame, size, &overlap, context);
-				return bResult ? 0:1;
+				return bResult ? 0: -1;
 			}
 
 			inline void BulkDataPort::TransferContext::Destroy()
