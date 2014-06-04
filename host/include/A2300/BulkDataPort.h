@@ -291,7 +291,7 @@ namespace A2300
 				return Submit( (ULONG)nFrameSize);
 			}
 
-			inline bool BulkDataPort::TransferContext::Cancel(int msecTimeout)
+			inline int BulkDataPort::TransferContext::Cancel(int msecTimeout)
 			{
                 pep->Abort();
                 if (pep->LastError == ERROR_IO_PENDING)
@@ -299,7 +299,7 @@ namespace A2300
 				
 				LONG size = (LONG) nFrameSize;
 				bool bResult = pep->FinishDataXfer(bufFrame, size, &overlap, context);
-				return bResult;
+				return bResult ? 0:1;
 			}
 
 			inline void BulkDataPort::TransferContext::Destroy()
