@@ -175,10 +175,10 @@ void DataStreamLogger::DisplayConfiguration()
 int DataStreamLogger::Start(size_t msecDur)
 {
 	//Calculate the total frames.
-	double sampsPerFrame = m_sizeFrame / m_BytesPerSample;
-	double framesPerMsec = m_dSampRate*1e6 / sampsPerFrame / 1000.0;
-	m_totalFramesToProcess = msecDur*framesPerMsec;
-	m_framesPerSec = (size_t) (framesPerMsec*1000.0);
+	double sampsPerFrame = (double) (m_sizeFrame / m_BytesPerSample);
+	double framesPerSec = m_dSampRate*1e6 / sampsPerFrame;
+	m_totalFramesToProcess = (size_t)( double(msecDur/1000)*framesPerSec);
+	m_framesPerSec = (size_t) (framesPerSec);
 
 	m_pDduc->Enable(true);
 	return 0;
