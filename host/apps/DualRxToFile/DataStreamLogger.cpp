@@ -1,6 +1,10 @@
 #include "DataStreamLogger.h"
 
 #include <time.h>
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 
 using namespace std;
@@ -48,12 +52,12 @@ const static int COUNT_PATHDEFS = 8;
 * DataStreamLogger Implementation.
 *****************************************************************/
 
-DataStreamLogger::DataStreamLogger(size_t bytesPerSample, size_t sizeFrame, size_t iMaxFrames)
+DataStreamLogger::DataStreamLogger(size_t bytesPerSample, size_t sizeFrame, size_t iMaxFrames, char chTick)
 : m_idxRfPath(-1), m_byteGain(0), m_dFreqRf(0),
 	m_dBandwidth( 28), m_dSampRate(2), 
 	m_pDevice(NULL), m_pRf(NULL), m_BytesPerSample(bytesPerSample),
 	m_sizeFrame(sizeFrame), m_iMaxBuffs(iMaxFrames), m_ctFramesProcessed(0),
-	m_pbuff(NULL), m_file(NULL)
+	m_totalFramesToProcess(0), m_framesPerSec(0), m_chTick(chTick), m_pbuff(NULL), m_file(NULL)
 {
 }
 
@@ -170,13 +174,19 @@ void DataStreamLogger::DisplayConfiguration()
 
 int DataStreamLogger::Start(size_t msecDur)
 {
+	//Calculate the total frames.
+	double sampsPerFrame = m_sizeFrame / m_BytesPerSample;
+	double framesPerMsec = m_dSampRate*1e6 / sampsPerFrame / 1000.0;
+	m_totalFramesToProcess = msecDur*framesPerMsec;
+	m_framesPerSec = (size_t) (framesPerMsec*1000.0);
+
 	m_pDduc->Enable(true);
 	return 0;
 }
 
 int DataStreamLogger::CheckStatus()
 {
-	return 0;
+	return !(m_ctFramesProcessed <=  m_totalFramesToProcess) ;
 }
 
 void DataStreamLogger::Stop()
@@ -184,7 +194,6 @@ void DataStreamLogger::Stop()
 	if( m_pPort!= NULL && m_pDduc != NULL)
 	{
 		m_pDduc->Enable(false);
-		m_pDevice->Dci0Transport().ClearReceiveQueue();
 		m_pDduc->Reset();
 	}
 }
@@ -200,9 +209,7 @@ void DataStreamLogger::Terminate()
 
 	// Configure the RF Front-end profile, gain, frequency, and Bandwidth.
 	m_pRf->RxPath( bIsRf0 ? (byte)RX0DPE_Disabled : (byte)RX1DPE_Disabled );
-	BulkDataPort::TransferContextList::iterator iter;
-	for( iter = m_listContext.begin(); iter != m_listContext.end(); iter++)
-		(*iter)->Cancel(1000);
+
 
 	//Wait for the transfer cancellations to complete.
 	time_t ttCur, ttEnd;
@@ -214,10 +221,14 @@ void DataStreamLogger::Terminate()
 	int completed = 0;
 	while( !completed && (ttCur < ttEnd))
 	{
-		m_pDevice->PollAsynchronousEvents(0.010, completed);
+		m_pDevice->Device().PollAsynchronousEvents(0.010, completed);
 		time(&ttCur);
 	}
 #endif
+
+	BulkDataPort::TransferContextList::iterator iter;
+	for( iter = m_listContext.begin(); iter != m_listContext.end(); iter++)
+		(*iter)->Cancel(1000);
 
 	// Close the Data Port
 	m_pPort->Close();
@@ -244,7 +255,7 @@ void DataStreamLogger::OnFrameReady (void* pObj, BulkDataPort::TransferContext* 
 	DataStreamLogger* pThis = static_cast<DataStreamLogger*>(pObj);
 
 	// if the status is OK (0)
-	if( pctxt->status == 0)
+	if( pctxt->status == 0 && !pThis->CheckStatus())
 	{
 		// Save data to disk
 		size_t nWritten = fwrite (pctxt->bufFrame, 1, pctxt->nActualLength, pThis->m_file);
@@ -254,11 +265,11 @@ void DataStreamLogger::OnFrameReady (void* pObj, BulkDataPort::TransferContext* 
 		}
 
 		pThis->m_ctFramesProcessed ++;
-		//if( s_ctScpFrames % SCP_REPORT_INTVL == 0)
-		//{
-		//	putc('s', stdout);
-		//	fflush(stdout);
-		//}
+		if( pThis->m_ctFramesProcessed % pThis->m_framesPerSec == 0)
+		{
+			putc( pThis->m_chTick, stdout);
+			fflush(stdout);
+		}
 	}
 
 	//Resubmit context.

@@ -53,12 +53,15 @@ private:
 	size_t				m_sizeFrame;
 	size_t				m_iMaxBuffs;
 	size_t				m_ctFramesProcessed;
+	size_t				m_totalFramesToProcess;
+	size_t				m_framesPerSec;
+	char				m_chTick;
 
 	byte*				m_pbuff;
 	FILE*				m_file;
 
 public:
-	DataStreamLogger(size_t bytesPerSample, size_t sizeFrame, size_t iMaxFrames);
+	DataStreamLogger(size_t bytesPerSample, size_t sizeFrame, size_t iMaxFrames, char chTick);
 	~DataStreamLogger();
 	void RegisterArgs( std::string sId, ArgParser& args);
 	int Init( ArgParser& args, ConfigDevice* m_pDevice);

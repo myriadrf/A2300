@@ -59,15 +59,14 @@ ARGPARSER_BEGIN_MAP( s_argmap )
 ARGPARSER_END_MAP
 
 
-static bool			s_bRunning = false;
 static bool			s_bKeyHit = false;
 
 static ArgParser		s_args;
 static ConfigDevice		s_cfgDevice;	
-static DataStreamLogger s_s1(4, 1024*64, 16);
-static DataStreamLogger s_s2(4, 1024*64, 16);
+static DataStreamLogger s_s1(4, 1024*64, 16, '1');
+static DataStreamLogger s_s2(4, 1024*64, 16, '2');
 
-/******************************************************************
+/***********************0*******************************************
 * Forward Declarations.
 *****************************************************************/
 
@@ -107,17 +106,17 @@ int main(int argc, const char** argv)
 	if( retval > 0)
 	{
 		int addr = (int) s_args.GetLong( "address");
-		//try {
-		//	addr = s_cfgDevice.Attach(addr);
-		//	printf("Attached to ASR-2300 at address = %d\n", addr);
+		try {
+			addr = s_cfgDevice.Attach(addr);
+			printf("Attached to ASR-2300 at address = %d\n", addr);
 
-		//} catch (std::runtime_error& re) {
-		//	printf("Error:  %s\n", re.what());
-		//	return -1;
-		//}
+		} catch (std::runtime_error& re) {
+			printf("Error:  %s0\n", re.what());
+			return -1;
+		}
 
-		//// Dump the device information
-		//DumpDeviceInformation();
+		// Dump the device information
+		DumpDeviceInformation();
 
 		//Initialize the stream loggers.
 		retval = s_s1.Init( s_args, &s_cfgDevice);
@@ -126,7 +125,14 @@ int main(int argc, const char** argv)
 	
 		//Receive the data and store to disk.
 		if( retval == 0)
+		{
+			s_s1.DisplayConfiguration();
+			s_s2.DisplayConfiguration();
+
+			s_cfgDevice.Dci0Transport().ClearReceiveQueue();
+
 			retval = ReceiveData((size_t) (s_args.GetDouble("duration")*1000.0));
+		}
 
 		s_s1.Terminate();
 		s_s2.Terminate();
@@ -147,8 +153,10 @@ int main(int argc, const char** argv)
 */
 static int ReceiveData (size_t msecDur)
 {
+	int retval = 0;
+
 	printf( msecDur == 0 ? "Duration: inifinite\n" : "Duration: %lu sec.\n",
-		msecDur);
+		msecDur/1000);
 
 	printf("\n--> Starting Run\n");
 	printf("Hit any key to stop data collection ...\n");
@@ -161,12 +169,16 @@ static int ReceiveData (size_t msecDur)
 	}
 #endif
 
+	//Start the loggers.
+	retval = s_s1.Start(msecDur);
+	if( !retval )  s_s2.Start(msecDur);
+
+
 	// Periodically poll and check status of processing.
-	int retval = 0;
 	while ((retval == 0) && (!s_bKeyHit))
 	{
 #if defined(HAVE_LIBUSB)
-		retval= device.PollAsynchronousEvents();
+		retval= s_cfgDevice.Device().PollAsynchronousEvents();
 #elif defined(WIN32) || defined(WIN64)
 		Sleep(10);
 #endif
@@ -177,7 +189,12 @@ static int ReceiveData (size_t msecDur)
 			retval = s_s2.CheckStatus();
 	}
 
+	s_cfgDevice.Dci0Transport().ClearReceiveQueue();
+	s_s2.Stop();
+	s_s1.Stop();
+
 	printf("\n--> Completed Run\n");
+
 
 	// join the keyboard entry thread
 #if defined(LINUX) || defined(APPLE)
