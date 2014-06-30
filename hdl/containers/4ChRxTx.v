@@ -23,14 +23,14 @@
 `include "4ChTxRxRegisterDefs.vh"
 
 `define  IDENTIFIER	16'h0002		//4 CH Transceiver Identifier.
-`define  VERSION		16'h0101		//[ver].[rev]
+`define  VERSION		16'h0103		//[ver].[rev]
 `define  PORTCAPS		16'h0303		//2 RX / 2 TX ports defined.
 `define  PORT_COUNT  4
 `define  PORT0_ADDR  2'h0  //TX Port 0 is EP 8h 
 `define  PORT1_ADDR  2'h1	//Rx Port 1 is EP 88h
 `define  PORT2_ADDR  2'h2	//TX Port 2 is EP 9h
 `define  PORT3_ADDR  2'h3	//RX Port 3 is EP 89h
-`define  PORT0_CONFIG 0 //
+
 `define  PORT_ADDR_MODE_SEQUENTIAL  0
 `define  PORT_ADDR_MODE_FIXED		  1
 
@@ -287,6 +287,7 @@ parameter NBITS_ADDR = 2;
 		.log2_rate(tx0_log2_rate),
 		
 		.strobe_if(tx0_strobe),  			// I.F. data output strobe (input).
+		//.iq_bb_in({16'h0100, 16'h0100}),	// Baseband input data [31:0] 
 		.iq_bb_in(iq_port0),					// Baseband input data [31:0] 
 		.iq_if_out(tx0_iq),					// I.F. ouput [23:0] iq_out
 

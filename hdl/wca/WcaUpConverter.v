@@ -57,9 +57,6 @@ module WcaUpConverter
 	
 	wire [15:0] icic_in;
 	wire [15:0] qcic_in;
-	wire [15:0] icic_out;
-   wire [15:0] qcic_out;
-
 	
 	wire hb_strobe_out;
 	wire cic_strobe_out;
@@ -123,7 +120,11 @@ endgenerate
 //*****************************************************
 generate if( MODE & `CIC_ENABLED)
   begin
-  
+  	wire [15:0] icic_out;
+   wire [15:0] qcic_out;
+   reg [15:0] icic_latch;
+	reg [15:0] qcic_latch;
+	
 	WcaCicInterp cic_i (
 	 .clock(clock), 
     .reset(reset | aclr), 
@@ -145,11 +146,21 @@ generate if( MODE & `CIC_ENABLED)
     .data_in(qcic_in), 
     .data_out(qcic_out)
     );
+	 
+	//Latch up data so timing is consistent.  
+	always @(posedge clock)
+	begin
+		if( strobe_if)
+		 begin
+			icic_latch<= icic_out;
+			qcic_latch<= qcic_out;
+		 end
+	end	 
 		
 	//Enable dynamic selection of bypass if DYNAMIC_CONFIG ENABLED, otherwise hardwire.
 	wire bypassCic    	=  MODE[3] & cfg[3];
-   assign icor_in 		= (bypassCic) ? icic_in[15:4] : icic_out[15:4];
-	assign qcor_in 		= (bypassCic) ? qcic_in[15:4] : qcic_out[15:4] ;
+   assign icor_in 		= (bypassCic) ? icic_in[15:4] : icic_latch[15:4];
+	assign qcor_in 		= (bypassCic) ? qcic_in[15:4] : qcic_latch[15:4] ;
 
 	end
 else 

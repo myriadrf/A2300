@@ -37,7 +37,7 @@ module WcaReadPort(
 	 output wire [1:0]				  	portCmd  	// Port Command ID
     );
 
-parameter ADDR_PORT = 0;
+parameter ADDR_PORT  = 0;
 parameter NBITS_ADDR = 2;
 
 	wire isAddr  = (ADDR_PORT == portCtrl[NBITS_ADDR+2:3]);
