@@ -1,30 +1,25 @@
-//////////////////////////////////////////////////////////////////////////////////
-// Company: Loctronix Corporation
-// Engineer: Michael B. Mathews
-// 
-// Create Date:    21:44:12 06/12/2013 
-// Design Name: 
-// Module Name:    4ChTxRx.v
-// Project Name: 
-// Target Devices: 
-// Tool versions: 
-// Description: 
-//  Container implementent 4 channel transmit and receive paths.
+// Name:  2ChRx.v
 //
-// Dependencies: 
+// Copyright(c) 2013 Loctronix Corporation
+// http://www.loctronix.com
 //
-// Revision: 
-// Revision 0.01 - File Created
-// Additional Comments: 
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
 //
-//////////////////////////////////////////////////////////////////////////////////
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+
 `timescale 1ns / 1ps
 `include "../wca/hal/WcaHalRegisterDefs.vh" //grab register addresses.
 `include "2ChRxRegisterDefs.vh"
 
 `define  IDENTIFIER	16'h0001		//2 CH Transceiver Identifier.
-`define  VERSION		16'h0106		//[ver].[rev]
-`define  PORTCAPS		16'h0300		//2 RX / 0 TX porta defined.
+`define  VERSION		16'h0107		//[ver].[rev]
+`define  PORTCAPS		16'h0300		//2 RX / 0 TX ports defined.
 `define  PORT_COUNT  4
 `define  PORT0_ADDR  2'h0  //TX Port 0 is EP 8h 
 `define  PORT1_ADDR  2'h1	//Rx Port 1 is EP 88h
@@ -161,13 +156,11 @@ parameter NBITS_ADDR = 2;
 	wire evt_fifoerr;
 
 	//Assign events Upper four events are not assigned.
-	assign evtsig = { 3'h0, evt_fifoerr, rx1_full, tx1_empty, rx0_full, tx0_empty}; 
+	assign evtsig = { 3'h0, evt_fifoerr, rx1_full, 1'b0, rx0_full, 1'b0}; 
 
 	//Generate an event if the fifos.full.
 	assign evt_fifoerr = rx1_full | rx1_empty |
-							   tx1_full | tx1_empty |
-								rx0_full | rx0_empty |
-								tx0_full | tx0_empty;
+								rx0_full | rx0_empty ;
 
 //*******************************************
 // Low Speed Data Ports
@@ -211,36 +204,9 @@ parameter NBITS_ADDR = 2;
 
 	//******************************************
 	// Channel TX0 Implementation.
+	// (Not implemented.)
    //*******************************************
 	
-	wire tx0_full, tx0_empty;
-	wire [23:0] bbtx0_iq;
-	assign tx0_full = 1'b0;
-	assign tx0_empty = 1'b0;
-
-/*	
-	// DUC0_CTRL (WcaWriteByteRegister)
-	wire [7:0] duc0_ctrl;
-	WcaWriteWordReg #(`DUC0_CTRL) wr_duc0_ctrl
-							(.reset(reset), 
-							.out( duc0_ctrl), 
-							.rbusCtrl(rbusCtrl), .rbusData(rbusData) );	
-	
-	WcaReadPort #(.ADDR_PORT(`PORT0_ADDR)) port_read0(
-	 .reset(reset | duc0_ctrl[1]),
-	 .port_enable( duc0_ctrl[0]),
-	 .rd_clk(),	// Clock read input..
-	 .rd_en(lsdp_strobe ),  	// Enables reading.
-	 .rd_out({bbtx0_iq[7:4], tx0_iq[23:12],bbtx0_iq[3:0], tx0_iq[11:0]}),	// Read Data output.	
-	 .empty(),	// Active high indicates buffer is empty.	 
-	 .full (),	// Active high indicates buffer is empty.
-	 .prog_empty(),
-	 .prog_full(),
-	 .pifData(pifData),		// 32 bit port interface data bus.
-	 .portCtrl(portCtrl), 	// Port State Control bits {addr[NBITS_ADDR:0], read, write, clk }
-	 .portCmd(portCmd)  	// Port Command ID
-	 );
-*/
 	//Disable transmit Ports.
 	WcaPortNull #(.ADDR_PORT(`PORT0_ADDR)) tx0_port_null 
 	( 
@@ -248,30 +214,6 @@ parameter NBITS_ADDR = 2;
 		 .portCtrl(portCtrl), 	// Port State Control bits {addr[NBITS_ADDR:0], read, write, clk }
 		 .portCmd(portCmd)  	// Port Command ID
 	);			
-	
-	/*
-	reg [31:00] counter;
-	always @(posedge clockDsp)
-	begin
-		if( reset) counter <= 32'h01B001A0;
-		else if( tx0_strobe)counter <= counter + 32'h01000100;
-	end
-	*/
-	
-	//Offset and interpolate Baseband frequency.
-	WcaUpConverter #(`DUC0_FREQ, `DUC0_INTEG, 1,0,0) tx0_duc
-	(
-		.clock( clockDsp),					// input Clock  
-		.reset( reset),						// input reset	
-		.enable( 1'b1	/*portConfig[8]*/),	// input enable
-		.dstrobe_in(tx0_strobe),			// input dstrobe_in
-		.dstrobe_out(tx0_strobe),   		// input dstrobe_out
-		.iq_in( /*counter */{16'hFE00, 16'h0200}),		// input [31:0] iq_in
-		.iq_out(tx0_iq),						// ouput [23:0] iq_out
-
-		.rbusCtrl(rbusCtrl), 
-		.rbusData(rbusData) 	
-	);	
 	
 	
 	//******************************************
@@ -324,18 +266,8 @@ parameter NBITS_ADDR = 2;
 
 	//******************************************
 	// Channel TX1 Implementation.
+	// (Not implemented)
    //*******************************************
-	wire   tx1_full, tx1_empty;
-	assign tx1_full = 1'b0;
-	assign tx1_empty = 1'b0;
-/*
-	// DUC1_CTRL (WcaWriteByteRegister)
-	wire [7:0] duc1_ctrl;
-	WcaWriteWordReg #(`DUC1_CTRL) wr_duc1_ctrl
-							(.reset(reset), 
-							.out( duc1_ctrl), 
-							.rbusCtrl(rbusCtrl), .rbusData(rbusData) );	
-*/
 
 	//Disable transmit Ports.
 	WcaPortNull #(.ADDR_PORT(`PORT2_ADDR)) tx1_port_null 
@@ -345,20 +277,6 @@ parameter NBITS_ADDR = 2;
 		.portCmd(portCmd)  	// Port Command ID
 	);			
 
-	//Offset and interpolate Baseband frequency.
-	WcaUpConverter #(`DUC1_FREQ, `DUC1_INTEG, 1,0,0) tx1_duc
-	(
-		.clock( clockDsp),					// input Clock  
-		.reset( reset),						// input reset	
-		.enable( 1'b1	/*portConfig[8]*/),	// input enable
-		.dstrobe_in(tx1_strobe),			// input dstrobe_in
-		.dstrobe_out(tx1_strobe),   		// input dstrobe_out
-		.iq_in( /*counter */{16'hFE00, 16'h0200}),		// input [31:0] iq_in
-		.iq_out(tx1_iq),						// ouput [23:0] iq_out
-
-		.rbusCtrl(rbusCtrl), 
-		.rbusData(rbusData) 	
-	);	
 
 
 	
