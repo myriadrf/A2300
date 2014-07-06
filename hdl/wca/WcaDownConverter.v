@@ -19,6 +19,7 @@ module WcaDownConverter
     input              clock,			// input Clock 
     input              reset,			// input reset	
     input              enable,		// input enable
+	 input				  aclr,			// clears state but not configuration.
     input              dstrobe_in,	// input dstrobe_in
 	 input  wire [3:0]  cfgflags,		// input dynamic configuration mode. 
 	 input  wire [23:0] iq_in,			// input [23:0] diq_in
@@ -45,6 +46,7 @@ module WcaDownConverter
 	wire [15:0] ihb_in;
 	wire [15:0] qhb_in;
 	wire hbstrobe_in;
+	wire clearAll = reset | aclr;
 	
 //*****************************************************  
 // CORDIC Frequency Up/Down Conversion
@@ -58,7 +60,7 @@ generate if( (MODE & `CORDIC_ENABLED))
     //Generate Phase for frequency translation.
     WcaPhaseGen #(IF_FREQ_ADDR, 32) phase_generator
     (
-      .clock(clock), .reset(reset), .aclr(1'b0), .enable(enable), .strobe(dstrobe_in),
+      .clock(clock), .reset(reset), .aclr(aclr), .enable(enable), .strobe(dstrobe_in),
       .rbusCtrl(rbusCtrl), .rbusData(rbusData), 
       .phase(phase)
     );
@@ -112,7 +114,7 @@ generate if( (MODE & `CORDIC_ENABLED))
     //
     WcaCordic12  #(12,12,0) cordic
     ( 
-       .ngreset(1'b1), .clock(clock),.reset(reset), .strobeData( dstrobe_in),
+       .ngreset(1'b1), .clock(clock),.reset(clearAll), .strobeData( dstrobe_in),
        .X0(X0), .Y0(Y0),.A0(A0),
        .XN(icor_out), .YN(qcor_out), .AN() 
     );	 
@@ -156,7 +158,7 @@ generate if(MODE & `CIC_ENABLED)
 	end
 
 	cic_decim cic_i (
-	.sclr(reset),			// resets
+	.sclr(clearAll),		// resets
 	.din(icic_in), 		// input [11 : 0] din
 	.nd(dstrobe_in),		// input nd
 	.rate(decim_rate), 	// input [12 : 0] rate
@@ -167,7 +169,7 @@ generate if(MODE & `CIC_ENABLED)
 	.rfd()); 				// output rfd
 
 	cic_decim cic_q (
-	.sclr(reset),			// resets
+	.sclr(clearAll),		// resets
 	.din(qcic_in), 	 	// input [11 : 0] din
 	.nd(dstrobe_in),		// input nd
 	.rate(decim_rate), 	// input [12 : 0] rate
@@ -192,7 +194,7 @@ else
 
 	//Generate strobe given the rate provided by the user.
 	WcaDspStrobe  lsdp_strobe_gen (
-		.clock(clock),  	.reset(reset), .enable(1'b1), .strobe_in(dstrobe_in), 
+		.clock(clock),  	.reset(clearAll), .enable(enable), .strobe_in(dstrobe_in), 
 		.rate(decim_rate), .strobe_out(hbstrobe_in), .count( )
 	);	
  end   

@@ -18,7 +18,7 @@
 `include "2ChRxRegisterDefs.vh"
 
 `define  IDENTIFIER	16'h0001		//2 CH Transceiver Identifier.
-`define  VERSION		16'h0107		//[ver].[rev]
+`define  VERSION		16'h0108		//[ver].[rev]
 `define  PORTCAPS		16'h0300		//2 RX / 0 TX ports defined.
 `define  PORT_COUNT  4
 `define  PORT0_ADDR  2'h0  //TX Port 0 is EP 8h 
@@ -125,7 +125,8 @@ parameter NBITS_ADDR = 2;
 // USB PORT Interface  Control  
 //*******************************************
 	wire  [4:0]  portCtrl;
-	wire  [1:0]  portCmd;	
+	wire  [1:0]  portCmd;
+	wire  		 clearSynch; //Wire clears all fifos when synch enabled.
 		
 	//Assign the LEDs to indicate which ports are enabled [ rx1, rx0, tx1, tx0]
 	assign ledSelect = { rx1_full, rx1_empty, rx0_full, rx0_empty}; 							
@@ -161,6 +162,9 @@ parameter NBITS_ADDR = 2;
 	//Generate an event if the fifos.full.
 	assign evt_fifoerr = rx1_full | rx1_empty |
 								rx0_full | rx0_empty ;
+								
+								
+								
 
 //*******************************************
 // Low Speed Data Ports
@@ -226,6 +230,9 @@ parameter NBITS_ADDR = 2;
 
 	// DDC0_CTRL (WcaWriteByteRegister)
 	wire [7:0] ddc0_ctrl;
+	
+	wire       clearRx0 = (clearSynch & ddc0_ctrl[6]) | ddc0_ctrl[1];
+	
 	WcaWriteByteReg #(`DDC0_CTRL) wr_ddc0_ctrl
 							(.reset(reset), 
 							.out( ddc0_ctrl), 
@@ -237,6 +244,7 @@ parameter NBITS_ADDR = 2;
 	(	
 		.clock( clockDsp),					// input Clock  
 		.reset( reset ),						// input reset	
+		.aclr( clearRx0),						// input clears state not configuration
 		.enable( ddc0_ctrl[0]),				// input enable
 		.dstrobe_in(rx0_strobe),			// input dstrobe_in
 		.cfgflags( ddc0_ctrl[5:2]),	   // input cfgflags (dynamic mode enabled).
@@ -250,7 +258,7 @@ parameter NBITS_ADDR = 2;
 	//Assign Port Address #1 as the DDC RX0 Output.
 	WcaPortWrite #(.ADDR_PORT(`PORT1_ADDR)) rx0_port_write
 	(
-		.reset(reset | ddc0_ctrl[1]),
+		.reset(reset | clearRx0),
 		.port_enable( ddc0_ctrl[0]),
 		.wr_clk(clockDsp),			   // Clock input to fifo.
 		.wr_en( rx0_strobewrite ), // Allows input if specified.	 
@@ -290,7 +298,10 @@ parameter NBITS_ADDR = 2;
 
 	// DDC1_CTRL (WcaWriteByteRegister)
 	wire [7:0] ddc1_ctrl;
-	WcaWriteWordReg #(`DDC1_CTRL) wr_ddc1_ctrl
+	
+	wire       clearRx1 = (clearSynch & ddc1_ctrl[6]) | ddc1_ctrl[1];
+	
+	WcaWriteByteReg #(`DDC1_CTRL) wr_ddc1_ctrl
 							(.reset(reset), 
 							.out( ddc1_ctrl), 
 							.rbusCtrl(rbusCtrl), .rbusData(rbusData) );	
@@ -300,6 +311,7 @@ parameter NBITS_ADDR = 2;
 	(
 		.clock( clockDsp),					// input Clock  
 		.reset( reset ),	// input reset	
+		.aclr( clearRx1),						// input clears state not configuration
 		.enable( ddc1_ctrl[0]),				// input enable
 		.dstrobe_in(rx1_strobe),			// input dstrobe_in
 		.cfgflags( ddc1_ctrl[5:2]),	   // input cfgflags (dynamic mode enabled).		
@@ -313,7 +325,7 @@ parameter NBITS_ADDR = 2;
 	//Assign Port Address #1 as the DDC RX0 Output.
 	WcaPortWrite #(.ADDR_PORT(`PORT3_ADDR)) rx1_port_write
 	(
-		.reset(reset | ddc1_ctrl[1]),
+		.reset(reset | clearRx1),
 		.port_enable( ddc1_ctrl[0]),
 		.wr_clk(clockDsp),			   // Clock input to fifo.
 		.wr_en( rx1_strobewrite ), 	// write.	 
@@ -326,4 +338,9 @@ parameter NBITS_ADDR = 2;
 		.portCtrl(portCtrl), 		// Port State Control bits {addr[NBITS_ADDR:0], read, write, clk }
 		.portCmd(portCmd)  			// Port Command ID
 	);
+	
+	
+	//Create multi-channel synchronization mode.
+	assign clearSynch = (ddc0_ctrl[6] & ddc0_ctrl[1]) | (ddc1_ctrl[6] & ddc1_ctrl[1]);
+	
 endmodule

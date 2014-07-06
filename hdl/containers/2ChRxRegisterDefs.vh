@@ -57,6 +57,9 @@
 //				When enabled, the decimation strobe is bypassed, and the original 
 //			   sampling strobe is used to drive down stream.  
 //  5       Bypass Half band filter (DYNAMIC_CONFIG only).  
+//  6       Synch mode enable,  if true, synchronizes reset of fifos with other
+//				DDUC components that have synch enabled.   This eliminates interchannel
+//				biases, or at least makes then constant.  
 
 
 //
