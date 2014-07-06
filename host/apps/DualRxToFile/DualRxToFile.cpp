@@ -170,9 +170,8 @@ static int ReceiveData (size_t msecDur)
 #endif
 
 	//Start the loggers.
-	retval = s_s1.Start(msecDur);
-	if( !retval )  s_s2.Start(msecDur);
-
+	retval = s_s1.Start(msecDur, false);  //Starts but does not enable.
+	if( !retval )  s_s2.Start(msecDur, true); //Enables both.
 
 	// Periodically poll and check status of processing.
 	while ((retval == 0) && (!s_bKeyHit))

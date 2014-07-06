@@ -66,7 +66,7 @@ public:
 	void RegisterArgs( std::string sId, ArgParser& args);
 	int Init( ArgParser& args, ConfigDevice* m_pDevice);
 	void DisplayConfiguration();
-	int Start(size_t msecDur);
+	int Start(size_t msecDur, bool bIsMaster);
 	int CheckStatus();
 	void Stop();
 	void Terminate();

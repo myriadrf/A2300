@@ -55,6 +55,17 @@ void ConfigDduc::Reset( double uiSamplingRateHz)
 	td.SetProperty<byte>(m_idComponent, DSP_DDUC_CTRL, DSP_DDUC_CTRL_DISABLED);
 }
 
+/** 
+* Clears fifos and without changing configuration.
+*/
+void ConfigDduc::Clear()
+{
+	TransportDci& td = m_pDevice->Dci0Transport();
+	td.SetProperty<byte>(m_idComponent, DSP_DDUC_CTRL, DSP_DDUC_CTRL_RESET);
+	Mode( m_byteMode);
+}
+
+
 /**
 * Sets thes DDUC operating mode.
 */

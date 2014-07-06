@@ -36,11 +36,12 @@ public:
 	* DDUC operating configurations.
 	*/
 	enum ModeEnum{
-		Default			= 0x00,
-		Normal			= 0x00,
-		BypassCordic	= 0x04,
-		BypassCic		= 0x08,
-		BypassHalfband	= 0x20
+		Default				= 0x00,
+		Normal				= 0x00,
+		BypassCordic		= 0x04,
+		BypassCic			= 0x08,
+		BypassHalfband		= 0x20,
+		SynchronizeReset	= 0x40  //Synchronizes dadta streams with other DDUC channels 
 	};
 
 public:
@@ -51,13 +52,26 @@ public:
 	/* Define IConfigComponent interface*/
 	virtual std::string name();
 	virtual byte componentId();
+
+	/**
+	* Resets fifos and counters and disables the channel.
+	*/
 	virtual void Reset();
+
+	/**
+	* Synchronizes object configuration with device configuration.  
+	*/
 	virtual void Synch();
 
 	void Enable( bool bEnable);
 	bool IsEnabled() const { return m_bEnable;}
 
 	void Reset( double uiSamplingRateHz);
+
+	/** 
+	* Clears fifos and counters without disabling streams.
+	*/
+	void Clear();
 
 	/**
 	* Returns the Sampling rate.

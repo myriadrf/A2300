@@ -134,6 +134,7 @@ int DataStreamLogger::Init( ArgParser& args, ConfigDevice* pDevice)
 	// Reset the DDC Component so no data is in cache.
 	m_pDduc				= new ConfigDduc(rpath.idDdc, m_sId + ".ddc", m_pDevice, true);
 	m_pDevice->Components().push_back(m_pDduc);
+	m_pDduc->Mode( ConfigDduc::Normal | ConfigDduc::SynchronizeReset);  //Synchronizes FIFOS with other streams.
 	m_pDduc->Reset();
 	m_dSampRate = m_pDduc->HostSamplingRate( m_dSampRate*1.0e6, true)/1.0e6;
 	//TODO Set the baseband DDC offset.
@@ -172,7 +173,7 @@ void DataStreamLogger::DisplayConfiguration()
 
 }
 
-int DataStreamLogger::Start(size_t msecDur)
+int DataStreamLogger::Start(size_t msecDur, bool bIsMaster)
 {
 	//Calculate the total frames.
 	double sampsPerFrame = (double) (m_sizeFrame / m_BytesPerSample);
@@ -180,7 +181,8 @@ int DataStreamLogger::Start(size_t msecDur)
 	m_totalFramesToProcess = (size_t)( double(msecDur/1000)*framesPerSec);
 	m_framesPerSec = (size_t) (framesPerSec);
 
-	m_pDduc->Enable(true);
+	//Only enable if master channel.
+	m_pDduc->Enable(bIsMaster);
 	return 0;
 }
 
@@ -193,8 +195,7 @@ void DataStreamLogger::Stop()
 {
 	if( m_pPort!= NULL && m_pDduc != NULL)
 	{
-		m_pDduc->Enable(false);
-		m_pDduc->Reset();
+		m_pDduc->Reset(); // Reset disables the channel so no need to call Enable(0).
 	}
 }
 void DataStreamLogger::Terminate()
