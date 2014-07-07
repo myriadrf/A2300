@@ -72,7 +72,9 @@ void ConfigDduc::Clear()
 void ConfigDduc::Mode( byte modeFlags)
 {
 	m_byteMode = modeFlags;
-	byte flags = ((m_bEnable) ? DSP_DDUC_CTRL_ENABLED : DSP_DDUC_CTRL_DISABLED) | m_byteMode | ((m_byteMode & ((byte) BypassCic)) ? DSP_DDUC_CTRL_BYPASSCICSTROBE : (byte) 0);
+	//Add Bypass Strobe flag if Bypass Cic specified.
+	byte flags = m_byteMode | ((m_byteMode & ((byte) BypassCic)) ? DSP_DDUC_CTRL_BYPASSCICSTROBE : (byte) 0);
+	flags |= (m_bEnable) ? DSP_DDUC_CTRL_ENABLED : DSP_DDUC_CTRL_DISABLED;
 
 	TransportDci& td = m_pDevice->Dci0Transport();
 	td.SetProperty<byte>(m_idComponent, DSP_DDUC_CTRL,flags );
@@ -89,19 +91,25 @@ double ConfigDduc::HostSamplingRate( double  dRateHz, bool bAutoSetMode )
 	
 	//determine which half-band filters are activated
     uint16 divisor = m_uiSamplingDivisor;
+
 	if (bAutoSetMode)
 	{
-		if( m_uiSamplingDivisor == 1)
+	    byte flags;
+	    byte mask = BypassCordic| BypassCic | BypassHalfband;
+
+	    if( m_uiSamplingDivisor == 1)
 		{
-			m_byteMode = BypassCic | DSP_DDUC_CTRL_BYPASSCICSTROBE | BypassHalfband ;
+			flags = BypassCic | DSP_DDUC_CTRL_BYPASSCICSTROBE | BypassHalfband ;
 		}
 		else if( m_uiSamplingDivisor % 2 == 0)
 		{
-			m_byteMode = Normal;
+			flags = Normal;
 			divisor /= 2;
 		}
 		else
-			m_byteMode = BypassHalfband;
+			flags = BypassHalfband;
+
+		m_byteMode = (m_byteMode & ~mask) | flags;
 	}
 	
 	//Set the decimation rate and turn on halband filters on ASR-2300.

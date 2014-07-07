@@ -134,8 +134,8 @@ int DataStreamLogger::Init( ArgParser& args, ConfigDevice* pDevice)
 	// Reset the DDC Component so no data is in cache.
 	m_pDduc				= new ConfigDduc(rpath.idDdc, m_sId + ".ddc", m_pDevice, true);
 	m_pDevice->Components().push_back(m_pDduc);
-	m_pDduc->Mode( ConfigDduc::Normal | ConfigDduc::SynchronizeReset);  //Synchronizes FIFOS with other streams.
 	m_pDduc->Reset();
+	m_pDduc->Mode( ConfigDduc::Normal | ConfigDduc::SynchronizeReset);  //Synchronizes FIFOS with other streams.
 	m_dSampRate = m_pDduc->HostSamplingRate( m_dSampRate*1.0e6, true)/1.0e6;
 	//TODO Set the baseband DDC offset.
 
