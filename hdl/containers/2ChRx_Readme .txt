@@ -36,6 +36,11 @@ See WcaHal definition headers for details.
 ********************************************************************************************************************
 VERSION NOTES:
 
+** Ver 2, rev. 10 (h0110 - 7/8/14)
+1)  Fixed bug introduced in last revision, which had removed the synch enable capability for some
+    reason.  It was restored to implementation in rev 8.  All other changes from rev. 9 remain.
+
+
 ** Ver 1, rev. 9 (h0108 - 7/6/14)
 1) Added synchronous RF clear option in the Master Control Register to clear the internal state
    of both Lime RF interfaces. The master control register has been updated as follows:
