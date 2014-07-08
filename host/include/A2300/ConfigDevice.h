@@ -67,6 +67,13 @@ public:
 	uint16 FpgaVersion();
 
 	/**
+	 * Synchronizes the internal RF Lime interfaces to eliminate interchannel bias
+	 * resulting in filters and various counters not be reset at the same time.  This
+	 * is only needed when channels must be synchronized.
+	 */
+	void SynchRfState();
+
+	/**
 	 * Attach ASR-2300 device by finding the device specified by address, if not defined,
 	 * the first device found is selected.  Override to use specialized VID, PID values.
 	 */

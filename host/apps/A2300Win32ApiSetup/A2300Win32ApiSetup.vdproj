@@ -213,6 +213,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_441AADE73F694E34BD1DEAA8100388C1"
+        "OwnerKey" = "8:_4BD440CC38044D08A064023B13DFFCC4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_441AADE73F694E34BD1DEAA8100388C1"
+        "OwnerKey" = "8:_89C358E0CDF8415D82BFB6E1E1CF9832"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_49F88E5E9E964164B98CC5ED5B96B829"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -233,6 +245,12 @@
         {
         "MsmKey" = "8:_4F78DDCF66E14D41ADF95A643D2C5784"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_503E9DF4142F4DAAB7010D2F96B592FD"
+        "OwnerKey" = "8:_441AADE73F694E34BD1DEAA8100388C1"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -411,12 +429,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_C9761C61B2A644B0AFC64B64697E8C43"
-        "OwnerKey" = "8:_CF58552BE80B4B7EBA9EEC11A619AF95"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_C9E1C86BB921473D88B495AC37C59069"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -425,18 +437,6 @@
         {
         "MsmKey" = "8:_CAE6F520843E46D4AC70D5BACA4B23C4"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_CF58552BE80B4B7EBA9EEC11A619AF95"
-        "OwnerKey" = "8:_4BD440CC38044D08A064023B13DFFCC4"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_CF58552BE80B4B7EBA9EEC11A619AF95"
-        "OwnerKey" = "8:_89C358E0CDF8415D82BFB6E1E1CF9832"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -617,16 +617,6 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Visual.C++.9.0.x64"
-                    {
-                    "Name" = "8:Visual C++ Runtime Libraries (x64)"
-                    "ProductCode" = "8:Microsoft.Visual.C++.9.0.x64"
-                    }
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Visual.C++.9.0.x86"
-                    {
-                    "Name" = "8:Visual C++ Runtime Libraries (x86)"
-                    "ProductCode" = "8:Microsoft.Visual.C++.9.0.x86"
-                    }
                     "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Windows.Installer.3.1"
                     {
                     "Name" = "8:Windows Installer 3.1"
@@ -3011,11 +3001,11 @@
         }
         "MergeModule"
         {
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_C9761C61B2A644B0AFC64B64697E8C43"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_441AADE73F694E34BD1DEAA8100388C1"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:microsoft_vc90_crt_x86.msm"
+            "SourcePath" = "8:policy_9_0_Microsoft_VC90_CRT_x86.msm"
                 "Properties"
                 {
                 }
@@ -3025,11 +3015,11 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_CF58552BE80B4B7EBA9EEC11A619AF95"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_503E9DF4142F4DAAB7010D2F96B592FD"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:policy_9_0_Microsoft_VC90_CRT_x86.msm"
+            "SourcePath" = "8:microsoft_vc90_crt_x86.msm"
                 "Properties"
                 {
                 }

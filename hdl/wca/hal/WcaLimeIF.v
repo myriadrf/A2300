@@ -17,7 +17,8 @@ module WcaLimeIF
 	input					 clock_dsp, //DSP Sampling Clock, which can be substantially faster than the other clocks.
 	input              clock_rx,  //Rx Clock Interface 2x Sample rate
 	input              clock_tx,  //Tx Clock Interface 2x Sample rate
-	input              reset,
+	input              reset,		//Resets configuration and clears state.
+	input					 aclr,      //Clears state but not configuration
 
 	//Internal Bus I/O
 	input  wire [23:0] tx_iq,			//Transmit I/Q data stream input (12 bits each).
@@ -70,10 +71,12 @@ parameter RXBIAS_ADDR = 0;
 	//          signals to the transmit functions of Lime chip #1.  If disabled, clock output will be low.
 
 	wire [7:0] rf_ctrl;
-	
+
 	//Control Register
 	WcaWriteByteReg #(CTRL_ADDR) wr_rf_ctrl
 	(.reset(reset), .out( rf_ctrl), .rbusCtrl(rbusCtrl), .rbusData(rbusData) );
+
+
 
 	//------------------------------------------------------------
 	// Lime chip control.
@@ -90,14 +93,14 @@ parameter RXBIAS_ADDR = 0;
 	//------------------------------------------------------------
 	// Receiver Interface Selector.
 	//------------------------------------------------------------   
-	
+	wire  clearState = reset | aclr;
 	wire  [11:0] rx_DciBiasRemoved; //These are provided by the DC Offset calculation 
 	reg   [1:0] reg_rxstrobe;
 
 	//Shape RX strobe as a 1 clock pulse strobe.
 	always @(posedge clock_dsp)
 	begin
-		if( reset )
+		if( clearState)
 			begin
 				reg_rxstrobe[0] <= 1'b0;
 				reg_rxstrobe[1] <= 1'b0;
@@ -152,7 +155,7 @@ parameter RXBIAS_ADDR = 0;
 	// Generate TX IQ select clock.
 	always @(posedge clock_tx)
 	begin
-		if( reset ) 
+		if( clearState) 
 			txiqsel <= 1'h0;
 		else
 			txiqsel <= ~txiqsel;
@@ -164,7 +167,7 @@ parameter RXBIAS_ADDR = 0;
 	// Generate TX IQ select clock.	
 	always @(posedge clock_dsp)
 	begin
-		if( reset )
+		if( clearState)
 			begin
 				reg_txstrobe[0] <= 1'b0;
 				reg_txstrobe[1] <= 1'b0;
@@ -198,11 +201,11 @@ parameter RXBIAS_ADDR = 0;
 
 	//Construct Inphase RSSI function
 	WcaRssi RssiInphase(
-	  .clock(clock_dsp), .reset(reset), .strobe(rx_strobe), .adc(rx_iq[11:00]), .rssi(rssi_i) );
+	  .clock(clock_dsp), .reset(clearState), .strobe(rx_strobe), .adc(rx_iq[11:00]), .rssi(rssi_i) );
 
 	//RSSI Quadrature Function
 	WcaRssi RssiQuadrature(
-	  .clock(clock_dsp), .reset(reset), .strobe(rx_strobe), .adc(rx_iq[23:12]), .rssi(rssi_q) );
+	  .clock(clock_dsp), .reset(clearState), .strobe(rx_strobe), .adc(rx_iq[23:12]), .rssi(rssi_q) );
 
 	//Place the RSSI values into a register for retrieval.
 	WcaReadWordReg #(RSSI_ADDR) RxRssiReadReg
@@ -214,7 +217,7 @@ parameter RXBIAS_ADDR = 0;
 	wire  [15:0] dcOffset;
 		
 	WcaDcOffset DcOffsetRemove(
-	  .clock(clock_rx),   .reset(reset), .strobe(1'h1), .iqSel(rf_rxiqsel), .sig_in(rf_rxdata), .dcoffset( dcOffset), .sigout(rx_DciBiasRemoved));
+	  .clock(clock_rx),   .reset(clearState), .strobe(1'h1), .iqSel(rf_rxiqsel), .sig_in(rf_rxdata), .dcoffset( dcOffset), .sigout(rx_DciBiasRemoved));
 
 	//Place the DCOffset values into registers for retrieval.
 	//WcaReadDwordReg #(RXBIAS_ADDR) RxBiasReadReg

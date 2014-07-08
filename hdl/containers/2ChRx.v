@@ -18,7 +18,7 @@
 `include "2ChRxRegisterDefs.vh"
 
 `define  IDENTIFIER	16'h0001		//2 CH Transceiver Identifier.
-`define  VERSION		16'h0108		//[ver].[rev]
+`define  VERSION		16'h0109		//[ver].[rev]
 `define  PORTCAPS		16'h0300		//2 RX / 0 TX ports defined.
 `define  PORT_COUNT  4
 `define  PORT0_ADDR  2'h0  //TX Port 0 is EP 8h 

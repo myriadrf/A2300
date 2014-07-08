@@ -20,9 +20,9 @@
 *  receiver function with configurable down sampling of baseband data streams.
 *
 *  HAL COMPONENT IDENTIFIER:  	h0001
-*  VERSION:			h0108  
+*  VERSION:			h0109  
 *  PORTCAPS:			h0300  -- 2 Receive, 0 Transmit Ports.
-*  Version Date:		7/6/2014
+*  Version Date:		7/7/2014
 *
 ********************************************************************************************************************
 Documentation:
@@ -35,6 +35,20 @@ See WcaHal definition headers for details.
 
 ********************************************************************************************************************
 VERSION NOTES:
+
+** Ver 1, rev. 9 (h0108 - 7/6/14)
+1) Added synchronous RF clear option in the Master Control Register to clear the internal state
+   of both Lime RF interfaces. The master control register has been updated as follows:
+
+	 bit#  |  Description
+	-------|----------------------------------------------------------
+	  0	 ResetRf0 - Performs a reset on RF0.
+	  1	 ResetRf1 - Performs a reset on RF1.
+	  2      ResetContainer - Performs a reset on HalContainer functions.
+	  3      ResetUsbIF - Performs a reset on the USB Interface.  Holding high places
+		 the interface in an idle state (disabled).
+	  4      ClearRf0Rf1 - Clears state of RF0 and RF1 without changing configuration
+		 This synchronizes internal counters in order to eliminate interchannel biases.
 
 ** Ver 1, rev. 8 (h0108 - 7/6/14)
 1) Added synchronous clear mode capability to synchronize RX0 and RX1 data streams.  Added 7th bit

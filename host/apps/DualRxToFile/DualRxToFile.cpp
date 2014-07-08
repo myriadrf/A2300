@@ -169,9 +169,12 @@ static int ReceiveData (size_t msecDur)
 	}
 #endif
 
+	//Synchronize the RF Front-ends 
+	s_cfgDevice.SynchRfState();
+
 	//Start the loggers.
 	retval = s_s1.Start(msecDur, false);  //Starts but does not enable.
-	if( !retval )  s_s2.Start(msecDur, true); //Enables both.
+	if( !retval )  s_s2.Start(msecDur, true); //Enables both, effectively synchronizing the DSP.
 
 	// Periodically poll and check status of processing.
 	while ((retval == 0) && (!s_bKeyHit))

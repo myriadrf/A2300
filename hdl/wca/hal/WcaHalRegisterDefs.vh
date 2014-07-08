@@ -29,6 +29,8 @@
 //   2      ResetContainer - Performs a reset on HalContainer functions.
 //   3      ResetUsbIF - Performs a reset on the USB Interface.  Holding high places
 //				the interface in an idle state (disabled).
+//	  4      ClearRf0Rf1 - Clears state of RF0 and RF1 without changing configuration
+//				This synchronizes internal counters in order to eliminate interchannel biases.
 `define WCAHAL_MSTR_CTRL   8'hB0 
 
 // Interrupt Control Registers.

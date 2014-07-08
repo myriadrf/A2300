@@ -20,6 +20,8 @@
 #include <stdexcept>
 #include <stdio.h>
 
+
+
 namespace A2300 {
 
 ConfigDevice::ConfigDevice()
@@ -122,6 +124,18 @@ uint16 ConfigDevice::FpgaVersion()
 	else
 		return 0;
 
+}
+
+/**
+ * Synchronizes the internal RF Lime interfaces to eliminate interchannel bias
+ * resulting in filters and various counters not be reset at the same time.  This
+ * is only needed when channels must be synchronized.
+ */
+void ConfigDevice::SynchRfState()
+{
+	TransportDci& dt = m_dci0.transport;
+	dt.SetProperty<byte>( WCACOMP_FPGA, 0x00, 0x10); 
+	dt.SetProperty<byte>( WCACOMP_FPGA, 0x00, 0x00);
 }
 
 /**
