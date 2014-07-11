@@ -252,12 +252,16 @@ module main
 	wire gps_select;
 	assign rf_Gps_nExtSelect = gps_select;  
 	assign rf_Gps_ExtSelect = ~gps_select; //The affirmitive external select is the opposite of the register settings.
-	
+
+
+	//Create synchronized clear of lime interfaces.
+	wire aclrLime;
+	WcaSynchEdgeDetect seClearLime ( .clk(clock_dsp), .in(mstrCtrl[4]),  .rising( aclrLime) );
 
 	// Lime RF#0 Interface implementation.
    WcaLimeIF  #( `WCAHAL_RF0_CTRL, `WCAHAL_RF0_RSSI, `WCAHAL_RF0_BIAS)
 				  lime0_if ( .clock_dsp(clock_dsp), .clock_rx(clock_limeif), .clock_tx(clock_limeif), 
-							 .reset(cpu_reset | mstrCtrl[0]), .aclr( mstrCtrl[4]),
+							 .reset(cpu_reset | mstrCtrl[0]), .aclr( aclrLime),
                       .rbusCtrl(rbusCtrl),.rbusData(rbusData),
                       .rf_rxclk(rf1_rxclk), .rf_rxiqsel(rf1_rxiqsel), .rf_rxen(rf1_rxen), .rf_rxdata(rf1_rxd[11:0]), 
                       .rf_txclk(rf1_txclk), .rf_txiqsel(rf1_txiqsel), .rf_txen(rf1_txen), .rf_txdata(rf1_txd[11:0]), 
@@ -266,7 +270,7 @@ module main
 	// Lime RF#1 Interface implementation						 
    WcaLimeIF   #( `WCAHAL_RF1_CTRL, `WCAHAL_RF1_RSSI, `WCAHAL_RF1_BIAS)
 					lime1_if ( .clock_dsp(clock_dsp), .clock_rx(clock_limeif), .clock_tx(clock_limeif), 
-							 .reset(cpu_reset | mstrCtrl[1]), .aclr( mstrCtrl[4]),
+							 .reset(cpu_reset | mstrCtrl[1]), .aclr( aclrLime),
                       .rbusCtrl(rbusCtrl), .rbusData(rbusData),
                       .rf_rxclk(rf2_rxclk), .rf_rxiqsel(rf2_rxiqsel), .rf_rxen(rf2_rxen), .rf_rxdata(rf2_rxd[11:0]), 
                       .rf_txclk(rf2_txclk), .rf_txiqsel(rf2_txiqsel), .rf_txen(rf2_txen), .rf_txdata(rf2_txd[11:0]), 

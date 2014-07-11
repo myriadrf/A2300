@@ -20,9 +20,9 @@
 *  receiver function with configurable down sampling of baseband data streams.
 *
 *  HAL COMPONENT IDENTIFIER:  	h0001
-*  VERSION:			h0109  
+*  VERSION:			h0111
 *  PORTCAPS:			h0300  -- 2 Receive, 0 Transmit Ports.
-*  Version Date:		7/7/2014
+*  Version Date:		7/11/2014
 *
 ********************************************************************************************************************
 Documentation:
@@ -36,7 +36,11 @@ See WcaHal definition headers for details.
 ********************************************************************************************************************
 VERSION NOTES:
 
-** Ver 2, rev. 10 (h0110 - 7/8/14)
+** Ver 1, rev. 17 (h0111 - 7/11/14)
+1)  Added rising edge detection on lime IF aclr (Master Control Bit 4, ClearRf0Rf1) to tighten 
+    up timing between data and dsp clock domains. This may improve stability.
+
+** Ver 1, rev. 16 (h0110 - 7/8/14)
 1)  Fixed bug introduced in last revision, which had removed the synch enable capability for some
     reason.  It was restored to implementation in rev 8.  All other changes from rev. 9 remain.
 
