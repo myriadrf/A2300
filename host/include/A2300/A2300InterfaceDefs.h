@@ -116,7 +116,8 @@ enum Rx0DefaultProfilesEnum
 	RX0DPE_GpsL1Int = 0x41,
 	RX0DPE_GpsL1Ext = 0x42,
 	RX0DPE_PcsExt   = 0x43,
-	RX0DPE_Wideband = 0x44
+	RX0DPE_Wideband = 0x44,
+	RX0DPE_WidebandLowFreq = 0x45
 };
 
 //Enum defines the default TX pathes for the RF1 component.  Depending on which RF profiles are loaded into the
@@ -139,7 +140,8 @@ enum Rx1DefaultProfilesEnum
 	RX1DPE_UhfExt   = 0xC1,
 	RX1DPE_IsmInt   = 0xC2,
 	RX1DPE_IsmExt   = 0xC3,
-	RX1DPE_Wideband = 0xC4
+	RX1DPE_Wideband = 0xC4,
+	RX1DPE_WidebandLowFreq = 0xC5
 };
 
 //These are actually half-bandwidth values as defined by the Lime Processor.  The effective

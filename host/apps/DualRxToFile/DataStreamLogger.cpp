@@ -18,7 +18,7 @@ ARGPARSER_BEGIN_MAP( s_argsLogger )
 	ARGPARSER_PARAM( "filename", "", "Binary data output file name.")
 	ARGPARSER_VAR( "path", ArgParser::Entry::DOUBLE, "pcs",
 				  "Receiver path to use. Choose from \"gpsant\", \"gpsext\", \"pcs\","
-				  "\"wideband0\", \"uhf\", \"ism_ant\", \"ism_ext\", \"wideband1\"")
+				  "\"wideband0\", \"widebandlf0\", \"uhf\", \"ism_ant\", \"ism_ext\", \"wideband1\", \"widebandlf1\" ")
 	ARGPARSER_VAR( "freq", ArgParser::Entry::DOUBLE, "1970", "Receiver center frequency in MHz. Valid range is between 300 MHz to 3.8 MHz")
 	ARGPARSER_VAR( "gain", ArgParser::Entry::LONG,   "9",    "Receiver gain in dB. Valid range is between 0 dB to 60 dB")
 	ARGPARSER_VAR( "bw",   ArgParser::Entry::DOUBLE, "5",    "Receiver front-end bandwidth in MHz. Valid range is 1.5 MHz to 28 MHz.")
@@ -41,12 +41,15 @@ static const RfPathDef s_pathDef[] = {
   { "gpsext",	"GPS L1 External Input",	0x88,  WCACOMP_RF0, WCACOMP_DSP_DDC0, RX0DPE_GpsL1Ext },
   { "pcs",		"PCS Input",				0x88,  WCACOMP_RF0, WCACOMP_DSP_DDC0, RX0DPE_PcsExt },
   { "wideband0","RF0 Wideband Input",		0x88,  WCACOMP_RF0, WCACOMP_DSP_DDC0, RX0DPE_Wideband },
+  { "widebandlf0","RF0 Wideband Low Freq. Input",		0x88,  WCACOMP_RF0, WCACOMP_DSP_DDC0, RX0DPE_WidebandLowFreq },
   { "uhf",		"UHF External Input",		0x89,  WCACOMP_RF1, WCACOMP_DSP_DDC1, RX1DPE_UhfExt },
   { "ism_ant",	"ISM 2.4 GHz Antenna",		0x89,  WCACOMP_RF1, WCACOMP_DSP_DDC1, RX1DPE_IsmInt },
   { "ism_ext",	"ISM 2.4 GHz Ext. Input",	0x89,  WCACOMP_RF1, WCACOMP_DSP_DDC1, RX1DPE_IsmExt },
-  { "wideband1","RF1 Wideband Input",		0x89,  WCACOMP_RF1, WCACOMP_DSP_DDC1, RX1DPE_Wideband }
+  { "wideband1","RF1 Wideband Input",		0x89,  WCACOMP_RF1, WCACOMP_DSP_DDC1, RX1DPE_Wideband },
+  { "widebandlf1","RF1 Wideband Low Freq. Input",		0x89,  WCACOMP_RF1, WCACOMP_DSP_DDC1, RX1DPE_WidebandLowFreq }
+
 };
-const static int COUNT_PATHDEFS = 8;
+const static int COUNT_PATHDEFS = 10;
 
 /******************************************************************
 * DataStreamLogger Implementation.
