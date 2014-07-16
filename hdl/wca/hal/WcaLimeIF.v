@@ -81,12 +81,12 @@ parameter RXBIAS_ADDR = 0;
 	//------------------------------------------------------------
 	// Lime chip control.
 	//------------------------------------------------------------   
-	assign rf_rxen  = rf_ctrl[4];   
-	assign rf_txen  = rf_ctrl[5];
-
+	WcaSynchEdgeDetect synchRxEnable ( .clk(clock_rx), .in(rf_ctrl[4]),  .out(rf_rxen));
+	WcaSynchEdgeDetect synchTxEnable ( .clk(clock_rx), .in(rf_ctrl[4]),  .out(rf_txen));
+	
 	//Buffer the clock output so the internal clock
 	//fanout is not driving the output pins.
-	ODDR2 oddr2_rxclk	( .D0(1'b1), .D1(1'b0), .CE(rf_ctrl[6]),	.C0(clock_rx),	.C1(~clock_rx), .Q(rf_rxclk) );
+   ODDR2 oddr2_rxclk	( .D0(1'b1), .D1(1'b0), .CE(rf_ctrl[6]),	.C0(clock_rx),	.C1(~clock_rx), .Q(rf_rxclk) );
 	ODDR2 oddr2_txclk ( .D0(1'b1), .D1(1'b0),	.CE(rf_ctrl[7]),	.C0(clock_tx),	.C1(~clock_tx), .Q(rf_txclk) );
 
 
@@ -214,7 +214,7 @@ parameter RXBIAS_ADDR = 0;
 	//------------------------------------------------------------
 	// RX DC Bias Detection.
 	//------------------------------------------------------------   
-	wire  [15:0] dcOffset;
+	wire  [11:0] dcOffset;
 		
 	WcaDcOffset DcOffsetRemove(
 	  .clock(clock_rx),   .reset(clearState), .strobe(1'h1), .iqSel(rf_rxiqsel), .sig_in(rf_rxdata), .dcoffset( dcOffset), .sigout(rx_DciBiasRemoved));

@@ -20,9 +20,9 @@
 *  receiver function with configurable down sampling of baseband data streams.
 *
 *  HAL COMPONENT IDENTIFIER:  	h0001
-*  VERSION:			h0111
+*  VERSION:			h0112 (dec 1.17)
 *  PORTCAPS:			h0300  -- 2 Receive, 0 Transmit Ports.
-*  Version Date:		7/11/2014
+*  Version Date:		7/15/2014
 *
 ********************************************************************************************************************
 Documentation:
@@ -35,6 +35,13 @@ See WcaHal definition headers for details.
 
 ********************************************************************************************************************
 VERSION NOTES:
+
+** Ver 1, rev. 18 (h0112 - 7/11/15)
+1)  Fixed synchronization problem in CIC Decimators, by changing the logic to update 
+    the rate register, which causes the internal counter to reset.  
+2)  Moved temporarily moved the rf1_rxclk and rf2_rxclk generation into main module.  Need to
+    move this back to the IF, once further testing on synchronization control of the 64 MHz
+    interface. 
 
 ** Ver 1, rev. 17 (h0111 - 7/11/14)
 1)  Added rising edge detection on lime IF aclr (Master Control Bit 4, ClearRf0Rf1) to tighten 

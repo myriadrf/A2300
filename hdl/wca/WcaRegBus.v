@@ -15,14 +15,14 @@
 
 module WcaRegBus
   ( 
-	 input clock, 	//System Clock.
+	 input wire clock, 	//System Clock.
     //Module control.
-    input reset, 
+    input wire reset, 
     
     // DMA Bus interface.
-    input address,  	//address Enable
-    input write,	//Write Enable
-    input read, 	//Read Enable
+    input wire address,  	//address Enable
+    input wire write,	//Write Enable
+    input wire read, 	//Read Enable
     inout wire [7:0] dbus,
 	 
     //Internal Interface.

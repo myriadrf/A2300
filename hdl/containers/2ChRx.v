@@ -18,7 +18,7 @@
 `include "2ChRxRegisterDefs.vh"
 
 `define  IDENTIFIER	16'h0001		//2 CH Transceiver Identifier.
-`define  VERSION		16'h0111		//[ver].[rev]
+`define  VERSION		16'h0112		//[ver].[rev]
 `define  PORTCAPS		16'h0300		//2 RX / 0 TX ports defined.
 `define  PORT_COUNT  4
 `define  PORT0_ADDR  2'h0  //TX Port 0 is EP 8h 
@@ -119,7 +119,7 @@ parameter NBITS_ADDR = 2;
 //*******************************************
 	
    //Ground the expansion port interface.
-	assign ep_io = 8'h0;
+	//assign ep_io = 8'h0;
 							
 //*******************************************
 // USB PORT Interface  Control  
@@ -130,7 +130,10 @@ parameter NBITS_ADDR = 2;
 	wire  		 enableSynch; // Wire enables all fifos with the synch bit set in the configuration register.
 		
 	//Assign the LEDs to indicate which ports are enabled [ rx1, rx0, tx1, tx0]
-	assign ledSelect = { rx1_full, rx1_empty, rx0_full, rx0_empty}; 							
+	assign ledSelect = { rx1_full, rx1_empty, rx0_full, rx0_empty}; 				
+	
+//	assign ep_io     = { 4'h0, clearSynch, enableSynch, rx1_strobe, rx0_strobe};
+
 
 	//Register returns the version identifier.
 	WcaReadWordReg  #(`WCAHAL_PORTCAPS)    rr_port_caps 
@@ -325,7 +328,7 @@ parameter NBITS_ADDR = 2;
 		.rbusData(rbusData) 	
 	);	
 
-	//Assign Port Address #1 as the DDC RX0 Output.
+	//Assign Port Address #3 as the DDC RX1 Output.
 	WcaPortWrite #(.ADDR_PORT(`PORT3_ADDR)) rx1_port_write
 	(
 		.reset(reset | clearRx1),
@@ -344,6 +347,9 @@ parameter NBITS_ADDR = 2;
 	
 	
 	//Create multi-channel synchronization mode.
-	assign clearSynch = (ddc0_ctrl[6] & ddc0_ctrl[1]) | (ddc1_ctrl[6] & ddc1_ctrl[1]);
+	//WcaSynchEdgeDetect seClearSynch (  .clk(clock_dsp), .in((rx1_strobe& ddc0_ctrl[6] & ddc0_ctrl[1]) | (ddc1_ctrl[6] & ddc1_ctrl[1])),  .rising( clearSynch) );	
+	//WcaSynchEdgeDetect seEnableSynch ( .clk(clock_dsp), .in((ddc0_ctrl[6] & ddc0_ctrl[0]) | (ddc1_ctrl[6] & ddc1_ctrl[0])),  .out( enableSynch) );
+	assign clearSynch  = (ddc0_ctrl[6] & ddc0_ctrl[1]) | (ddc1_ctrl[6] & ddc1_ctrl[1]);
 	assign enableSynch = (ddc0_ctrl[6] & ddc0_ctrl[0]) | (ddc1_ctrl[6] & ddc1_ctrl[0]);
+	assign ep_io     = { 2'h0, clearSynch, enableSynch, clearRx1, clearRx0, rx1_strobewrite, rx0_strobewrite};
 endmodule

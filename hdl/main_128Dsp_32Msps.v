@@ -218,8 +218,8 @@ module main
 								.rbusCtrl(rbusCtrl), .rbusData(rbusData) );
 	
 	//Highjack expansion port for now. TODO REMOVE ME.
-	assign ep_io = { rbusCtrl[5:1], cpu_rstrobe, cpu_wstrobe, cpu_astrobe};
-
+	//assign ep_io = { rbusCtrl[5:1], cpu_rstrobe, cpu_wstrobe, cpu_astrobe};
+	
 	//CPU Micro Register interface implementation.
    WcaRegBus  cpu_if ( .clock(clock_data),  .address(cpu_astrobe), .reset(cpu_reset), 
 							  .read(cpu_rstrobe), .write(cpu_wstrobe), .dbus(cpu_dbus), 
@@ -251,10 +251,11 @@ module main
 	//through all the docuementation.  Was easiest to fix here.
 	wire gps_select;
 	assign rf_Gps_nExtSelect = gps_select;  
-	assign rf_Gps_ExtSelect = ~gps_select; //The affirmitive external select is the opposite of the register settings.
+	assign rf_Gps_ExtSelect = ~gps_select; //The affirmative external select is the opposite of the register settings.
 
 
 	//Create synchronized clear of lime interfaces.
+	wire enSynch, enRx1, enRx2, enTx1, enTx2;
 	wire aclrLime;
 	WcaSynchEdgeDetect seClearLime ( .clk(clock_dsp), .in(mstrCtrl[4]),  .rising( aclrLime) );
 
@@ -263,7 +264,7 @@ module main
 				  lime0_if ( .clock_dsp(clock_dsp), .clock_rx(clock_limeif), .clock_tx(clock_limeif), 
 							 .reset(cpu_reset | mstrCtrl[0]), .aclr( aclrLime),
                       .rbusCtrl(rbusCtrl),.rbusData(rbusData),
-                      .rf_rxclk(rf1_rxclk), .rf_rxiqsel(rf1_rxiqsel), .rf_rxen(rf1_rxen), .rf_rxdata(rf1_rxd[11:0]), 
+                      /*.rf_rxclk(rf1_rxclk),*/ .rf_rxiqsel(rf1_rxiqsel), .rf_rxen(enRx1), .rf_rxdata(rf1_rxd[11:0]), 
                       .rf_txclk(rf1_txclk), .rf_txiqsel(rf1_txiqsel), .rf_txen(rf1_txen), .rf_txdata(rf1_txd[11:0]), 
                       .rx_strobe( rx0_strobe),  .rx_iq(rx0_iq), .tx_strobe( tx0_strobe), .tx_iq( tx0_iq ) ); 
 	
@@ -272,10 +273,21 @@ module main
 					lime1_if ( .clock_dsp(clock_dsp), .clock_rx(clock_limeif), .clock_tx(clock_limeif), 
 							 .reset(cpu_reset | mstrCtrl[1]), .aclr( aclrLime),
                       .rbusCtrl(rbusCtrl), .rbusData(rbusData),
-                      .rf_rxclk(rf2_rxclk), .rf_rxiqsel(rf2_rxiqsel), .rf_rxen(rf2_rxen), .rf_rxdata(rf2_rxd[11:0]), 
+                      /*.rf_rxclk(rf2_rxclk),*/ .rf_rxiqsel(rf2_rxiqsel), .rf_rxen(enRx2), .rf_rxdata(rf2_rxd[11:0]), 
                       .rf_txclk(rf2_txclk), .rf_txiqsel(rf2_txiqsel), .rf_txen(rf2_txen), .rf_txdata(rf2_txd[11:0]), 
                       .rx_strobe( rx1_strobe),  .rx_iq(rx1_iq), .tx_strobe( tx1_strobe), .tx_iq(tx1_iq) );
-							 
+	
+	//assign enSynch = enRx1 & enRx2;
+	assign rf1_rxen = enRx1;
+	assign rf2_rxen = enRx1;
+	ODDR2 oddr1_rxclk	( .D0(1'b1), .D1(1'b0), .CE(enRx1),	.C0(clock_limeif),	.C1(~clock_limeif), .Q(rf1_rxclk) );
+	ODDR2 oddr2_rxclk	( .D0(1'b1), .D1(1'b0), .CE(enRx1),	.C0(clock_limeif),	.C1(~clock_limeif), .Q(rf2_rxclk) );	
+
+	// Push out top level synchronization signals 
+	wire [7:0] ep_io_container; // { 2'h0, clearSynch, enableSynch, clearRx1, clearRx0, rx1_strobeWrite, rx0_strobeWrite};
+	assign ep_io = { ep_io_container[2:0], aclrLime, rx1_strobe, rx0_strobe, rf2_rxiqsel, rf1_rxiqsel};
+	
+	
 	//Pass elements into WcaContainer for DSP logic..
 	WcaContainer container( .reset( cpu_reset | mstrCtrl[2]), .clockData( clock_data), .clockDsp( clock_dsp),
 			//RF0 Interface 
@@ -290,7 +302,7 @@ module main
 						ism_extselect, gps_select, rf_Gps_DcBiasSelect}), 
 						
 			//Expansion Port Interface.			
-			.ep_io( /*ep_io */),
+			.ep_io( ep_io_container),
 
 			//USB Interface 
 			.pifData( pifData),
