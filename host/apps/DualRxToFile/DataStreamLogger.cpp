@@ -185,7 +185,11 @@ int DataStreamLogger::Start(size_t msecDur, bool bIsMaster)
 	m_framesPerSec = (size_t) (framesPerSec);
 
 	//Only enable if master channel.
-	m_pDduc->Enable(bIsMaster);
+	if( bIsMaster)
+	{
+		m_pDduc->Clear();
+		m_pDduc->Enable(true);
+	}
 	return 0;
 }
 
@@ -199,6 +203,16 @@ void DataStreamLogger::Stop()
 	if( m_pPort!= NULL && m_pDduc != NULL)
 	{
 		m_pDduc->Reset(); // Reset disables the channel so no need to call Enable(0).
+
+
+		bool bIsRf0	= s_pathDef[m_idxRfPath].idRf == WCACOMP_RF0;
+
+		//Clear out any DCI command messages.
+		m_pDevice->Dci0Transport().ClearReceiveQueue();
+
+		// Configure the RF Front-end profile, gain, frequency, and Bandwidth.
+		m_pRf->RxPath( bIsRf0 ? (byte)RX0DPE_Disabled : (byte)RX1DPE_Disabled );
+
 	}
 }
 void DataStreamLogger::Terminate()
@@ -207,13 +221,6 @@ void DataStreamLogger::Terminate()
 		return;
 
 	bool bIsRf0	= s_pathDef[m_idxRfPath].idRf == WCACOMP_RF0;
-
-	//Clear out any DCI command messages.
-	m_pDevice->Dci0Transport().ClearReceiveQueue();
-
-	// Configure the RF Front-end profile, gain, frequency, and Bandwidth.
-	m_pRf->RxPath( bIsRf0 ? (byte)RX0DPE_Disabled : (byte)RX1DPE_Disabled );
-
 
 	//Wait for the transfer cancellations to complete.
 	time_t ttCur, ttEnd;

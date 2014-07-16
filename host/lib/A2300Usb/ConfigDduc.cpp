@@ -60,9 +60,27 @@ void ConfigDduc::Reset( double uiSamplingRateHz)
 */
 void ConfigDduc::Clear()
 {
+	//Add Bypass Strobe flag if Bypass Cic specified.
+	byte flags = m_byteMode | ((m_byteMode & ((byte) BypassCic)) ? DSP_DDUC_CTRL_BYPASSCICSTROBE : (byte) 0);
+	flags |= (m_bEnable) ? DSP_DDUC_CTRL_ENABLED : DSP_DDUC_CTRL_DISABLED;
+
 	TransportDci& td = m_pDevice->Dci0Transport();
-	td.SetProperty<byte>(m_idComponent, DSP_DDUC_CTRL, DSP_DDUC_CTRL_RESET);
-	Mode( m_byteMode);
+	td.SetProperty<byte>(m_idComponent, DSP_DDUC_CTRL,flags | DSP_DDUC_CTRL_RESET );
+	td.SetProperty<byte>(m_idComponent, DSP_DDUC_CTRL,flags );
+
+//	byte buff[DCI_MAX_MSGSIZE];
+//	int 			   len   = Dci_TypedProperties_Init(buff, DCI_MAX_MSGSIZE, m_idComponent,  2, NULL);
+//	Dci_Property* props = Dci_TypedProperties_GetProperties( (Dci_TypedProperties*) buff);
+//	props[0].idtype 		= PT_BYTE;
+//	props[0].idprop 		= DSP_DDUC_CTRL;
+//	props[0].value.vByte 	= flags | DSP_DDUC_CTRL_RESET;
+//
+//	props[1].idtype 		= PT_BYTE;
+//	props[1].idprop 		= DSP_DDUC_CTRL;
+//	props[1].value.vByte 	= flags;
+//
+//	TransportDci& td = m_pDevice->Dci0Transport();
+//	td.SendMsg(buff,len, false);
 }
 
 

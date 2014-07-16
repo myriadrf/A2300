@@ -169,12 +169,12 @@ static int ReceiveData (size_t msecDur)
 	}
 #endif
 
-	SLEEP_SEC(1);
+	//SLEEP_SEC(1);
 
 	//Synchronize the RF Front-ends 
 	s_cfgDevice.SynchRfState();
 
-	SLEEP_SEC(1);
+	//SLEEP_SEC(1);
 
 
 	//Start the loggers.
