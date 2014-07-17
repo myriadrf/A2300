@@ -158,22 +158,22 @@ generate if(MODE & `CIC_ENABLED)
 	end
 
 	cic_decim cic_i (
-	.sclr(clearAll),		// resets
+	.sclr(reset),			// resets
 	.din(icic_in), 		// input [11 : 0] din
 	.nd(dstrobe_in),		// input nd
 	.rate(decim_rate), 	// input [12 : 0] rate
-	.rate_we(rnd), 		// input rate_we
+	.rate_we(rnd | aclr), // input rate_we
 	.clk(clock), 			// input clk
 	.dout(icic_out), 		// output [15 : 0] dout
 	.rdy(cic_strobe_out),// output rdy
 	.rfd()); 				// output rfd
 
 	cic_decim cic_q (
-	.sclr(clearAll),		// resets
+	.sclr(reset),			// resets
 	.din(qcic_in), 	 	// input [11 : 0] din
 	.nd(dstrobe_in),		// input nd
 	.rate(decim_rate), 	// input [12 : 0] rate
-	.rate_we(rnd), 		// input rate_we
+	.rate_we(rnd | aclr),// input rate_we
 	.clk(clock), 			// input clk
 	.dout(qcic_out), 		// output [15 : 0] dout
 	.rdy(), 					// output rdy
@@ -223,6 +223,7 @@ generate if((MODE & `HBF_ENABLED))
 	*/
 	 halfband_decim hb_i (
 		.clk(clock), 				// input clk
+		.sclr(clearAll),
 		.nd(hbstrobe_in), 		// input nd
 		.rfd(), 						// output rfd
 		.rdy(dstrobe_hb_out), 	// output rdy
@@ -231,6 +232,7 @@ generate if((MODE & `HBF_ENABLED))
 	  
 	 halfband_decim hb_q(
 		.clk(clock), 		    	// input clk
+		.sclr(clearAll),
 		.nd(hbstrobe_in),     	// input nd
 		.rfd(), 				    	// output rfd
 		.rdy(), 	 					// output rdy
