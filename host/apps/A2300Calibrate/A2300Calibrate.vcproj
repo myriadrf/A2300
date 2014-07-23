@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
 	Name="A2300Calibrate"
-	ProjectGUID="{A93A8C1F-867E-4510-A4AF-78FCA6DB3B42}"
+	ProjectGUID="{F2817D77-5DA3-4295-9825-B81A5B234979}"
 	RootNamespace="A2300Calibrate"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="0"
@@ -12,14 +12,17 @@
 		<Platform
 			Name="Win32"
 		/>
+		<Platform
+			Name="x64"
+		/>
 	</Platforms>
 	<ToolFiles>
 	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="Debug"
-			IntermediateDirectory="Debug"
+			OutputDirectory="$(SolutionDir)\bin\$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(ProjectDir)\obj\$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -63,7 +66,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="A2300Usb.lib A2300Common.lib CyAPI.lib Setupapi.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(ProjectDir)/../../lib/A2300Usb/Debug&quot;;&quot;$(ProjectDir)/../../extern/CypressFx3UsbDriver/lib/x86&quot;;&quot;$(ProjectDir)/../../../common/Debug&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\lib\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(ProjectDir)/../../extern/CypressFx3UsbDriver/lib/x86&quot;"
 				IgnoreDefaultLibraryNames="LIBC;LIBCMT"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -93,8 +96,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
+			OutputDirectory="$(SolutionDir)\bin\$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(ProjectDir)\obj\$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -136,13 +139,165 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="A2300Common.lib A2300Usb.lib CyAPI.lib Setupapi.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(ProjectDir)/../../lib/A2300Usb/Release&quot;;&quot;$(ProjectDir)/../../extern/CypressFx3UsbDriver/lib/x86&quot;;&quot;$(ProjectDir)/../../../common/Release&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\lib\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(ProjectDir)/../../extern/CypressFx3UsbDriver/lib/x86&quot;"
 				IgnoreDefaultLibraryNames="LIBC;LIBCMT"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug|x64"
+			OutputDirectory="$(SolutionDir)\bin\$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(ProjectDir)\obj\$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TargetEnvironment="3"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\..\common&quot;;&quot;$(ProjectDir)\..\..\extern\CypressFx3UsbDriver\include&quot;;&quot;$(ProjectDir)\..\..\A2300Usb&quot;;&quot;$(ProjectDir)\..\..\include&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;"
+				MinimalRebuild="true"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				UsePrecompiledHeader="0"
+				WarningLevel="4"
+				Detect64BitPortabilityProblems="false"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="A2300Usb.lib A2300Common.lib CyAPI.lib Setupapi.lib"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\lib\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(ProjectDir)/../../extern/CypressFx3UsbDriver/lib/x64&quot;"
+				IgnoreDefaultLibraryNames="LIBC;LIBCMT"
+				GenerateDebugInformation="true"
+				SubSystem="1"
+				TargetMachine="17"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|x64"
+			OutputDirectory="$(SolutionDir)\bin\$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(ProjectDir)\obj\$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TargetEnvironment="3"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="3"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\..\common&quot;;&quot;$(ProjectDir)\..\..\extern\CypressFx3UsbDriver\include&quot;;&quot;$(ProjectDir)\..\..\A2300Usb&quot;;&quot;$(ProjectDir)\..\..\include&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;"
+				RuntimeLibrary="2"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="false"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="A2300Common.lib A2300Usb.lib CyAPI.lib Setupapi.lib"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\lib\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(ProjectDir)/../../extern/CypressFx3UsbDriver/lib/x64&quot;"
+				IgnoreDefaultLibraryNames="LIBC;LIBCMT"
+				GenerateDebugInformation="true"
+				SubSystem="1"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="17"
 			/>
 			<Tool
 				Name="VCALinkTool"
