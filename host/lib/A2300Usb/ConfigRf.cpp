@@ -113,12 +113,12 @@ RfBandwidthValuesEnum ConfigRf::RxBandwidth( RfBandwidthValuesEnum bw)
 RfBandwidthValuesEnum ConfigRf::RxBandwidth( ) const
 {
 	return m_rxbw;
-}
+}6
 
 uint32 ConfigRf::TxFrequency( uint32 freqkHz)
 {
 	TransportDci& td = m_pDevice->Dci0Transport();
-	m_txfreq = std::min<uint32>( 300000, std::max<uint32>( 3800000, freqkHz));
+	m_txfreq = std::max<uint32>( 300000, std::min<uint32>( 3800000, freqkHz));
 	td.SetProperty<uint32>(m_idComponent, RFPROP_TXFREQ, m_txfreq);
 	return m_txfreq;
 }
@@ -130,7 +130,7 @@ uint32 ConfigRf::TxFrequency( ) const
 byte ConfigRf::TxGain( byte gainDb)
 {
 	TransportDci& td = m_pDevice->Dci0Transport();
-	m_txgain = std::min<byte>( 0, std::max<byte>( 60, gainDb));
+	m_txgain = std::max<byte>( 0, std::min<byte>( 60, gainDb));
 	td.SetProperty<byte>(m_idComponent, RFPROP_TXGAIN, m_txgain);
 	return m_txgain;
 }

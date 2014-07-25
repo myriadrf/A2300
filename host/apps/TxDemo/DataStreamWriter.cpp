@@ -21,7 +21,7 @@ ARGPARSER_BEGIN_MAP( s_argsLogger )
 	ARGPARSER_VAR( "freq",		ArgParser::Entry::DOUBLE, "2420",	"Receiver center frequency in MHz. Valid range is between 300 MHz to 3.8 MHz")
 	ARGPARSER_VAR( "if-freq",	ArgParser::Entry::DOUBLE, "0",		"Digital Upconverter Frequency Offset in Hz")
 	ARGPARSER_VAR( "gain",		ArgParser::Entry::LONG,   "9",		"Receiver gain in dB. Valid range is between 0 dB to 60 dB")
-	ARGPARSER_VAR( "bw",		ArgParser::Entry::DOUBLE, "5",		"Receiver front-end bandwidth in MHz. Valid range is 1.5 MHz to 28 MHz.")
+	ARGPARSER_VAR( "bw",		ArgParser::Entry::DOUBLE, "3",		"Receiver front-end bandwidth in MHz. Valid range is 1.5 MHz to 28 MHz.")
 	ARGPARSER_VAR( "rate",		ArgParser::Entry::DOUBLE, "2",		"Host sample rate in MS/s. Valid range is 3.90625 kS/s to 32 MS/s.")
 ARGPARSER_END_MAP
 
