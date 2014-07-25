@@ -140,8 +140,9 @@ parameter NBITS_ADDR = 2;
 	wire  [1:0]  portCmd;	
 		
 	//Assign the LEDs to indicate which ports are enabled [ rx1, rx0, tx1, tx0]
-	assign ledSelect = { rx1_full, tx1_empty, rx0_full, tx0_empty}; 							
-
+	//assign ledSelect = { rx1_full, tx1_empty, rx0_full, tx0_empty}; 							
+	assign ledSelect = { tx0_duc_bbstrobe, tx0_duc_cfg[0], tx0_full, tx0_empty}; 							
+	
 	//Register returns the version identifier.
 	WcaReadWordReg  #(`WCAHAL_PORTCAPS)    rr_port_caps 
 						   (.clock( clockData), .reset( reset), 	
@@ -176,46 +177,6 @@ parameter NBITS_ADDR = 2;
 								rx0_full | rx0_empty |
 								tx0_full | tx0_empty;
 
-//*******************************************
-// Low Speed Data Ports
-//*******************************************
-/*
-	wire [23:0] lsdp_rate;
-	wire [7:0]  lsdp_control;
-
-	//8bit LSDP Control Register
-	WcaWriteByteReg #(`WCAHAL_LSDP_CONTROL) wr_lsdp_control
-							(.reset(reset), .out( lsdp_control), 
-							 .rbusCtrl(rbusCtrl), .rbusData(rbusData) );	
-
-	//24bit Data Rate Configuration Register.
-	WcaWriteDwordReg #(`WCAHAL_LSDP_RATE) wr_lsdp_rate
-							(.reset(reset), .out( lsdp_rate), 
-							 .rbusCtrl(rbusCtrl), .rbusData(rbusData) );	
- 
-	//Keep track of fifo status.
-	WcaReadByteReg #(`WCAHAL_LSDP_STATUS) lsdpstatus
-	( .reset(reset), .clock(clkSample), .enableIn(1'b1), 
-		.in({ 
-				rx1_full, rx1_empty,
-				tx1_full, tx1_empty,
-				rx0_full, rx0_empty,
-				tx0_full, tx0_empty
-		}), 
-	  .rbusCtrl(rbusCtrl), .rbusData(rbusData) );
-
-	//Data Create one sample clock for now.
-	assign clkLsdpSample = tx0_strobe; // Use a single clock for everything.
-	
-	//Generate lsdp strobe given the rate provided by the user.
-	WcaDspStrobe  lsdp_strobe_gen (
-		.clock(clkLsdpSample),  	.reset(reset), .enable(1'h1), 
-		.rate(rate), .strobe(lsdp_strobe), .count( strobecount)
-	);	
-	  
-	  
-*/
-
 	//******************************************
 	// Channel TX0 Implementation.
    //*******************************************
@@ -223,7 +184,6 @@ parameter NBITS_ADDR = 2;
 	wire tx0_full, tx0_empty, tx0_afull, tx0_aempty;
 	wire [31:0] iq_port0;
 	wire [23:0] bbtx0_iq;
-
 	wire [7:0]  tx0_duc_cfg;			
 	wire [12:0] tx0_duc_rateinterp;	
 	wire			tx0_duc_rateinterp_we;	

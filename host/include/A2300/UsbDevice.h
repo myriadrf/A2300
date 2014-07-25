@@ -25,10 +25,15 @@
 #define A2300_PRODUCT_ID  ((uint16)0x608B)	//Registered ASR-2300 PID.
 #define A2300_ADDR_UNDEF  ((uint16)0xffff)
 
-#define A2300_DciIdc0_EpIn ((byte)0x82)
+#define A2300_DciIdc0_EpIn	((byte)0x82)
 #define A2300_DciIdc0_EpOut ((byte)0x1)
-#define A2300_DciIdc1_EpIn ((byte)0x84)
+#define A2300_DciIdc1_EpIn	((byte)0x84)
 #define A2300_DciIdc1_EpOut ((byte)0x3)
+#define A2300_Port0_Out		((byte)0x08)
+#define A2300_Port0_In		((byte)0x88)
+#define A2300_Port1_Out		((byte)0x09)
+#define A2300_Port1_In		((byte)0x89)
+
 
 namespace A2300
 {
