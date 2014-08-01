@@ -113,7 +113,7 @@ RfBandwidthValuesEnum ConfigRf::RxBandwidth( RfBandwidthValuesEnum bw)
 RfBandwidthValuesEnum ConfigRf::RxBandwidth( ) const
 {
 	return m_rxbw;
-}6
+}
 
 uint32 ConfigRf::TxFrequency( uint32 freqkHz)
 {

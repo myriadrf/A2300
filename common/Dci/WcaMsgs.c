@@ -247,7 +247,7 @@ byte* Dci_BinaryImageTransferFrame_GetData( Dci_BinaryImageTransferFrame* pmsg)
 */
 int Dci_BinaryImageTransferStatus_Init( void* buff,
 		byte idComponent, byte idTransfer, uint16 idFrame,
-		uint32 ctTransferred, byte idStatus)
+		uint32 ctTransferred, byte idStatus, uint16 chksum)
 {
 	Dci_BinaryImageTransferStatus* pmsg;
 	Dci_Hdr_Init( buff, 0x21, 0x06);
@@ -259,6 +259,7 @@ int Dci_BinaryImageTransferStatus_Init( void* buff,
 	pmsg->idFrame				= idFrame;
 	pmsg->ctTransferred			= ctTransferred;
 	pmsg->idStatus				= idStatus;
+	pmsg->chksum				= chksum;
 	return sizeof( Dci_BinaryImageTransferStatus);
 
 }

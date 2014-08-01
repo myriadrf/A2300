@@ -206,7 +206,7 @@ typedef struct Dci_BinaryImageTransfer
 int Dci_BinaryImageTransfer_Init( void* buff,
 			 byte idComponent,    byte flags,   pcstr  szName,
 			 pcstr szDescription, uint32  sizeImg, uint16 sizeFrame,
-			 uint32 ctFrames, byte idTransfer );
+			 uint32 ctFrames, byte idTransfer);
 
 /**
 * Base class message for Binary Image Transfer Frames (21,04)
@@ -252,7 +252,8 @@ enum Dci_BitStatusEnum
     BSE_WriteError = 4,
     BSE_ReadError = 5,
     BSE_OperationNotAvailable =6,
-	BSE_OperationCancelled = 7
+	BSE_OperationCancelled = 7,
+	BSE_InvalidChecksum    = 8
 };
 
 /**
@@ -266,6 +267,7 @@ typedef struct Dci_BinaryImageTransferStatus
 	uint16		idFrame;
 	uint32		ctTransferred;
 	byte 	  	idStatus;
+	uint16		chksum;
 } Dci_BinaryImageTransferStatus;
 
 /**
@@ -273,7 +275,7 @@ typedef struct Dci_BinaryImageTransferStatus
 */
 int Dci_BinaryImageTransferStatus_Init( void* buff,
 		byte idComponent, byte idTransfer, uint16 idFrame,
-		uint32 ctTransferred, byte idStatus);
+		uint32 ctTransferred, byte idStatus, uint16 chksum);
 
 /*****************************************************************************/
 /*****************************************************************************/

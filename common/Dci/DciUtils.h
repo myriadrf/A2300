@@ -223,6 +223,7 @@ typedef struct Dci_BitOperation
 	bool   bTargetTransfer;  //if true a target transfer otherwise source transfer.
 	Dci_BitOpStateEnum state;
 	Dci_BinaryImageTransfer bitinfo;
+	uint16   chksum;  //accumulated checksum.
 } Dci_BitOperation;
 
 /**
@@ -250,7 +251,7 @@ typedef int  (*SetFrameData)(Dci_BitOperation* pbop, byte* buff, uint16 ctBytes 
 /**
 * Handler called when transfer operation completes with the specified status.
 */
-typedef void (*TransferComplete) (Dci_BitOperation* pbop, byte idStatus);
+typedef void (*TransferComplete) (Dci_BitOperation* pbop, byte idStatus, uint16 chksumTarget);
 
 /**
 * Function pointer callback for sending a DCI Message.

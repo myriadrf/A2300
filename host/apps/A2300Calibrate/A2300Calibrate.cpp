@@ -199,7 +199,7 @@ static int DoCalibrate ()
 	//***********************************
 	// CALIBRATE EACH RF COMPONENT
 	//***********************************
-	for (byte nn = 0; nn < (byte) numRxComponents; ++nn) {
+	for (byte nn = 1; nn < (byte) numRxComponents; ++nn) {
 
 		printf( "******************************\n");
 		printf( "* CALIBRATING RF%d \n", (nn+1));
@@ -299,7 +299,7 @@ static int DoCalibrate ()
 			// Calibrate this path
 			printf ("  Calibrating\n");
 			memset(buff, 0, sizeof(buff));
-			msgSize = Dci_ExecuteAction_Init (buff, DCI_MAX_MSGSIZE, tRxInfo.cRf.componentId(), RFACTION_SAVERXPROFILE, 0, NULL);
+			msgSize = Dci_ExecuteAction_Init (buff, DCI_MAX_MSGSIZE, tRxInfo.cRf.componentId(), RFACTION_RXCALIBRATE, 0, NULL);
 			ctSent = tDci.SendMsg (buff, (size_t) msgSize, true);
 			// get ack, and verify
 			SLEEP_SEC(1);

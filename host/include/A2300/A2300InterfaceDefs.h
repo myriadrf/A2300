@@ -89,10 +89,10 @@
 #define RFACTION_RXCALIBRATE	((byte)0x82)  //Calibrate the receiver using the current configuration
 #define RFACTION_TXCALIBRATE	((byte)0x83)  //Calibrate the transmitter configuration using the current configuration.
 #define RFACTION_TOPCALIBRATE   ((byte)0x84)  //Calibrate Top Level.
-#define RFACTION_SAVERXPROFILE	((byte)0x85)  //Updates the stored RX profile with calibration data
-									  //Must be in cached mode to actually save the data.
-#define RFACTION_SAVETXPROFILE	((byte)0x86)  //Updates the stored TX profile with calibration data
-									  //Must be in cached mode to actually save the data.
+#define RFACTION_SAVERXPROFILE	((byte)0x85)  //Updates the current cache RX Profile data using the current lime
+											  //chip configuration.  Must be in cache mode for this to work.
+#define RFACTION_SAVETXPROFILE	((byte)0x86)  //Updates the current cache TX Profile data using the current lime
+											  //chip configuration.  Must be in cache mode for this to work.
 #define RFACTION_RESETTOPCALIB  ((byte)0x87)  //Resets the top level calibration of the RF Component
 #define RFACTION_RESETRXCALIB  	((byte)0x88)  //Resets the RX calibration of the RF component.
 #define RFACTION_RESETTXCALIB  	((byte)0x89)  //Resets the TX calibration of the RF component.

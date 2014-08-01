@@ -90,7 +90,7 @@ static byte OnBitInitiateSourceTransfer(Dci_BitOperation* pbop);
 static byte OnBitInitiateTargetTransfer(Dci_BitOperation* pbop);
 static int OnBitGetFrameData(Dci_BitOperation* pbop, byte* buff, uint16 ctBytes);
 static int OnBitSetFrameData(Dci_BitOperation* pbop, byte* buff, uint16 ctBytes);
-static void OnBitTransferComplete(Dci_BitOperation* pbop, byte idStatus);
+static void OnBitTransferComplete(Dci_BitOperation* pbop, byte idStatus, uint16 chksum);
 static int OnSendMessage(byte* pmsg, int len, bool bAckRequired,	Dci_Context* pctxt );
 
 /******************************************************************
@@ -385,7 +385,7 @@ static int DoBitTransfer()
 
 	while (cntLoop < 20) {
 		memset(buff, 0, sizeof(buff));
-		nread = s_ptd->ReceiveMsg(buff, MAX_MSG_SIZE);
+		nread = s_ptd->ReceiveMsg(buff, MAX_MSG_SIZE,5);
 		if (nread > 0) {
 
 			Dci_Hdr* pMsg = (Dci_Hdr*) buff;
@@ -626,13 +626,15 @@ static int OnBitSetFrameData(Dci_BitOperation* pbop, byte* buff,
 	return ((int) nwritten);
 }
 
-static void OnBitTransferComplete(Dci_BitOperation* /* pbop */, byte idStatus) {
+static void OnBitTransferComplete(Dci_BitOperation*  pbop, byte idStatus, uint16 chksum) {
 
 	const char* szStatus[] = {"Initiating", "Complete", "ReadyNext", "Frame Error",
 							   "Write Error", "Read Error", "Operation Not Available",
-							   "Operation Cancelled"};
+							   "Operation Cancelled", "InvalidChecksum"};
 	s_idLastBitStatus = idStatus;
 	printf( "\n  BIT Operation Ended: %s\n", szStatus[idStatus]);
+	if( idStatus == BSE_InvalidChecksum)
+		printf("\n   Target (chksum = %04X), Source (chksum = %04X)\n", chksum, pbop->chksum);
 }
 
 /**
