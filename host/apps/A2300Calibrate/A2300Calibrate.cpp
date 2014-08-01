@@ -199,7 +199,7 @@ static int DoCalibrate ()
 	//***********************************
 	// CALIBRATE EACH RF COMPONENT
 	//***********************************
-	for (byte nn = 1; nn < (byte) numRxComponents; ++nn) {
+	for (byte nn = 0; nn < (byte) numRxComponents; ++nn) {
 
 		printf( "******************************\n");
 		printf( "* CALIBRATING RF%d \n", (nn+1));
