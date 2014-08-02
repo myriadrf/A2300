@@ -524,7 +524,7 @@ static void PrintUsage() {
 static void DumpDeviceInformation ()
 {
 	std::string sId = s_cfgDevice.IdentifyDevice();
-	std::string sVer = s_cfgDevice.FirmwareVersion(0);
+	std::string sVer = s_cfgDevice.FirmwareVersion();
 	uint16 idFpga = s_cfgDevice.FpgaId();
 	uint16 verFpga = s_cfgDevice.FpgaVersion();
 	int iVer = (verFpga >> 8);

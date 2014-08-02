@@ -200,6 +200,14 @@ typedef struct Dci_BinaryImageTransfer
 	byte		idTransfer;
 } Dci_BinaryImageTransfer;
 
+enum Dci_BitConfigFlags
+{
+	BCF_Volatile			=0x0,
+	BCF_Saved				=0x1,
+	BCF_TerminateExisting 	=0x4,
+	BCF_ChecksumValidation	=0x8
+};
+
 /**
 * Initializes the BinaryImageTransfer (21,03) message.
 */
@@ -291,6 +299,16 @@ typedef struct Dci_BinaryImageTransferQuery
 	byte		idTransfer;
 	byte		flags;
 } Dci_BinaryImageTransferQuery;
+
+enum Dci_BitQueryFlags
+{
+	BQF_TransferAll 				= 0x0,
+	BQF_TransferInfo 				= 0x1,
+	BQF_TransferAllInfos 			= 0x2,
+	BQF_TerminateExisting		 	= 0x4,
+	BQF_ChecksumValidation			= 0x8
+};
+
 
 /**
 * Initializes the Dci_BinaryImageTransferQuery (21,83)

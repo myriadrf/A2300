@@ -69,7 +69,7 @@ int main(int, char**)
 
 				//Print out Device information
 				std::string sId 		= config.IdentifyDevice();
-				std::string sVer 		= config.FirmwareVersion(0);
+				std::string sVer 		= config.FirmwareVersion();
 				uint16	    idFpga 		= config.FpgaId();
 				uint16 		verFpga 	= config.FpgaVersion();
 				int  		iVer = (verFpga>>8);

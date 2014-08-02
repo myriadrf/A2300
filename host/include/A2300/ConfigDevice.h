@@ -62,7 +62,8 @@ public:
 	TransportDci& Dci1Transport();
 
 	std::string IdentifyDevice();
-	std::string FirmwareVersion( int idWhich);
+	std::string FirmwareVersion( );
+	bool FirmwareVersionRaw(Dci_VersionInfo* pvi); //Returns the Raw Version DCI message
 	uint16 FpgaId();
 	uint16 FpgaVersion();
 

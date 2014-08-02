@@ -357,11 +357,30 @@ static int DoBitTransfer()
 	byte idStatus = BSE_OperationNotAvailable;
 
 	printf("\n** Initiating BIT Operation ... \n");
+
+	//Get firmware version to see if advanced bit operations supported.
+	bool bChecksum = false;
+	bool bOverride = false;
+	Dci_VersionInfo vi;
+	if( s_config.FirmwareVersionRaw( &vi))
+	{
+		int   ver = (vi.VerMajor <<8) + vi.VerMinor;
+		bChecksum = ver >= 0x0101;  //must be greater than 1.1.0 
+		bOverride = ver >= true;
+
+		printf(" - Checksum Validation Enabled\n - Existing Transfers Will be Terminated\n");
+	}
+
 	fflush (stdout);
 
-	if (s_pOp->dir == e_Download) {
+	if (s_pOp->dir == e_Download) 
+	{
+		byte flags = 1; // Save the data.
+		if( bChecksum) flags |= BCF_ChecksumValidation;
+		if( bOverride) flags |= BCF_TerminateExisting;
+
 		idStatus = Dci_BitInitiateTargetTransfer(&s_bitmgr, &s_BITClient,
-				s_pOp->idTargetComponent, 1, 0, &ctxt);
+				s_pOp->idTargetComponent, flags, 0, &ctxt);
 		// flags: 1 == save; 0 means don't save
 
 		if (idStatus != BSE_InitiatingTransfer) {
@@ -374,9 +393,15 @@ static int DoBitTransfer()
 				return -6;
 			}
 		}
-	} else {
+	} 
+	else 
+	{
+		byte flags = 1; // Save the data.
+		if( bChecksum) flags |= BQF_ChecksumValidation;
+		if( bOverride) flags |= BQF_TerminateExisting;
+
 		Dci_BitRequestSourceTransfer(&s_bitmgr, &s_BITClient,
-				s_pOp->idTargetComponent, 0, 0, &ctxt);
+				s_pOp->idTargetComponent, flags, 0, &ctxt);
 	}
 
 	// enter while loop to process messages while BIT operation completes
@@ -555,7 +580,7 @@ static bool IsArgumentName( pcstr arg, pcstr szName, size_t minChars)
 static void DumpDeviceInformation()
 {
 	std::string sId = s_config.IdentifyDevice();
-	std::string sVer = s_config.FirmwareVersion(0);
+	std::string sVer = s_config.FirmwareVersion();
 	uint16 idFpga = s_config.FpgaId();
 	uint16 verFpga = s_config.FpgaVersion();
 	int iVer = (verFpga >> 8);

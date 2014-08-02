@@ -81,10 +81,24 @@ std::string ConfigDevice::IdentifyDevice()
 	return std::string("-N/A-");
 }
 
-std::string ConfigDevice::FirmwareVersion( int /*idWhich*/)
+std::string ConfigDevice::FirmwareVersion( )
+{
+	Dci_VersionInfo vi;
+	if( FirmwareVersionRaw( &vi) )
+	{
+		char sbuff[256];
+		sprintf(sbuff, "%02d.%02d.%02d - %04d",
+				(int) vi.VerMajor, (int) vi.VerMinor,
+				(int) vi.VerMaintenance, (int) vi.Revision);
+		return std::string( sbuff);
+	}
+	else
+		return std::string("-N/A-");
+}
+
+bool ConfigDevice::FirmwareVersionRaw(Dci_VersionInfo* pvi)
 {
 	byte buff[DCI_MAX_MSGSIZE];
-	char sbuff[256];
 	TransportDci& dt = m_dci0.transport;
 	int len = Dci_VersionInfoQuery_Init(buff);
 
@@ -94,13 +108,11 @@ std::string ConfigDevice::FirmwareVersion( int /*idWhich*/)
 		Dci_VersionInfo* pinfo = (Dci_VersionInfo*) buff;
 		if( len > 0 && Dci_Hdr_MatchesId1(&(pinfo->hdr), Dci_VersionInfo_Id))
 		{
-			sprintf(sbuff, "%02d.%02d.%02d - %04d",
-					(int) pinfo->VerMajor, (int) pinfo->VerMinor,
-					(int) pinfo->VerMaintenance, (int) pinfo->Revision);
-			return std::string( sbuff);
+			memcpy( pvi, buff, sizeof( Dci_VersionInfo));
+			return true;
 		}
 	}
-	return std::string("-N/A-");
+	return false;
 }
 
 uint16 ConfigDevice::FpgaId()
