@@ -16,6 +16,7 @@
 
 #include "../System/DataTypes.h"
 #include "DciUtils.h"
+#include "BinaryStreamFormatter.h"
 #include "StandardMsgs.h"
 #include <string.h>
 
@@ -109,10 +110,17 @@ void Dci_MapMgr_Add( Dci_MapMgr* pmgr,  Dci_MapEntry* pentry)
 			{
 				if( pcur->idType > pentry->idType)
 				{
-					//Insert at current node or root if that is					//where we are.
-					if( pprev != NULL) pprev->pNextType = pentry;
-					else			   pmgr->proot = pentry;
-
+					//Insert at current node or root if that is 
+					//where we are.
+					if( pprev != NULL)
+					{ 
+						if( pprev->pNextCategory == pcur ) 	pprev->pNextCategory = pentry;
+						else   								pprev->pNextType = pentry;
+					}
+					else
+					{
+						pmgr->proot = pentry;
+					}
 					//If pcur is a CategoryNode, move next category
 					//to pentry;
 					if( pcur->pNextCategory != NULL)
@@ -186,7 +194,8 @@ void Dci_MapMgr_Process( Dci_MapMgr* pmgr, Dci_Context* pctxt)
 					{
 						//If basic message handler or specialized
 						//handler returned true, call message handler.
-						if( pnode->idHandlerType == 0							|| (*(s_HandlerTypes[ pnode->idHandlerType]))( pnode, pctxt))
+						if( pnode->idHandlerType == 0 
+							|| (*(s_HandlerTypes[ pnode->idHandlerType]))( pnode, pctxt))
 						{
 							(*(pnode->fncHandler))(pctxt);
 						}
@@ -294,6 +303,20 @@ bool OnWcaPropQuery( Dci_MapEntry* pentry, Dci_Context* pctxt)
 // DCI BIT Framework.
 //*****************************************************************************
 
+//Helper makes code more readable.
+#define  UPDATE_CHECKSUM(  pbop, pdata, ctBytes) \
+	pbop->chksum = ((pbop->chksum + (uint16) Dci_Bsf_CalcChecksum( pdata, ctBytes )) & 0x7FFF)
+
+//Helper resets existing operation so new one can start.
+void CancelExistingOperation(  Dci_BitOperation* pbop,Dci_BitClient* pClient)
+{
+	if( pClient->fncTransferComplete != NULL )
+		(*(pClient->fncTransferComplete))( pbop, BSE_OperationCancelled, pbop->chksum);
+
+	pbop->idFrame = 0;
+	pbop->state = DCI_BOS_IDLE;	
+}
+
 /**
 * Initializes the DCI BIT Client to a safe state.  Function
 * callbacks must still be set or it will not work.
@@ -339,7 +362,8 @@ Dci_BitClient* GetBitClient( Dci_BitOperationMgr* pmgr, byte idComponent )
 	Dci_BitClient* piter = pmgr->plistClients;
 	while( piter != NULL)
 	{
-		if( piter->idComponent == idComponent)			break;
+		if( piter->idComponent == idComponent)
+			break;
 		else
 			piter = piter->pNextClient;
 	}
@@ -372,7 +396,7 @@ bool Dci_BitProcessDciMsg( Dci_BitOperationMgr* pmgr, Dci_Context* pctxt)
 		////////////////////////////////////////////////////
 		// Process Target Transfer Operation.
 		////////////////////////////////////////////////////
-		case Dci_BinaryImageTransfer_Id:
+	case Dci_BinaryImageTransfer_Id:
 		{
 			Dci_BinaryImageTransfer *pBit = (Dci_BinaryImageTransfer*) pctxt->pMsg;
 
@@ -380,10 +404,17 @@ bool Dci_BitProcessDciMsg( Dci_BitOperationMgr* pmgr, Dci_Context* pctxt)
 			//and Client supports the type of operation.
 			idStatus = BSE_OperationNotAvailable; //Set default status.
 			idTransfer = pBit->idTransfer;
-			if(    ( idTransfer < DCI_BITMAXOPS)				&& (pmgr->aBitOps[ idTransfer ].state == DCI_BOS_IDLE)				&& (pClient->fncInitiateTargetTransfer != NULL)	)
+			if(    ( idTransfer < DCI_BITMAXOPS)				
+				&& (pmgr->aBitOps[ idTransfer ].state == DCI_BOS_IDLE || (pBit->flags & BCF_TerminateExisting) == BCF_TerminateExisting)				
+				&& (pClient->fncInitiateTargetTransfer != NULL)	)
 			{
 				//Set up the operation.
 				pbop = pmgr->aBitOps + idTransfer;
+				
+				//Cancel any existing operation
+				CancelExistingOperation( pbop, pClient);
+				
+				//Update with new operation information.
 				pbop->bitinfo = *pBit;
 
 				//Let Client get a whack at initializing.
@@ -393,14 +424,16 @@ bool Dci_BitProcessDciMsg( Dci_BitOperationMgr* pmgr, Dci_Context* pctxt)
 				//as active.
 				if( idStatus == BSE_InitiatingTransfer)
 				{
-				 	pbop->idFrame = 0;					pbop->state = DCI_BOS_TARGET_TRANSFER;
+					pbop->idFrame = 0;					
+					pbop->state   = DCI_BOS_TARGET_TRANSFER;
+					pbop->chksum  = 0;
 				}
 			}
 
 			//Send a response that we are initiating.
 			lenMsg = Dci_BinaryImageTransferStatus_Init(				
 				buff, pbop->bitinfo.idComponent,				
-				idTransfer, pbop->idFrame, 0, idStatus);
+				idTransfer, pbop->idFrame, 0, idStatus, pbop->chksum);
 
 			(*(pmgr->fncSendDciMessage))(buff, lenMsg, false, pctxt);
 		}
@@ -409,7 +442,7 @@ bool Dci_BitProcessDciMsg( Dci_BitOperationMgr* pmgr, Dci_Context* pctxt)
 		////////////////////////////////////////////////////
 		// Process Request to Initiate Source Transfer.
 		////////////////////////////////////////////////////
-		case Dci_BinaryImageTransferQuery_Id:
+	case Dci_BinaryImageTransferQuery_Id:
 		{
 			bool bResetState = false;
 			Dci_BinaryImageTransferQuery* pbitq = (Dci_BinaryImageTransferQuery*)pctxt->pMsg;
@@ -420,10 +453,17 @@ bool Dci_BitProcessDciMsg( Dci_BitOperationMgr* pmgr, Dci_Context* pctxt)
 			idTransfer = pbitq->idTransfer;
 			pbop 	   = pmgr->aBitOps + idTransfer; //don't use until validated.
 
-			if(    ( idTransfer < DCI_BITMAXOPS)				&& (pmgr->aBitOps[ idTransfer].state == DCI_BOS_IDLE)				&& (pClient->fncInitiateSourceTransfer != NULL)	)
+			if(  ( idTransfer < DCI_BITMAXOPS) 
+				&& (pmgr->aBitOps[ idTransfer].state == DCI_BOS_IDLE || (pbitq->flags & BQF_TerminateExisting) == BQF_TerminateExisting)				
+				&& (pClient->fncInitiateSourceTransfer != NULL)	)
 			{
+				Dci_BinaryImageTransfer* pbit;
+				
+				//Cancel any existing operation
+				CancelExistingOperation( pbop, pClient);
+				
 				//Initialize the BIT Transfer information
-				Dci_BinaryImageTransfer* pbit = &(pbop->bitinfo);
+				pbit = &(pbop->bitinfo);
 				Dci_BinaryImageTransfer_Init( pbit, pbitq->idComponent,
 					pbitq->flags, NULL,	NULL, 0, 256, 0, idTransfer);
 
@@ -437,17 +477,19 @@ bool Dci_BitProcessDciMsg( Dci_BitOperationMgr* pmgr, Dci_Context* pctxt)
 			{
 				//Send a BIT Transfer Message telling target we are going to
 				//send data.
-				(*(pmgr->fncSendDciMessage))( (byte*) &(pbop->bitinfo),					sizeof( Dci_BinaryImageTransfer), false, pctxt);
+				(*(pmgr->fncSendDciMessage))( (byte*) &(pbop->bitinfo),	sizeof( Dci_BinaryImageTransfer), false, pctxt);
 
 				//Mark this operation as in use.
 				pbop->idFrame = 0;
 				pbop->state = DCI_BOS_SOURCE_TRANSFER;
+				pbop->chksum = 0;
 			}
 			else //Report error
 			{
 				//Send a response that we are initiating.
-				lenMsg = Dci_BinaryImageTransferStatus_Init(					buff, pbop->bitinfo.idComponent,					idTransfer, pbop->idFrame, 0, idStatus);
-
+				lenMsg = Dci_BinaryImageTransferStatus_Init(					
+					buff, pbop->bitinfo.idComponent,					
+					idTransfer, pbop->idFrame, 0, idStatus, pbop->chksum);
 				(*(pmgr->fncSendDciMessage))(buff, lenMsg, false, pctxt);
 
 				//Make sure we reset the operation.
@@ -460,7 +502,7 @@ bool Dci_BitProcessDciMsg( Dci_BitOperationMgr* pmgr, Dci_Context* pctxt)
 		////////////////////////////////////////////////////
 		//Process Frame transfer Message.
 		////////////////////////////////////////////////////
-		case Dci_BinaryImageTransferFrame_Id:
+	case Dci_BinaryImageTransferFrame_Id:
 		{
 			byte *pdata;
 			Dci_BinaryImageTransferFrame* pBitf = (Dci_BinaryImageTransferFrame*) pctxt->pMsg;
@@ -472,20 +514,29 @@ bool Dci_BitProcessDciMsg( Dci_BitOperationMgr* pmgr, Dci_Context* pctxt)
 
 			//Look up requested operation and make sure it is in target transfer
 			//and Client supports the type of operation.
-			if(    ( idTransfer < DCI_BITMAXOPS )				&& (pbop->state == DCI_BOS_TARGET_TRANSFER)				&& (pClient->fncSetFrameData != NULL)	)
+			if(    ( idTransfer < DCI_BITMAXOPS ) && (pbop->state == DCI_BOS_TARGET_TRANSFER) && (pClient->fncSetFrameData != NULL)	)
 			{
 				// Check frame id and set up status.
 				idStatus = (pBitf->idFrame != pbop->idFrame)
-					? BSE_FrameError					: ( pbop->idFrame < (pbop->bitinfo.ctFrames-1))						? BSE_ReadyNextFrame : BSE_TransferComplete;
+					? BSE_FrameError 
+					: ( pbop->idFrame < (pbop->bitinfo.ctFrames-1)) 
+						? BSE_ReadyNextFrame : BSE_TransferComplete;
 
-				//Let the client set the frame data. If they do not				//return the number of bytes in the frame, then a write_error
+				//Let the client set the frame data. If they do not				
+				//return the number of bytes in the frame, then a write_error
 				//occured.
 				pdata = Dci_BinaryImageTransferFrame_GetData(pBitf);
+
+				//Calculate checksum if checksum verification is enabled.
+				if( (pbop->bitinfo.flags & BCF_ChecksumValidation) == BCF_ChecksumValidation)
+					UPDATE_CHECKSUM(  pbop, pdata, pBitf->ctBytes);
+
 				if( (*(pClient->fncSetFrameData))( pbop, pdata, pBitf->ctBytes)	!= pBitf->ctBytes)
 					idStatus = BSE_WriteError;
 
 				//Send the current status so process can continue.
-				lenMsg = Dci_BinaryImageTransferStatus_Init( buff,					pbop->bitinfo.idComponent,					pBitf->idTransfer, pbop->idFrame, pBitf->ctBytes, idStatus);
+				lenMsg = Dci_BinaryImageTransferStatus_Init( buff, pbop->bitinfo.idComponent,
+							pBitf->idTransfer, pbop->idFrame, pBitf->ctBytes, idStatus, pbop->chksum);
 				(*(pmgr->fncSendDciMessage))(buff, lenMsg, false, pctxt);
 
 				//If ready for next frame set the expected id.
@@ -496,7 +547,7 @@ bool Dci_BitProcessDciMsg( Dci_BitOperationMgr* pmgr, Dci_Context* pctxt)
 				else // We are stopping for some reason either complete or error.
 				{
 					if( pClient->fncTransferComplete != NULL)
-						(*(pClient->fncTransferComplete))( pbop, idStatus);
+						(*(pClient->fncTransferComplete))( pbop, idStatus, pbop->chksum);
 
 					pbop->idFrame = 0;
 					pbop->state = DCI_BOS_IDLE;
@@ -508,7 +559,7 @@ bool Dci_BitProcessDciMsg( Dci_BitOperationMgr* pmgr, Dci_Context* pctxt)
 		////////////////////////////////////////////////////
 		//Process Frame transfer status Message.
 		////////////////////////////////////////////////////
-		case Dci_BinaryImageTransferStatus_Id:
+	case Dci_BinaryImageTransferStatus_Id:
 		{
 			//Switch on the Status Message ID.
 			Dci_BinaryImageTransferStatus *pMsg = (Dci_BinaryImageTransferStatus *) pctxt->pMsg;
@@ -520,65 +571,83 @@ bool Dci_BitProcessDciMsg( Dci_BitOperationMgr* pmgr, Dci_Context* pctxt)
 
 			//Look up requested operation and make sure it not inactive
 			//and Client supports the type of operation.
-			if(    ( idTransfer < DCI_BITMAXOPS )				&& (pbop->state == DCI_BOS_SOURCE_TRANSFER)				&& (pClient->fncGetFrameData != NULL)	)
+			if(    ( idTransfer < DCI_BITMAXOPS )				
+				&& (pbop->state > DCI_BOS_IDLE) )				
 			{
 				switch(pMsg->idStatus)
 				{
-					case(BSE_InitiatingTransfer): //Target ready to receive.
-						pbop->ctBytesRemaining = pbop->bitinfo.sizeImg;
-					case(BSE_ReadyNextFrame):			// Send next frame.
+				case(BSE_InitiatingTransfer): //Target ready to receive.
+					pbop->ctBytesRemaining = pbop->bitinfo.sizeImg;
+				case(BSE_ReadyNextFrame):			// Send next frame.
 					// Send a frame of data.
 					{
-						//Determine how much data to send.
-						byte *pdata;
-						uint16 ctBytes = (pbop->ctBytesRemaining > pbop->bitinfo.sizeFrame)								? pbop->bitinfo.sizeFrame
+						//Make sure checksums match or there was an invalid transfer.
+						idStatus = (pbop->chksum == pMsg->chksum) ? BSE_ReadyNextFrame : BSE_InvalidChecksum;
+						if( idStatus == BSE_ReadyNextFrame && (pClient->fncGetFrameData != NULL) )
+						{
+							//Determine how much data to send.
+							byte *pdata;
+							uint16 ctBytes = (pbop->ctBytesRemaining > pbop->bitinfo.sizeFrame)								? pbop->bitinfo.sizeFrame
 								: (uint16) pbop->ctBytesRemaining;
 
-						// Create Frame message and get point to read data into it.
-						lenMsg = Dci_BinaryImageTransferFrame_Init( buff, pbop->bitinfo.idComponent,									idTransfer, 0, pbop->idFrame, ctBytes, NULL);
-						pdata  = Dci_BinaryImageTransferFrame_GetData( (Dci_BinaryImageTransferFrame *)buff );
+							// Create Frame message and get point to read data into it.
+							lenMsg = Dci_BinaryImageTransferFrame_Init( buff, pbop->bitinfo.idComponent,									idTransfer, 0, pbop->idFrame, ctBytes, NULL);
+							pdata  = Dci_BinaryImageTransferFrame_GetData( (Dci_BinaryImageTransferFrame *)buff );
 
-						//Request the client populate the frame with data.
-						if( (*(pClient->fncGetFrameData))( pbop, pdata, ctBytes) == ctBytes)
-						{
-							//Send the buffer frame to the target.
-							(*(pmgr->fncSendDciMessage))(buff, lenMsg, false, pctxt);
+							//Request the client populate the frame with data.
+							if( (*(pClient->fncGetFrameData))( pbop, pdata, ctBytes) == ctBytes)
+							{
+								//Calculate checksum if checksum verification is enabled.
+								if( (pbop->bitinfo.flags & BCF_ChecksumValidation) == BCF_ChecksumValidation)
+									UPDATE_CHECKSUM(  pbop, pdata, ctBytes);
 
-							//Update internal state.
-							++(pbop->idFrame);
-							pbop->ctBytesRemaining -= ctBytes;
+								//Send the buffer frame to the target.
+								(*(pmgr->fncSendDciMessage))(buff, lenMsg, false, pctxt);
 
-							//Determine if we are done or ready for next frame.
-							idStatus = (pbop->idFrame >= pbop->bitinfo.ctFrames)
-								? BSE_TransferComplete									 
-								: BSE_ReadyNextFrame;
+								//Update internal state.
+								++(pbop->idFrame);
+								pbop->ctBytesRemaining -= ctBytes;
+
+								//Determine if we are done or ready for next frame.
+								//idStatus = (pbop->idFrame >= pbop->bitinfo.ctFrames)
+								//	? BSE_TransferComplete									 
+								//	: BSE_ReadyNextFrame;
+							}
+							else //Read Error, send notification.
+								idStatus = BSE_ReadError;
 						}
-						else //Read Error, send notification.
+						
+						//Report error status to target if something bad has happened.
+						if( idStatus > BSE_ReadyNextFrame)
 						{
-							idStatus = BSE_ReadError;
-
-							lenMsg = Dci_BinaryImageTransferStatus_Init(										buff, pbop->bitinfo.idComponent,										idTransfer, pbop->idFrame, 0, idStatus);
+							lenMsg = Dci_BinaryImageTransferStatus_Init(	
+								buff, pbop->bitinfo.idComponent,
+								idTransfer, pbop->idFrame, 0, idStatus, pbop->chksum);
 							(*(pmgr->fncSendDciMessage))(buff, lenMsg, false, pctxt);
 						}
 					}
 					break;
 
-					// Default conditions hault transfer
-					case(BSE_FrameError):
-					case(BSE_OperationNotAvailable):
-					case(BSE_WriteError):
-					default:
-						idStatus = pMsg->idStatus;
-						break;
+				case(BSE_TransferComplete):  //Source notified that Target completed the transfer.
+				case(BSE_FrameError):
+				case(BSE_OperationNotAvailable):
+				case(BSE_WriteError):
+				default:
+					idStatus = pMsg->idStatus;
+					break;
 				} //End status switch
 
 				//If we are not waiting for next frame,
 				//terminate the BIT operation.
 				if( idStatus != BSE_ReadyNextFrame)
 				{
+					//Validate checksum on complete transfer.
+					if( idStatus == BSE_TransferComplete && pbop->chksum != pMsg->chksum)
+						idStatus = BSE_InvalidChecksum;
+
 					//Notifiy client we are complete.
 					if( pClient->fncTransferComplete != NULL)
-						(*(pClient->fncTransferComplete))( pbop, idStatus);
+						(*(pClient->fncTransferComplete))( pbop, idStatus, pMsg->chksum);
 
 					pbop->idFrame = 0;
 					pbop->state = DCI_BOS_IDLE;
@@ -588,9 +657,9 @@ bool Dci_BitProcessDciMsg( Dci_BitOperationMgr* pmgr, Dci_Context* pctxt)
 
 		break;
 
-		default:
-			bHandled = false;
-			break;
+	default:
+		bHandled = false;
+		break;
 	}
 	return bHandled;
 }
@@ -600,38 +669,38 @@ bool Dci_BitProcessDciMsg( Dci_BitOperationMgr* pmgr, Dci_Context* pctxt)
 */
 byte Dci_BitInitiateTargetTransfer( Dci_BitOperationMgr* pmgr, Dci_BitClient* pClient, byte idComponentTarget, byte flags, byte idTransfer, Dci_Context* pctxt)
 {
-  Dci_BitOperation* pbop = NULL;
-  byte idStatus  = 0;
+	Dci_BitOperation* pbop = NULL;
+	byte idStatus  = 0;
 
-  //Set up the operation.
-  pbop = pmgr->aBitOps + idTransfer;
+	//Set up the operation.
+	pbop = pmgr->aBitOps + idTransfer;
 
-  //Look up requested operation and make sure it is inactive
-  //and Client supports the type of operation.
-  idStatus = BSE_OperationNotAvailable; //Set default status.
-  if(    ( idTransfer < DCI_BITMAXOPS)	 && (pmgr->aBitOps[ idTransfer].state == DCI_BOS_IDLE)	 && (pClient->fncInitiateSourceTransfer != NULL)	)
-    {
-      //Initialize the BIT Transfer information
+	//Look up requested operation and make sure it is inactive
+	//and Client supports the type of operation.
+	idStatus = BSE_OperationNotAvailable; //Set default status.
+	if(    ( idTransfer < DCI_BITMAXOPS)	 && (pmgr->aBitOps[ idTransfer].state == DCI_BOS_IDLE)	 && (pClient->fncInitiateSourceTransfer != NULL)	)
+	{
+		//Initialize the BIT Transfer information
 
-      Dci_BinaryImageTransfer_Init( &(pbop->bitinfo),
-				    idComponentTarget, flags, "",
-				    "", 0, 256, 0, idTransfer);
+		Dci_BinaryImageTransfer_Init( &(pbop->bitinfo),
+			idComponentTarget, flags, "",
+			"", 0, 256, 0, idTransfer);
 
-      //Request Client fill out the rest of the information.
-      idStatus = (*(pClient->fncInitiateSourceTransfer))( pbop);
-    }
+		//Request Client fill out the rest of the information.
+		idStatus = (*(pClient->fncInitiateSourceTransfer))( pbop);
+	}
 
-  if( idStatus == BSE_InitiatingTransfer)
-    {
-      //Send a BIT Transfer Message telling target we are going to
-      //send data.
-      (*(pmgr->fncSendDciMessage))( (byte*) &(pbop->bitinfo),				    sizeof( Dci_BinaryImageTransfer), false, pctxt);
+	if( idStatus == BSE_InitiatingTransfer)
+	{
+		//Send a BIT Transfer Message telling target we are going to
+		//send data.
+		(*(pmgr->fncSendDciMessage))( (byte*) &(pbop->bitinfo),	sizeof( Dci_BinaryImageTransfer), false, pctxt);
 
-      //Mark this operation as in use.
-      pbop->idFrame = 0;
-      pbop->state = DCI_BOS_SOURCE_TRANSFER;
-    }
-  return( idStatus);
+		//Mark this operation as in use.
+		pbop->idFrame = 0;
+		pbop->state = DCI_BOS_SOURCE_TRANSFER;
+	}
+	return( idStatus);
 }
 
 /**
@@ -640,25 +709,25 @@ byte Dci_BitInitiateTargetTransfer( Dci_BitOperationMgr* pmgr, Dci_BitClient* pC
 bool Dci_BitRequestSourceTransfer( Dci_BitOperationMgr* pmgr, Dci_BitClient* pClient, byte idComponentSource, byte flags, byte idTransfer, Dci_Context* pctxt)
 {
 
-  // Dci_BitOperation* pbop;
-  byte buff[MAX_MSG_SIZE];
+	// Dci_BitOperation* pbop;
+	byte buff[MAX_MSG_SIZE];
 
-  //Set up the operation.
-  // pbop = pmgr->aBitOps + idTransfer;
+	//Set up the operation.
+	// pbop = pmgr->aBitOps + idTransfer;
 
-  //Look up requested operation and make sure it is inactive
-  //and Client supports the type of operation.
+	//Look up requested operation and make sure it is inactive
+	//and Client supports the type of operation.
 
-  if(    ( idTransfer < DCI_BITMAXOPS)
-	 && (pmgr->aBitOps[ idTransfer].state == DCI_BOS_IDLE))
-    {
-      int msgLen = Dci_BinaryImageTransferQuery_Init(buff, idComponentSource, idTransfer, flags);
+	if(    ( idTransfer < DCI_BITMAXOPS)
+		&& (pmgr->aBitOps[ idTransfer].state == DCI_BOS_IDLE))
+	{
+		int msgLen = Dci_BinaryImageTransferQuery_Init(buff, idComponentSource, idTransfer, flags);
 
-      //Send request to initiate a BIT Transfer
-      (*(pmgr->fncSendDciMessage))( buff, msgLen, false, pctxt);
+		//Send request to initiate a BIT Transfer
+		(*(pmgr->fncSendDciMessage))( buff, msgLen, false, pctxt);
 
-      return (true);
-    }
+		return (true);
+	}
 
-  return( false);
+	return( false);
 }
