@@ -20,9 +20,9 @@
 *  receiver function with configurable down sampling of baseband data streams.
 *
 *  HAL COMPONENT IDENTIFIER:  	h0001
-*  VERSION:			h0112 (dec 1.17)
+*  VERSION:			h0113 (dec 1.19)
 *  PORTCAPS:			h0300  -- 2 Receive, 0 Transmit Ports.
-*  Version Date:		7/15/2014
+*  Version Date:		7/28/2014
 *
 ********************************************************************************************************************
 Documentation:
@@ -36,7 +36,12 @@ See WcaHal definition headers for details.
 ********************************************************************************************************************
 VERSION NOTES:
 
-** Ver 1, rev. 18 (h0112 - 7/11/15)
+** Ver 1, rev. 19 (h0113 - 7/28/14)
+1)  Restored original Lime clock enable and clock functions to lime interface so we could release updated general
+    binary.  The synchronous version required both channels to be active.  This should be revisited to ensure
+    stability for synchronous operation.
+
+** Ver 1, rev. 18 (h0112 - 7/11/14)
 1)  Fixed synchronization problem in CIC Decimators, by changing the logic to update 
     the rate register, which causes the internal counter to reset.  
 2)  Moved temporarily moved the rf1_rxclk and rf2_rxclk generation into main module.  Need to
