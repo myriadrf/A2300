@@ -27,6 +27,9 @@ namespace A2300 {
 
 typedef std::list<IConfigComponent*> ConfigComponentList;
 
+struct RfProfileDescriptor{ byte id; char descr[18]; };
+typedef std::list<RfProfileDescriptor> RfProfileDescriptorList;
+
 /**
  * Class implements configuration accessors for the ASR-2300 Device.  This is
  * the root object for working with the ASR 2300 configuration.
@@ -66,6 +69,15 @@ public:
 	bool FirmwareVersionRaw(Dci_VersionInfo* pvi); //Returns the Raw Version DCI message
 	uint16 FpgaId();
 	uint16 FpgaVersion();
+	uint16 RfProfileId();
+	uint16 RfProfileVersion();
+	uint16 RfProfileRevision();
+
+
+	/** 
+	* Queries hardware for the currently list of RF Profiles available.
+	*/
+	void GetRfDescriptorList( RfProfileDescriptorList& list);
 
 	/**
 	 * Synchronizes the internal RF Lime interfaces to eliminate interchannel bias
@@ -103,6 +115,17 @@ public:
 	void Reset();
 
 	ConfigComponentList& Components() { return m_listComponents;}
+
+
+	/**
+	* Routine dumps ASR-2300 version data to the specified FILE*
+	*/
+	void DumpVersionInfo( FILE* fp );
+
+	/**
+	* Dumps RF Profile descriptors to the specified file pointer.
+	*/
+	void DumpRfProfilesDescriptors( RfProfileDescriptorList& listDescrs, FILE* fp );
 
 protected:
 	struct DciCtrl

@@ -115,27 +115,74 @@ bool ConfigDevice::FirmwareVersionRaw(Dci_VersionInfo* pvi)
 	return false;
 }
 
+#define GET_UINT16PROP( comp, id, defaultval) \
+	TransportDci& dt = m_dci0.transport; \
+	uint16 value; \
+	if( dt.GetProperty<uint16>(comp, id, value) == 0) \
+		return value; \
+	else \
+		return defaultval; \
+
+
 uint16 ConfigDevice::FpgaId()
 {
-	TransportDci& dt = m_dci0.transport;
-
-	uint16 value;
-	if( dt.GetProperty<uint16>(WCACOMP_HALDEFAULT, 0x01, value) == 0)
-		return value;
-	else
-		return 0;
+	GET_UINT16PROP( WCACOMP_HALDEFAULT, 0x01, 0)
 }
 
 uint16 ConfigDevice::FpgaVersion()
 {
-	TransportDci& dt = m_dci0.transport;
+	GET_UINT16PROP( WCACOMP_HALDEFAULT, 0x02, 0)
+}
 
-	uint16 value;
-	if( dt.GetProperty<uint16>(WCACOMP_HALDEFAULT, 0x02, value) == 0)
-		return value;
-	else
-		return 0;
+uint16 ConfigDevice::RfProfileId()
+{
+	GET_UINT16PROP( WCACOMP_RFPROFILES, RFP_PROP_ID, 0xFFFF)
+}
+uint16 ConfigDevice::RfProfileVersion()
+{
+	GET_UINT16PROP( WCACOMP_RFPROFILES, RFP_PROP_VERSION, 0xFFFF)
+}
 
+uint16 ConfigDevice::RfProfileRevision()
+{
+	GET_UINT16PROP( WCACOMP_RFPROFILES, RFP_PROP_REVISION, 0xFFFF)
+}
+
+
+/** 
+* Queries hardware for the currently list of RF Profiles available.
+*/
+void ConfigDevice::GetRfDescriptorList( RfProfileDescriptorList& list)
+{
+	#define DESCR_RECSIZE 18
+	#define MAX_RECSPERMSG 14
+	byte buff[DCI_MAX_MSGSIZE];
+	TransportDci& dt = m_dci0.transport; 
+
+	//Request the path data descriptors.
+	int len = Dci_TypedDataRecordQuery_Init(buff, RFP_TYPEDATA_PATHDESCRIP ,0);
+	if( dt.SendMsg( buff, (size_t) len, false) > 0)
+	{
+		int len,  ctRecords = MAX_RECSPERMSG;
+		while( ctRecords >= MAX_RECSPERMSG && (len = dt.ReceiveMsg( buff, DCI_MAX_MSGSIZE)) > 0)
+		{
+			Dci_TypedDataRecord* ptdr = (Dci_TypedDataRecord*) buff;
+
+			if( len > 0 && Dci_Hdr_MatchesId1(&(ptdr->hdr), Dci_TypedDataRecord_Id))
+			{
+				byte* pdata = Dci_TypedDataRecord_GetData(ptdr);
+				ctRecords = ptdr->lenData / DESCR_RECSIZE;
+				for( int i = 0; i < ctRecords; i++, pdata+=DESCR_RECSIZE)
+				{	
+					RfProfileDescriptor descr;
+					descr.id = pdata[0];
+					memcpy( descr.descr, pdata+1, 17);
+					descr.descr[17] = '\0';
+					list.push_back( descr);
+				}
+			}
+		}
+	}
 }
 
 /**
@@ -260,6 +307,57 @@ void ConfigDevice::Reset()
 	}
 
 }
+
+
+/**
+* Routine dumps ASR-2300 version data to the specified FILE*
+*/
+void ConfigDevice::DumpVersionInfo( FILE* fp)
+{
+	//Clear out any previous messages.
+	Dci0Transport().ClearReceiveQueue();
+
+	//Print out Device information
+	std::string sId 		= IdentifyDevice();
+	std::string sVer 		= FirmwareVersion();
+	uint16	    idFpga 		= FpgaId();
+	uint16 		verFpga 	= FpgaVersion();
+	uint16		idProfile   = this->RfProfileId();
+	uint16      verProfile  = this->RfProfileVersion();
+	uint16      revProfile  = this->RfProfileRevision();
+
+	int  		iVer = (verFpga>>8);
+	int	 		iRev = (verFpga& 0x00ff);
+
+	fprintf(fp, "[USB Address: %d] \n", this->m_pDevice->GetUsbAddress());
+	fprintf(fp, "  Identity:               %s\n", sId.c_str());
+	fprintf(fp, "  CPU FW Ver:             %s\n", sVer.c_str());
+	fprintf(fp, "  FX3 FW Ver:	           %s\n", "-Not implemented-");
+	fprintf(fp, "  FPGA ID-Ver:            %04X - %X.%X\n", idFpga, iVer, iRev);
+	fprintf(fp, "  RF Profile ID-Ver-Rev:  %04X - %X.%X-%X\n\n", idProfile, (verProfile >> 0x8), (verProfile & 0x00FF), revProfile);
+
+}
+/**
+* Dumps RF Profile descriptors to the specified file pointer.
+*/
+void ConfigDevice::DumpRfProfilesDescriptors( RfProfileDescriptorList& listDescrs, FILE* fp)
+{
+	const char* szCh[] = {"RF0 TX", "RF0 RX", "RF1 TX", "RF1 RX"};
+	RfProfileDescriptorList::iterator iter = listDescrs.begin();
+
+	fprintf( fp, "  RF PATH DEFINITIONS: \n");
+	fprintf( fp, "    ID  | Channel | Description\n");
+	fprintf( fp, "    -----------------------------------------\n");
+
+	for( ; iter != listDescrs.end(); iter++)
+	{
+		RfProfileDescriptor& pd = (*iter);
+		byte ch = (pd.id >> 6);
+		fprintf( fp, "    %02Xh | %6s  | %s\n", pd.id, szCh[ch], pd.descr);
+	}
+
+}
+
 
 void ConfigDevice::DciCtrl::Init( UsbDevice& device, int idc, double timeout)
 {

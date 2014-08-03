@@ -161,7 +161,16 @@ enum RfBandwidthValuesEnum
 #define RFP_ACTION_CACHEDATA    	((byte)0x00)	//Enter Cache mode of RF Profiles (use for calibration editing)
 #define RFP_ACTION_DISCARDCHANGES 	((byte)0x01)	//Exits Cache mode and discards changes
 #define RFP_ACTION_SAVECHANGES		((byte)0x02)	//Exits Cache mode and saves Profile changes to NVM.
-											//Rolls the revision number.
+													//Rolls the revision number.
+
+#define RFP_PROP_ID					0x00	//RF Profile Identifier.
+#define RFP_PROP_VERSION			0x01	//RF Profile version
+#define RFP_PROP_REVISION			0x02	//RF Profile revision.
+
+#define RFP_TYPEDATA_PATHDESCRIP    0x94    //TypeId for TypeData 20,13 response for getting
+											//RF Path Profile descriptors and identifiers.
+											//Returns an 18 byte record for each path descriptor comprising
+											//struct{byte id, char[17] descr};
 
 //*******************************************************
 // FPGA Component(0xB0) Interface Spec.

@@ -33,7 +33,7 @@ int main(int, char**)
 		   "* ASR-2300 Identification and Version Information Tool \n"
 		   "*********************************************************************\n"
 		   "*\n"
-		   "* This software example provided by Loctronix Corporation (2013) \n"
+		   "* Copyright(c) Loctronix Corpration 2013-2014 \n"
 		   "* www.loctronix.com\n" 
 		   "*********************************************************************\n");
 
@@ -67,19 +67,13 @@ int main(int, char**)
 				//Clear out any previous messages.
 				config.Dci0Transport().ClearReceiveQueue();
 
-				//Print out Device information
-				std::string sId 		= config.IdentifyDevice();
-				std::string sVer 		= config.FirmwareVersion();
-				uint16	    idFpga 		= config.FpgaId();
-				uint16 		verFpga 	= config.FpgaVersion();
-				int  		iVer = (verFpga>>8);
-				int	 		iRev = (verFpga& 0x00ff);
+				//Display the standard version information.
+				config.DumpVersionInfo(stdout);
 
-				printf("[USB Address: %d] \n", addr);
-				printf("  Identity:     %s\n", sId.c_str());
-				printf("  CPU FW Ver:   %s\n", sVer.c_str());
-				printf("  FX3 FW Ver:   %s\n", "-Not implemented-");
-				printf("  FPGA ID-Ver:  %04X - %02X.%02X\n\n", idFpga, iVer, iRev);
+				//Dump the current RF Descriptors to the console.
+				RfProfileDescriptorList list;
+				config.GetRfDescriptorList( list);
+				config.DumpRfProfilesDescriptors( list, stdout);
 
 				config.Detach();
 			}
