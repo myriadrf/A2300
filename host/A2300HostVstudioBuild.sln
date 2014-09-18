@@ -60,6 +60,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DualRxToFile", "apps\DualRx
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "A2300Calibrate", "apps\A2300Calibrate\A2300Calibrate.vcproj", "{F2817D77-5DA3-4295-9825-B81A5B234979}"
+	ProjectSection(ProjectDependencies) = postProject
+		{88183079-7867-4C3F-9887-65D0003E325C} = {88183079-7867-4C3F-9887-65D0003E325C}
+		{DCFDE6F1-2FF1-4118-8CBB-178579CA0783} = {DCFDE6F1-2FF1-4118-8CBB-178579CA0783}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TxDemo", "apps\TxDemo\TxDemo.vcproj", "{9F0F3AD5-656D-4692-939B-97FC811437EE}"
 	ProjectSection(ProjectDependencies) = postProject
