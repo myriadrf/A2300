@@ -20,9 +20,9 @@
 *  receiver function with configurable down sampling of baseband data streams.
 *
 *  HAL COMPONENT IDENTIFIER:  	h0001
-*  VERSION:			h0113 (dec 1.19)
+*  VERSION:			h0114 (dec 1.20)
 *  PORTCAPS:			h0300  -- 2 Receive, 0 Transmit Ports.
-*  Version Date:		7/28/2014
+*  Version Date:		8/21/2014
 *
 ********************************************************************************************************************
 Documentation:
@@ -35,6 +35,12 @@ See WcaHal definition headers for details.
 
 ********************************************************************************************************************
 VERSION NOTES:
+
+** Ver 1, rev. 20 (h0114 - 8/21/14)
+1)  Added latching to rx0 full and rx1 full led indicators.  These can be reset when the fifos are cleared.
+    This provides a visual queue that is readily visible when an overflow occurs.  Primarily using to debug
+    USB streaming interfaces.
+
 
 ** Ver 1, rev. 19 (h0113 - 7/28/14)
 1)  Restored original Lime clock enable and clock functions to lime interface so we could release updated general

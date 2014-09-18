@@ -37,6 +37,7 @@
 #define A2300_DDUC_FREQ_MAX     ((double)(14e6))
 #define A2300_DDUC_FREQ_MIN		((double)(-14e6))
 #define A2300_DDUC_FREQ_STEP	((double)(0.0149011611938))
+#define A2300_CORDIC_RES		((double) 4294967296);
 
 #define A2300_MIN_BW			((double)(0.75e6 * 2.0))	// 0.75 MHz.
 #define A2300_MAX_BW 			((double)(14.0e6 * 2.0))	// 14.0 MHz.

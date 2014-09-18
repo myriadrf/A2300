@@ -303,7 +303,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Threading\Mutex.hpp"
+				>
+			</File>
+			<File
 				RelativePath=".\dci\StandardMsgs.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Threading\Thread.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Threading\ThreadSafeQueue.hpp"
 				>
 			</File>
 			<File
@@ -347,7 +359,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Threading\Mutex.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\dci\StandardMsgs.c"
+				>
+			</File>
+			<File
+				RelativePath=".\Threading\Thread_Win32.cpp"
 				>
 			</File>
 			<File

@@ -111,7 +111,7 @@ static size_t s_numBytesCollected = 0;
 static FILE*		s_fileStream = NULL;
 static ConfigDevice s_cfgDevice;
 static ulong		s_ctPackets = 0;
-static ulong		s_ctData = 0;
+static size_t		s_ctData = 0;
 static bool			s_bRunning = false;
 static bool			s_bKeyHit = false;
 
@@ -355,7 +355,7 @@ static int DoRxToFile ()
 	s_cfgDevice.Components().remove( &ddc);
 
 	//10) Print results
-	printf("\n--> Completed Run: Packets = %ld, Bytes = %ld\n", s_ctPackets, s_ctData);
+	printf("\n--> Completed Run: Packets = %ld, Bytes = %ld\n", s_ctPackets, (ulong) s_ctData);
 
 	//11) Disable the RF Communications
 	rf.RxPath( bIsRf0 ? (byte)RX0DPE_Disabled : (byte)RX1DPE_Disabled );
@@ -411,7 +411,7 @@ static void OnFrameReady (void* /* arg */, BulkDataPort::TransferContext* pctxt)
 	{
 		// common functionality
 		++s_ctPackets;
-		s_ctData += pctxt->nActualLength;
+		s_ctData +=  pctxt->nActualLength;
 		pctxt->Submit();
 
 		if (s_params.numsamples == 0) {

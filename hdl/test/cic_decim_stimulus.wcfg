@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="U:/GitHubA2300_ltxdev/hdl/FpgaCore_2chRx/cic_decim_stimulus_isim_beh.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="cic_decim_stimulus" />
+            <top_module name="glbl" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="10" />
+   <wvobject fp_name="/cic_decim_stimulus/dspclk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">dspclk</obj_property>
+      <obj_property name="ObjectShortName">dspclk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cic_decim_stimulus/reset" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">reset</obj_property>
+      <obj_property name="ObjectShortName">reset</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cic_decim_stimulus/rfd" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">rfd</obj_property>
+      <obj_property name="ObjectShortName">rfd</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cic_decim_stimulus/nd" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">nd</obj_property>
+      <obj_property name="ObjectShortName">nd</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cic_decim_stimulus/rdy" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">rdy</obj_property>
+      <obj_property name="ObjectShortName">rdy</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cic_decim_stimulus/sclr" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">sclr</obj_property>
+      <obj_property name="ObjectShortName">sclr</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cic_decim_stimulus/rate_we" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">rate_we</obj_property>
+      <obj_property name="ObjectShortName">rate_we</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cic_decim_stimulus/din" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">din[11:0]</obj_property>
+      <obj_property name="ObjectShortName">din[11:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cic_decim_stimulus/rate" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">rate[12:0]</obj_property>
+      <obj_property name="ObjectShortName">rate[12:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cic_decim_stimulus/dout" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dout[15:0]</obj_property>
+      <obj_property name="ObjectShortName">dout[15:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+</wave_config>

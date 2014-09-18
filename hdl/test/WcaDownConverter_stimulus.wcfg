@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="U:/GitHubA2300_ltxdev/hdl/FpgaCore_2chRx/WcaDownConverter_stimulus_isim_beh.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="WcaDownConverter_stimulus" />
+            <top_module name="glbl" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="29" />
+   <wvobject fp_name="/WcaDownConverter_stimulus/reset" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">reset</obj_property>
+      <obj_property name="ObjectShortName">reset</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/sysclk" type="logic" db_ref_id="1">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">sysclk</obj_property>
+      <obj_property name="ObjectShortName">sysclk</obj_property>
+      <obj_property name="label">sysclk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/cpuclk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">cpuclk</obj_property>
+      <obj_property name="ObjectShortName">cpuclk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/dspclk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">dspclk</obj_property>
+      <obj_property name="ObjectShortName">dspclk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/limeclk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">limeclk</obj_property>
+      <obj_property name="ObjectShortName">limeclk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/comp_reset" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">comp_reset</obj_property>
+      <obj_property name="ObjectShortName">comp_reset</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/iq_out" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">iq_out[31:0]</obj_property>
+      <obj_property name="ObjectShortName">iq_out[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/dstrobe_out" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">dstrobe_out</obj_property>
+      <obj_property name="ObjectShortName">dstrobe_out</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/address" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">address</obj_property>
+      <obj_property name="ObjectShortName">address</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/write" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">write</obj_property>
+      <obj_property name="ObjectShortName">write</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/read" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">read</obj_property>
+      <obj_property name="ObjectShortName">read</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/rbusCtrl" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">rbusCtrl[11:0]</obj_property>
+      <obj_property name="ObjectShortName">rbusCtrl[11:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/rbusData" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">rbusData[7:0]</obj_property>
+      <obj_property name="ObjectShortName">rbusData[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/dbus" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dbus[7:0]</obj_property>
+      <obj_property name="ObjectShortName">dbus[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/rf0_rxclk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">rf0_rxclk</obj_property>
+      <obj_property name="ObjectShortName">rf0_rxclk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/rf0_rxen" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">rf0_rxen</obj_property>
+      <obj_property name="ObjectShortName">rf0_rxen</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/rf0_txclk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">rf0_txclk</obj_property>
+      <obj_property name="ObjectShortName">rf0_txclk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/rf0_txiqsel" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">rf0_txiqsel</obj_property>
+      <obj_property name="ObjectShortName">rf0_txiqsel</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/rf0_txen" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">rf0_txen</obj_property>
+      <obj_property name="ObjectShortName">rf0_txen</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/rf0_txd" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">rf0_txd[11:0]</obj_property>
+      <obj_property name="ObjectShortName">rf0_txd[11:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/rx0_iq" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">rx0_iq[23:0]</obj_property>
+      <obj_property name="ObjectShortName">rx0_iq[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/tx0_iq" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">tx0_iq[23:0]</obj_property>
+      <obj_property name="ObjectShortName">tx0_iq[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/rx0_strobe" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">rx0_strobe</obj_property>
+      <obj_property name="ObjectShortName">rx0_strobe</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/tx0_strobe" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">tx0_strobe</obj_property>
+      <obj_property name="ObjectShortName">tx0_strobe</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/rx1_strobe" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">rx1_strobe</obj_property>
+      <obj_property name="ObjectShortName">rx1_strobe</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/tx1_strobe" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">tx1_strobe</obj_property>
+      <obj_property name="ObjectShortName">tx1_strobe</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/iq_in" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">iq_in[23:0]</obj_property>
+      <obj_property name="ObjectShortName">iq_in[23:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/rf0_rxd" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">rf0_rxd[11:0]</obj_property>
+      <obj_property name="ObjectShortName">rf0_rxd[11:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/WcaDownConverter_stimulus/cpuif/clock" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">clock</obj_property>
+      <obj_property name="ObjectShortName">clock</obj_property>
+   </wvobject>
+</wave_config>

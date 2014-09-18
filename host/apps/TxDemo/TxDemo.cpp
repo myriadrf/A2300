@@ -108,7 +108,7 @@ int main(int argc, const char** argv)
 	{
 		retval = s_args.Parse( argc, argv);
 	} 
-	catch (ArgParserException& e)
+	catch (ArgParserException& /*e*/)
 	{
 		retval = -1;
 	}
@@ -192,7 +192,7 @@ static int TransmitData (size_t msecDur)
 		retval= s_cfgDevice.Device().PollAsynchronousEvents();
 #elif defined(WIN32) || defined(WIN64)
 		s_s1.Port()->WaitForWriteTransferEvent(500);
-		s_bKeyHit = _kbhit();
+		s_bKeyHit = _kbhit() > 0;
 #endif
 		//Check status of processing.
 		if( !retval)

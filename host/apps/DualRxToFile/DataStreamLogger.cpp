@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <Threading/Thread.hpp>
 
 using namespace std;
 
@@ -60,7 +60,8 @@ DataStreamLogger::DataStreamLogger(size_t bytesPerSample, size_t sizeFrame, size
 	m_dBandwidth( 28), m_dSampRate(2), 
 	m_pDevice(NULL), m_pRf(NULL), m_BytesPerSample(bytesPerSample),
 	m_sizeFrame(sizeFrame), m_iMaxBuffs(iMaxFrames), m_ctFramesProcessed(0),
-	m_totalFramesToProcess(0), m_framesPerSec(0), m_chTick(chTick), m_pbuff(NULL), m_file(NULL)
+	m_totalFramesToProcess(0), m_framesPerSec(0), m_chTick(chTick), m_pbuff(NULL), m_file(NULL),
+	m_bIsRunning(false)
 {
 }
 
@@ -124,6 +125,10 @@ int DataStreamLogger::Init( ArgParser& args, ConfigDevice* pDevice)
 		return -3;
 	}
 
+	//Launch the write thread
+	m_bIsRunning = true;
+	A2300::Threading::Thread::ThreadCreate(true,&WriteDataThreadFunc, this);
+
 	//Clear out any DCI command messages.
 	m_pDevice->Dci0Transport().ClearReceiveQueue();
 
@@ -154,6 +159,8 @@ int DataStreamLogger::Init( ArgParser& args, ConfigDevice* pDevice)
 		pctxtRaw->Submit();
 		m_listContext.push_back( pctxtRaw);
 	}
+
+
 
 	//Ready to go.
 	return 0;
@@ -200,6 +207,8 @@ int DataStreamLogger::CheckStatus()
 
 void DataStreamLogger::Stop()
 {
+	
+	m_bIsRunning = false;
 	if( m_pPort!= NULL && m_pDduc != NULL)
 	{
 		m_pDduc->Reset(); // Reset disables the channel so no need to call Enable(0).
@@ -219,8 +228,6 @@ void DataStreamLogger::Terminate()
 {
 	if( m_pPort == NULL || m_pDduc == NULL)
 		return;
-
-	bool bIsRf0	= s_pathDef[m_idxRfPath].idRf == WCACOMP_RF0;
 
 	//Wait for the transfer cancellations to complete.
 	time_t ttCur, ttEnd;
@@ -264,28 +271,46 @@ void DataStreamLogger::OnFrameReady (void* pObj, BulkDataPort::TransferContext* 
 {
 
 	DataStreamLogger* pThis = static_cast<DataStreamLogger*>(pObj);
-
-	// if the status is OK (0)
-	if( pctxt->status == 0 && !pThis->CheckStatus())
-	{
-		// Save data to disk
-		size_t nWritten = fwrite (pctxt->bufFrame, 1, pctxt->nActualLength, pThis->m_file);
-		if (nWritten != pctxt->nActualLength)
-		{
-			printf ("\nWarning: Some data failed to write to the selected file ('%s').\n", pThis->m_sFilename.c_str());
-		}
-
-		pThis->m_ctFramesProcessed ++;
-		if( pThis->m_ctFramesProcessed % pThis->m_framesPerSec == 0)
-		{
-			putc( pThis->m_chTick, stdout);
-			fflush(stdout);
-		}
-	}
-
-	//Resubmit context.
-	pctxt->Submit();
-
+	pThis->m_queueFramesToWrite.Push( pctxt);
 }
 
 
+void* DataStreamLogger::WriteDataThreadFunc(void* arg)
+{
+	DataStreamLogger* pThis = static_cast<DataStreamLogger*>(arg);
+
+	while(pThis->m_bIsRunning)
+	{
+		BulkDataPort::TransferContext* pctxt;
+
+		if( pThis->m_queueFramesToWrite.Pop(&pctxt,100))
+		{
+			if( pctxt->status == 0 && !pThis->CheckStatus() )
+			{
+				// Save data to disk
+				size_t nWritten = fwrite (pctxt->bufFrame, 1, pctxt->nActualLength, pThis->m_file);
+				if (nWritten != pctxt->nActualLength)
+				{
+					printf ("\nWarning: Some data failed to write to the selected file ('%s').\n", pThis->m_sFilename.c_str());
+				}
+
+				pThis->m_ctFramesProcessed ++;
+				if( pThis->m_ctFramesProcessed % pThis->m_framesPerSec == 0)
+				{
+					putc( pThis->m_chTick, stdout);
+					fflush(stdout);
+				}
+			}
+			else
+			{
+				putc('x',stdout);
+				fflush(stdout);
+			}
+
+			//Resubmit.
+			pctxt->Submit();
+		}
+	}
+	return NULL;
+
+}

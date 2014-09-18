@@ -366,7 +366,7 @@ static int DoBitTransfer()
 	{
 		int   ver = (vi.VerMajor <<8) + vi.VerMinor;
 		bChecksum = ver >= 0x0101;  //must be greater than 1.1.0 
-		bOverride = ver >= true;
+		bOverride = ver >= 0x0101;
 
 		printf(" - Checksum Validation Enabled\n - Existing Transfers Will be Terminated\n");
 	}

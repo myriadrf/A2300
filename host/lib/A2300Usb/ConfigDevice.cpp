@@ -20,6 +20,7 @@
 #include <stdexcept>
 #include <stdio.h>
 
+#define ENABLE DCI1 1
 
 
 namespace A2300 {
@@ -252,6 +253,9 @@ void ConfigDevice::Attach( UsbDevice* pdevice)
 {
 	//Bind DCI IDC0 so we can communicate with the device.
 	m_dci0.Init( *pdevice, 0, m_timeoutDefault);
+#ifdef ENABLE_IDC1
+	m_dci1.Init( *pdevice, 1, m_timeoutDefault);
+#endif
 
 }
 

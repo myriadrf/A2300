@@ -28,6 +28,8 @@
 #include <A2300/ConfigDevice.h>
 #include <A2300/ConfigDduc.h>
 #include <System/ArgParser.hpp>
+#include <Threading/ThreadSafeQueue.hpp>
+
 using namespace A2300;
 
 
@@ -47,6 +49,7 @@ private:
 	ConfigDduc*			m_pDduc;
 	BulkDataPort*		m_pPort;
 	BulkDataPort::TransferContextList m_listContext;
+	A2300::Threading::ThreadSafeQueue< BulkDataPort::TransferContext*> m_queueFramesToWrite;
 
 	//Runtime variables.
 	size_t				m_BytesPerSample;
@@ -56,9 +59,9 @@ private:
 	size_t				m_totalFramesToProcess;
 	size_t				m_framesPerSec;
 	char				m_chTick;
-
 	byte*				m_pbuff;
 	FILE*				m_file;
+	bool				m_bIsRunning;
 
 public:
 	DataStreamLogger(size_t bytesPerSample, size_t sizeFrame, size_t iMaxFrames, char chTick);
@@ -73,5 +76,6 @@ public:
 
 private:
 	static void OnFrameReady( void* pobj, BulkDataPort::TransferContext* pctxt);
+	static void* WriteDataThreadFunc( void* arg);
 
 };

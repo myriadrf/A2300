@@ -18,7 +18,7 @@
 `include "2ChRxRegisterDefs.vh"
 
 `define  IDENTIFIER	16'h0001		//2 CH Transceiver Identifier.
-`define  VERSION		16'h0113		//[ver].[rev]
+`define  VERSION		16'h0114		//[ver].[rev]
 `define  PORTCAPS		16'h0300		//2 RX / 0 TX ports defined.
 `define  PORT_COUNT  4
 `define  PORT0_ADDR  2'h0  //TX Port 0 is EP 8h 
@@ -126,11 +126,7 @@ parameter NBITS_ADDR = 2;
 //*******************************************
 	wire  [4:0]  portCtrl;
 	wire  [1:0]  portCmd;
-	wire  		 clearSynch; //Wire clears all fifos when synch enabled.
-	wire  		 enableSynch; // Wire enables all fifos with the synch bit set in the configuration register.
-		
-	//Assign the LEDs to indicate which ports are enabled [ rx1, rx0, tx1, tx0]
-	assign ledSelect = { rx1_full, rx1_empty, rx0_full, rx0_empty}; 				
+
 	
 //	assign ep_io     = { 4'h0, clearSynch, enableSynch, rx1_strobe, rx0_strobe};
 
@@ -158,16 +154,32 @@ parameter NBITS_ADDR = 2;
 //*******************************************
 // Event mapping
 //*******************************************
-	wire evt_fifoerr;
+	wire  evt_fifoerr;
+	reg latch_rx0_full;
+   reg latch_rx1_full;
 
+	wire  clearSynch; //Wire clears all fifos when synch enabled.
+	wire  enableSynch; // Wire enables all fifos with the synch bit set in the configuration register.
+		
 	//Assign events Upper four events are not assigned.
 	assign evtsig = { 3'h0, evt_fifoerr, rx1_full, 1'b0, rx0_full, 1'b0}; 
 
 	//Generate an event if the fifos.full.
 	assign evt_fifoerr = rx1_full | rx1_empty |
 								rx0_full | rx0_empty ;
-								
-								
+
+	//Latch RX0 and RX1 full indicators.
+	always @(posedge clockDsp)
+	begin
+		if(clearSynch | clearRx0) latch_rx0_full       <= 1'b0;
+		else if(rx0_full) latch_rx0_full <= 1'b1;
+		
+		if(clearSynch | clearRx1) latch_rx1_full 		<= 1'b0;
+		else if(rx1_full) latch_rx1_full <= 1'b1;							
+	end
+	
+	//Assign the LEDs to indicate which ports are enabled [ rx1, rx0, tx1, tx0]
+	assign ledSelect = { latch_rx1_full, rx1_empty, latch_rx0_full, rx0_empty}; 		
 								
 
 //*******************************************

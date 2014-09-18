@@ -17,30 +17,27 @@
 # Setup common System library as static
 ##############################################################
 
-SET(A2300System_sources
-    ${CMAKE_CURRENT_SOURCE_DIR}/ArgParser.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/std/itoa.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/std/strrev.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/std/TimeSpecUtil.cpp
+SET(A2300Threading_sources
+    ${CMAKE_CURRENT_SOURCE_DIR}/Mutex.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Thread_Linux.cpp
 )
 
-ADD_LIBRARY(A2300System STATIC ${A2300System_sources})
+ADD_LIBRARY(A2300Threading STATIC ${A2300THreading_sources})
 
 ##############################################################
 # Install information
 ##############################################################
 
-INSTALL(TARGETS A2300System
+INSTALL(TARGETS A2300Threading
     LIBRARY DESTINATION ${LIBRARY_DIR} COMPONENT libraries # .so file
     ARCHIVE DESTINATION ${LIBRARY_DIR} COMPONENT libraries # .lib file
     RUNTIME DESTINATION ${RUNTIME_DIR} COMPONENT libraries # .dll file
 )
 
 UHD_INSTALL(FILES
-    DataTypes.h
-    ArgParser.hpp
-    std/strtools.h
-    std/TimeSpecUtil.h
-    DESTINATION ${INCLUDE_DIR}/A2300/System
+    Mutex.hpp
+    Thread.hpp
+    ThreadSafeQueue.hpp
+    DESTINATION ${INCLUDE_DIR}/A2300/Threading
     COMPONENT headers
 )

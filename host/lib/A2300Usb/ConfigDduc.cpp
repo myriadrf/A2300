@@ -139,7 +139,7 @@ double ConfigDduc::HostSamplingRate( double  dRateHz, bool bAutoSetMode )
 
 double ConfigDduc::FrequencyOffset( double dOffsetHz)
 {
-	double dphase = dOffsetHz / m_uiSampRate * ((double) 2147483648);
+	double dphase = dOffsetHz / m_uiSampRate * A2300_CORDIC_RES;
 	m_iPhaseRate = (int32) (dphase + 0.5);
 	TransportDci& td = m_pDevice->Dci0Transport();
 	td.SetProperty<int32>(m_idComponent, DSP_DDUC_PHASERATE, m_iPhaseRate);

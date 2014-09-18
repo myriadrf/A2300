@@ -32,6 +32,7 @@ class ConfigDevice;
 class ConfigDduc  : public IConfigComponent{
 public:
 
+
 	/**
 	* DDUC operating configurations.
 	*/
@@ -95,7 +96,7 @@ public:
 	double HostSamplingRate() const { return m_uiSampRate / ((double) m_uiSamplingDivisor); }
 
 	double FrequencyOffset( double dOffsetHz);
-	double FrequencyOffset() const { return ((double) m_iPhaseRate) * m_uiSampRate / ((double)2147483648); }
+	double FrequencyOffset() const { return ((double) m_iPhaseRate) * m_uiSampRate / A2300_CORDIC_RES; }
 
 private:
 	byte  m_idComponent;
