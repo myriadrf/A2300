@@ -27,7 +27,7 @@ public:
 
 	static void Adjust(struct timespec *ts, double dt);
 
-	static int Compare(struct timespec *a, struct timespec *b);
+	static long Compare(struct timespec *a, struct timespec *b);
 
 	static void Subtract(struct timespec *a, struct timespec *b);
 

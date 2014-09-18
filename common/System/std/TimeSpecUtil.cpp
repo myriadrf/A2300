@@ -31,7 +31,7 @@ void TimeSpecUtil::ToTimeVal(struct timespec *ts, struct timeval *tv)
 
 void TimeSpecUtil::AddMsec(struct timespec *ts, long ms)
 {
-        int sec=ms/1000;
+        long sec=ms/1000;
         ms=ms-sec*1000;
 
         // perform the addition
@@ -44,7 +44,7 @@ void TimeSpecUtil::AddMsec(struct timespec *ts, long ms)
 
 void TimeSpecUtil::AddNsec(struct timespec *ts, long ns)
 {
-        int sec=ns/1000000000;
+        long sec=ns/1000000000;
         ns=ns - sec*1000000000;
 
         // perform the addition
@@ -58,11 +58,11 @@ void TimeSpecUtil::AddNsec(struct timespec *ts, long ns)
 
 void TimeSpecUtil::Adjust(struct timespec *ts, double dt)
 {
-        int sec;
+        long sec;
         long ns;
 
-        sec = (int) dt;
-        ns = (dt - sec) * 1000000000;
+        sec = (long) dt;
+        ns = ((long) dt - sec) * 1000000000;
 
         while (ns < 0) {
                 ns += 1000000000;
@@ -78,10 +78,10 @@ void TimeSpecUtil::Adjust(struct timespec *ts, double dt)
 
 }
 
-int TimeSpecUtil::Compare(struct timespec *a, struct timespec *b)
+long TimeSpecUtil::Compare(struct timespec *a, struct timespec *b)
 {
         if (a->tv_sec!=b->tv_sec)
-                return a->tv_sec-b->tv_sec;
+                return a->tv_sec - b->tv_sec;
 
         return a->tv_nsec-b->tv_nsec;
 }

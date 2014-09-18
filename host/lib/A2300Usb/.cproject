@@ -49,8 +49,8 @@
 								<option id="gnu.c.compiler.option.misc.pic.148135224" name="Position Independent Code (-fPIC)" superClass="gnu.c.compiler.option.misc.pic" value="true" valueType="boolean"/>
 								<option id="gnu.c.compiler.option.include.paths.1559823134" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Common}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/common}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.114397469" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="LINUX=2"/>
@@ -66,9 +66,11 @@
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.so.debug.1386240877" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.so.debug">
 								<option defaultValue="true" id="gnu.cpp.link.so.debug.option.shared.1933961080" name="Shared (-shared)" superClass="gnu.cpp.link.so.debug.option.shared" valueType="boolean"/>
 								<option id="gnu.cpp.link.option.paths.942942430" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Common/Debug}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/common/Debug}&quot;"/>
 								</option>
 								<option id="gnu.cpp.link.option.libs.1067906570" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="Common"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="common"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1233401268" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
@@ -79,6 +81,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.assembler.so.debug.406032375" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.so.debug">
 								<option id="gnu.both.asm.option.include.paths.724683252" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Common}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/common}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1377853219" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -101,8 +104,11 @@
 				<externalSettings containerId="common;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/Common"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/common"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/Common/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/common/Debug"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="Common" srcPrefixMapping="" srcRootPath=""/>
+						<entry flags="RESOLVED" kind="libraryFile" name="common" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 			</storageModule>
@@ -137,6 +143,7 @@
 								<option id="gnu.cpp.compiler.so.release.option.debugging.level.382838731" name="Debug Level" superClass="gnu.cpp.compiler.so.release.option.debugging.level" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.1033344205" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Common}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/common}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:${WorkspaceDirPath}/host/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../common&quot;"/>
@@ -154,6 +161,7 @@
 								<option id="gnu.c.compiler.option.misc.pic.260297024" name="Position Independent Code (-fPIC)" superClass="gnu.c.compiler.option.misc.pic" value="true" valueType="boolean"/>
 								<option id="gnu.c.compiler.option.include.paths.1835341320" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Common}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/common}&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1635901929" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="LINUX=2"/>
@@ -169,10 +177,10 @@
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.so.release.1217432302" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.so.release">
 								<option defaultValue="true" id="gnu.cpp.link.so.release.option.shared.1736600855" name="Shared (-shared)" superClass="gnu.cpp.link.so.release.option.shared" valueType="boolean"/>
 								<option id="gnu.cpp.link.option.paths.1837479254" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Common/Debug}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/common/Release}&quot;"/>
 								</option>
 								<option id="gnu.cpp.link.option.libs.1993119972" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="Common"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="common"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1711920570" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -181,7 +189,7 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.so.release.467102907" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.so.release">
 								<option id="gnu.both.asm.option.include.paths.442677551" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Common}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/common}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1733910076" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -193,11 +201,14 @@
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings">
-				<externalSettings containerId="common;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
+				<externalSettings containerId="common;cdt.managedbuild.config.gnu.lib.release.2024839123" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/Common"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/Common/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/common"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/Common/Release"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/common/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="Common" srcPrefixMapping="" srcRootPath=""/>
+						<entry flags="RESOLVED" kind="libraryFile" name="common" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 			</storageModule>

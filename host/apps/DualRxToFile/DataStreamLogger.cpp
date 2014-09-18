@@ -23,6 +23,7 @@ ARGPARSER_BEGIN_MAP( s_argsLogger )
 	ARGPARSER_VAR( "gain", ArgParser::Entry::LONG,   "9",    "Receiver gain in dB. Valid range is between 0 dB to 60 dB")
 	ARGPARSER_VAR( "bw",   ArgParser::Entry::DOUBLE, "5",    "Receiver front-end bandwidth in MHz. Valid range is 1.5 MHz to 28 MHz.")
 	ARGPARSER_VAR( "rate", ArgParser::Entry::DOUBLE, "2",    "Host sample rate in MS/s. Valid range is 3.90625 kS/s to 32 MS/s.")
+	ARGPARSER_SWITCH("speedtest", false, "Switch test I/O speed for overflow, does not write to disk.")
 ARGPARSER_END_MAP
 
 /**
@@ -61,7 +62,7 @@ DataStreamLogger::DataStreamLogger(size_t bytesPerSample, size_t sizeFrame, size
 	m_pDevice(NULL), m_pRf(NULL), m_BytesPerSample(bytesPerSample),
 	m_sizeFrame(sizeFrame), m_iMaxBuffs(iMaxFrames), m_ctFramesProcessed(0),
 	m_totalFramesToProcess(0), m_framesPerSec(0), m_chTick(chTick), m_pbuff(NULL), m_file(NULL),
-	m_bIsRunning(false)
+	m_bIsRunning(false), m_bSpeedTest(false)
 {
 }
 
@@ -104,6 +105,7 @@ int DataStreamLogger::Init( ArgParser& args, ConfigDevice* pDevice)
 	m_byteGain   = (byte) args.GetLong(m_sId + ".gain");
 	m_dBandwidth = args.GetDouble(m_sId + ".bw");
 	m_dSampRate  = args.GetDouble(m_sId + ".rate");
+	m_bSpeedTest = args.GetBool(m_sId + ".speedtest");
 
 
 	// Open the specified file for writing.
@@ -180,6 +182,8 @@ void DataStreamLogger::DisplayConfiguration()
 	printf("RX Frequency:  %0.3f MHz\n",  m_dFreqRf);
 	printf("RX Bandwidth:  %0.3lf MHz\n", m_dBandwidth);
 	printf("Host Rate:     %0.3lf MHz\n", m_dSampRate);
+	if( m_bSpeedTest)
+		printf("** Speed Test Mode Enabled\n");
 
 }
 
@@ -285,7 +289,7 @@ void* DataStreamLogger::WriteDataThreadFunc(void* arg)
 
 		if( pThis->m_queueFramesToWrite.Pop(&pctxt,100))
 		{
-			if( pctxt->status == 0 && !pThis->CheckStatus() )
+			if( pctxt->status == 0 && !pThis->CheckStatus()  && !pThis->m_bSpeedTest )
 			{
 				// Save data to disk
 				size_t nWritten = fwrite (pctxt->bufFrame, 1, pctxt->nActualLength, pThis->m_file);
@@ -300,11 +304,6 @@ void* DataStreamLogger::WriteDataThreadFunc(void* arg)
 					putc( pThis->m_chTick, stdout);
 					fflush(stdout);
 				}
-			}
-			else
-			{
-				putc('x',stdout);
-				fflush(stdout);
 			}
 
 			//Resubmit.

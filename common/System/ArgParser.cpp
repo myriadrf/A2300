@@ -248,7 +248,7 @@ int A2300::ArgParser::Parse( int argc, const char* argv[] )
 			{
 				return -1;
 			}
-			else if( p[0] == '/' || p[0] == '-' )
+			else if( p[0] == '-' )
 			{
 				const char* p2 = 	strchr(p,'=');
 

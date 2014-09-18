@@ -223,7 +223,7 @@ bool OnTypedDataMsg( Dci_MapEntry* pentry, Dci_Context* pctxt)
 	//Cast to a 20,13 message.
 	Dci_TypedDataRecord* ptd = (Dci_TypedDataRecord*) pctxt->pMsg;
 
-	uint16 idtype = ((uint16)(pentry->idComponent)) | ((uint16)(pentry->idPropStart<<8));
+	uint16 idtype = (uint16) (((uint16)(pentry->idComponent)) | ((uint16)(pentry->idPropStart<<8)));
 	return ptd->idtype == idtype;
 }
 
@@ -232,7 +232,7 @@ bool OnTypedDataQueryMsg( Dci_MapEntry* pentry, Dci_Context* pctxt)
 	//Cast to a 20,93 message.
 	Dci_TypedDataRecordQuery* ptdq = (Dci_TypedDataRecordQuery*) pctxt->pMsg;
 
-	uint16 idtype = ((uint16)(pentry->idComponent)) | ((uint16)(pentry->idPropStart<<8));
+	uint16 idtype = (uint16) (((uint16)(pentry->idComponent)) | ((uint16)(pentry->idPropStart<<8)));
 	return ptdq->idtype == idtype;
 }
 
@@ -706,7 +706,7 @@ byte Dci_BitInitiateTargetTransfer( Dci_BitOperationMgr* pmgr, Dci_BitClient* pC
 /**
 * Functions requests peer to initiate a transfer.  By calling this funtion, the caller is designating themselves the target of the operation.
 */
-bool Dci_BitRequestSourceTransfer( Dci_BitOperationMgr* pmgr, Dci_BitClient* pClient, byte idComponentSource, byte flags, byte idTransfer, Dci_Context* pctxt)
+bool Dci_BitRequestSourceTransfer( Dci_BitOperationMgr* pmgr, Dci_BitClient*  pClient, byte idComponentSource, byte flags, byte idTransfer, Dci_Context* pctxt)
 {
 
 	// Dci_BitOperation* pbop;

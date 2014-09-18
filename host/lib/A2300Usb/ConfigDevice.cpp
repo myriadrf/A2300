@@ -19,6 +19,7 @@
 #include <Dci/StandardMsgs.h>
 #include <stdexcept>
 #include <stdio.h>
+#include <string.h>
 
 #define ENABLE DCI1 1
 
@@ -356,7 +357,7 @@ void ConfigDevice::DumpRfProfilesDescriptors( RfProfileDescriptorList& listDescr
 	for( ; iter != listDescrs.end(); iter++)
 	{
 		RfProfileDescriptor& pd = (*iter);
-		byte ch = (pd.id >> 6);
+		byte ch = (byte) (pd.id >> 6);
 		fprintf( fp, "    %02Xh | %6s  | %s\n", pd.id, szCh[ch], pd.descr);
 	}
 

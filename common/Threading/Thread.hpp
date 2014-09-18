@@ -79,7 +79,7 @@ namespace A2300
 
 		#ifndef _WIN32
 			std::string Name();
-			void 		Name( Ltx::System::pcstr pszName);
+			void 		Name( const char* pszName);
 			void 		Name( std::string sName) { Name( sName.c_str());}
 		#else
 			// Workaround for Windows Thread Naming.

@@ -62,6 +62,7 @@ private:
 	byte*				m_pbuff;
 	FILE*				m_file;
 	bool				m_bIsRunning;
+	bool 				m_bSpeedTest;
 
 public:
 	DataStreamLogger(size_t bytesPerSample, size_t sizeFrame, size_t iMaxFrames, char chTick);

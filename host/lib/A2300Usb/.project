@@ -3,7 +3,6 @@
 	<name>A2300Usb</name>
 	<comment></comment>
 	<projects>
-		<project>Common</project>
 		<project>common</project>
 	</projects>
 	<buildSpec>

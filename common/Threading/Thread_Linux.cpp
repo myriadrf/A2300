@@ -22,7 +22,7 @@
 #include <stdio.h>
 
 //Declare static storage for key and bInitStatics.
-using namespace Ltx::Threading;
+using namespace A2300::Threading;
 
 pthread_key_t Thread::m_keyCurrentThread;
 bool   		  Thread::s_bInitStatics = true;
@@ -84,7 +84,7 @@ std::string Thread::Name()
 #endif
 	return std::string(buff);
 }
-void 	Thread::Name( Ltx::System::pcstr pszName)
+void 	Thread::Name( const char* pszName)
 {
 	::pthread_setname_np(*m_pthread, pszName);
 }
@@ -232,7 +232,7 @@ void Thread::Sleep( int nMilliseconds )
 	spec.tv_sec  = nMilliseconds/1000;
 	spec.tv_nsec = (nMilliseconds -(spec.tv_sec*1000))*1000000;
 	if( spec.tv_sec > 0 && spec.tv_nsec == 0)
-		sleep( spec.tv_sec);
+		sleep( (unsigned int) spec.tv_sec);
 	else
 		nanosleep(&spec, NULL);
 	//	sleep( nMilliseconds / 1000);

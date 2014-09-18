@@ -22,7 +22,7 @@ SET(A2300Threading_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/Thread_Linux.cpp
 )
 
-ADD_LIBRARY(A2300Threading STATIC ${A2300THreading_sources})
+ADD_LIBRARY(A2300Threading STATIC ${A2300Threading_sources})
 
 ##############################################################
 # Install information

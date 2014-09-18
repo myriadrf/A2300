@@ -97,7 +97,7 @@ public:
 		int retval = ReadTypedDataMsg( buff, lenMax, timeout);
 
 		Report* rpt = NULL;
-		if( retval > sizeof( Report))
+		if( (size_t) retval > sizeof( Report))
 		{
 			rpt = (Report*) Dci_TypedDataRecord_GetData( (Dci_TypedDataRecord*) buff);
 		}

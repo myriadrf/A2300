@@ -42,7 +42,7 @@ public:
 		BypassCordic		= 0x04,
 		BypassCic			= 0x08,
 		BypassHalfband		= 0x20,
-		SynchronizeReset	= 0x40  //Synchronizes dadta streams with other DDUC channels 
+		SynchronizeReset	= 0x40  //Synchronizes data streams with other DDUC channels
 	};
 
 public:

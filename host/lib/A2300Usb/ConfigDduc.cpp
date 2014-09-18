@@ -61,8 +61,8 @@ void ConfigDduc::Reset( double uiSamplingRateHz)
 void ConfigDduc::Clear()
 {
 	//Add Bypass Strobe flag if Bypass Cic specified.
-	byte flags = m_byteMode | ((m_byteMode & ((byte) BypassCic)) ? DSP_DDUC_CTRL_BYPASSCICSTROBE : (byte) 0);
-	flags |= (m_bEnable) ? DSP_DDUC_CTRL_ENABLED : DSP_DDUC_CTRL_DISABLED;
+	byte flags = (byte)( m_byteMode | ((m_byteMode & ((byte) BypassCic)) ? DSP_DDUC_CTRL_BYPASSCICSTROBE : (byte) 0));
+	flags |= (byte)((m_bEnable) ? DSP_DDUC_CTRL_ENABLED : DSP_DDUC_CTRL_DISABLED);
 
 	TransportDci& td = m_pDevice->Dci0Transport();
 	td.SetProperty<byte>(m_idComponent, DSP_DDUC_CTRL,flags | DSP_DDUC_CTRL_RESET );
@@ -91,8 +91,8 @@ void ConfigDduc::Mode( byte modeFlags)
 {
 	m_byteMode = modeFlags;
 	//Add Bypass Strobe flag if Bypass Cic specified.
-	byte flags = m_byteMode | ((m_byteMode & ((byte) BypassCic)) ? DSP_DDUC_CTRL_BYPASSCICSTROBE : (byte) 0);
-	flags |= (m_bEnable) ? DSP_DDUC_CTRL_ENABLED : DSP_DDUC_CTRL_DISABLED;
+	byte flags = (byte)(m_byteMode | ((m_byteMode & ((byte) BypassCic)) ? DSP_DDUC_CTRL_BYPASSCICSTROBE : (byte) 0));
+	flags |= (byte) (m_bEnable ? DSP_DDUC_CTRL_ENABLED : DSP_DDUC_CTRL_DISABLED);
 
 	TransportDci& td = m_pDevice->Dci0Transport();
 	td.SetProperty<byte>(m_idComponent, DSP_DDUC_CTRL,flags );
@@ -127,7 +127,7 @@ double ConfigDduc::HostSamplingRate( double  dRateHz, bool bAutoSetMode )
 		else
 			flags = BypassHalfband;
 
-		m_byteMode = (m_byteMode & ~mask) | flags;
+		m_byteMode = (byte)((m_byteMode & ~mask) | flags);
 	}
 	
 	//Set the decimation rate and turn on halband filters on ASR-2300.

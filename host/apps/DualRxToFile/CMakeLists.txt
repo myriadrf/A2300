@@ -42,7 +42,7 @@ IF(ENABLE_DUALRXTOFILE_APP)
 # Link with the A2300 USB interface
 ##############################################################
 
-    TARGET_LINK_LIBRARIES(DualRxToFile A2300Usb A2300System)
+    TARGET_LINK_LIBRARIES(DualRxToFile A2300Usb A2300Threading A2300System)
 
 ##############################################################
 # On Linux, link with the real time clock

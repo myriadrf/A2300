@@ -6,8 +6,11 @@
 				<externalSettings>
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/Common"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/common"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/Common/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/common/Debug"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="Common" srcPrefixMapping="" srcRootPath=""/>
+						<entry flags="RESOLVED" kind="libraryFile" name="common" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<extensions>
@@ -67,7 +70,7 @@
 					</folderInfo>
 					<fileInfo id="cdt.managedbuild.config.gnu.lib.debug.1951022754.1855250318" name="A2300Common.vcproj" rcbsApplicability="disable" resourcePath="A2300Common.vcproj" toolsToInvoke=""/>
 					<sourceEntries>
-						<entry excluding="A2300Common.vcproj" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Threading/Thread_Win32.cpp|A2300Common.vcproj" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -78,8 +81,11 @@
 				<externalSettings>
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/Common"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/common"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/Common/Release"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/common/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="Common" srcPrefixMapping="" srcRootPath=""/>
+						<entry flags="RESOLVED" kind="libraryFile" name="common" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<extensions>
@@ -126,6 +132,9 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<sourceEntries>
+						<entry excluding="Threading/Thread_Win32.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
