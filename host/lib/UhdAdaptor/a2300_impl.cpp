@@ -161,7 +161,7 @@ static device::sptr a2300_make(const device_addr_t &device_addr)
 }
 
 UHD_STATIC_BLOCK(register_a2300_device){
-    device::register_device(&a2300_find, &a2300_make);
+    device::register_device(&a2300_find, &a2300_make, device::ANY);
 }
 
 /***********************************************************************
