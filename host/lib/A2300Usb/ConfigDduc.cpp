@@ -119,7 +119,7 @@ double ConfigDduc::HostSamplingRate( double  dRateHz, bool bAutoSetMode )
 		{
 			flags = BypassCic | DSP_DDUC_CTRL_BYPASSCICSTROBE | BypassHalfband ;
 		}
-		else if( m_uiSamplingDivisor % 2 == 0)
+		else if( (m_uiSamplingDivisor % 2) == 0 && m_uiSamplingDivisor > 4)
 		{
 			flags = Normal;
 			divisor /= 2;
