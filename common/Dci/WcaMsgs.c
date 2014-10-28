@@ -24,33 +24,38 @@
 int Dci_TypedProperties_Init( void* buff, uint16 sizeBuff,
 		byte idComponent, byte ctProperties, Dci_Property* pProps)
 {
-	Dci_TypedProperties* pmsg;
 	int lenData;
 	int lenHdr;
 	int lenMsg;
+	Dci_TypedProperties* pmsg = (Dci_TypedProperties*) buff;
+	Dci_Hdr_Init( buff, 0x21, 0x01);
+	
+	lenMsg = (int)sizeof(Dci_TypedProperties);
+
+	pmsg->idComponent  = idComponent;
+	pmsg->ctProperties = 0;
 
 	if( (ctProperties > 0) )
 	{
 		// Compute the Properities length.
 		lenData = ((int)ctProperties) * ((int)sizeof( Dci_Property));
-		lenHdr = (int)sizeof(Dci_TypedProperties);
-		lenMsg = lenHdr + lenData;
-
+		lenHdr  = lenMsg;
+		lenMsg  += lenData;
+		
 		// Make sure it will fit in the output buffer.
 		if( lenMsg <= sizeBuff )
 		{
-			pmsg = (Dci_TypedProperties*) buff;
-			Dci_Hdr_Init( buff, 0x21, 0x01);
-			pmsg->idComponent  = idComponent;
 			pmsg->ctProperties = ctProperties;
 
 			// Copy if properties specified, otherwise, skip.
 			if(pProps != NULL)
 				memcpy(((byte*)buff)+lenHdr, pProps, (size_t) lenData);
-			return (lenMsg);
 		}
+		else
+			lenMsg = -1;
 	}
-	return -1;
+	
+	return lenMsg;
 }
 
 /**
