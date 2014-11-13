@@ -61,7 +61,7 @@ void ConfigDduc::Reset( double uiSamplingRateHz)
 void ConfigDduc::Clear()
 {
 	//Add Bypass Strobe flag if Bypass Cic specified.
-	byte flags = (byte)( m_byteMode | ((m_byteMode & ((byte) BypassCic)) ? DSP_DDUC_CTRL_BYPASSCICSTROBE : (byte) 0));
+	byte flags = m_byteMode;
 	flags |= (byte)((m_bEnable) ? DSP_DDUC_CTRL_ENABLED : DSP_DDUC_CTRL_DISABLED);
 
 	TransportDci& td = m_pDevice->Dci0Transport();
@@ -91,7 +91,7 @@ void ConfigDduc::Mode( byte modeFlags)
 {
 	m_byteMode = modeFlags;
 	//Add Bypass Strobe flag if Bypass Cic specified.
-	byte flags = (byte)(m_byteMode | ((m_byteMode & ((byte) BypassCic)) ? DSP_DDUC_CTRL_BYPASSCICSTROBE : (byte) 0));
+	byte flags = m_byteMode;
 	flags |= (byte) (m_bEnable ? DSP_DDUC_CTRL_ENABLED : DSP_DDUC_CTRL_DISABLED);
 
 	TransportDci& td = m_pDevice->Dci0Transport();
@@ -113,20 +113,34 @@ double ConfigDduc::HostSamplingRate( double  dRateHz, bool bAutoSetMode )
 	if (bAutoSetMode)
 	{
 	    byte flags;
-	    byte mask = BypassCordic| BypassCic | BypassHalfband;
+	    byte mask = BypassCordic| BypassCic | BypassHalfband | DSP_DDUC_CTRL_BYPASSCICSTROBE;
 
-	    if( m_uiSamplingDivisor == 1)
+		//Configure the mode based on the amount of decimation selected.
+		switch( m_uiSamplingDivisor)
 		{
-			flags = BypassCic | DSP_DDUC_CTRL_BYPASSCICSTROBE | BypassHalfband ;
-		}
-		else if( (m_uiSamplingDivisor % 2) == 0 && m_uiSamplingDivisor > 4)
-		{
-			flags = Normal;
-			divisor /= 2;
-		}
-		else
+		case 1:
+			flags = BypassCic | DSP_DDUC_CTRL_BYPASSCICSTROBE | BypassHalfband;
+			break;
+		case 2:
+		case 3:
+			flags = BypassCic | BypassHalfband; 
+			break;
+		case 4:
 			flags = BypassHalfband;
-
+			break;
+		default:
+			if( (m_uiSamplingDivisor % 2) == 0)
+			{			
+				flags = Normal;
+				divisor /=2;
+			}
+			else
+			{
+				flags = BypassHalfband;
+			}
+			break;
+		}
+		
 		m_byteMode = (byte)((m_byteMode & ~mask) | flags);
 	}
 	
