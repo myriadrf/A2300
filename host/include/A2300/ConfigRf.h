@@ -44,7 +44,7 @@ public:
 	static RfBandwidthValuesEnum BandwidthFromMHz( double bandwidthMHz);
 
 	/**
-	* Routines convers half bandwidth identifiers into fullbandwidth (28 MHz to 1.5 MHz)
+	* Routines converts half bandwidth identifiers into fullbandwidth (28 MHz to 1.5 MHz)
 	* values in units of MHz.
 	*/
 	static double  BandwidthToMHz( RfBandwidthValuesEnum bw);
@@ -55,6 +55,17 @@ public:
 	byte    RxGain() const;
 	byte	RxPath( byte idPath);
 	byte    RxPath() const;
+
+	/** 
+	* Returns the current ADC received signal strength
+	*/
+	uint16	RxRssi() const;
+
+	/**
+	* Returns the current ADC received signal DC Bias offset.
+	*/
+	uint32	RxBias() const;
+
 	RfBandwidthValuesEnum RxBandwidth( RfBandwidthValuesEnum bw);
 	RfBandwidthValuesEnum RxBandwidth( ) const;
 
@@ -64,6 +75,10 @@ public:
 	byte TxGain( ) const;
 	byte TxPath( byte idPath);
 	byte TxPath( ) const;
+
+
+
+
 	RfBandwidthValuesEnum TxBandwidth( RfBandwidthValuesEnum bw);
 	RfBandwidthValuesEnum TxBandwidth( ) const;
 
