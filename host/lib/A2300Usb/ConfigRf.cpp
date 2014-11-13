@@ -41,10 +41,13 @@ ConfigRf::~ConfigRf()
 RfBandwidthValuesEnum ConfigRf::BandwidthFromMHz( double bandwidthMhz)
 {
 	// Verify range.
-	if( bandwidthMhz > s_rfbandwidths[0] ||
-			bandwidthMhz < s_rfbandwidths[CT_BANDWIDTHS-1] )
+	if( bandwidthMhz > s_rfbandwidths[0])
 	{
-		return RFBW_5MHZ;
+		return RFBW_14MHZ;
+	}
+	else if( bandwidthMhz < s_rfbandwidths[CT_BANDWIDTHS-1] )
+	{
+		return RFBW_0750KHZ;
 	}
 
 	// Find best match (below).
@@ -101,6 +104,32 @@ byte ConfigRf::RxPath( ) const
 {
 	return m_rxpath;
 }
+
+
+/** 
+* Returns the current ADC received signal strength
+*/
+uint16 ConfigRf::RxRssi( ) const
+{
+	uint16 val = 0;
+    TransportDci& td = m_pDevice->Dci0Transport();
+    td.GetProperty<uint16>(m_idComponent, RFPROP_RXRSSI, val);
+	return val;
+
+}
+
+/**
+* Returns the current ADC received signal DC Bias offset.
+*/
+uint32 ConfigRf::RxBias( ) const
+{
+	uint32 val = 0;
+    TransportDci& td = m_pDevice->Dci0Transport();
+    td.GetProperty<uint32>(m_idComponent, RFPROP_RXIQBIAS, val);
+	return val;
+
+}
+
 
 RfBandwidthValuesEnum ConfigRf::RxBandwidth( RfBandwidthValuesEnum bw)
 {
