@@ -253,6 +253,19 @@ static int DoRxToFile ()
 	s_params.freq		= rf.RxFrequency( (uint32) (s_params.freq*1000 + 0.5))/1000.0;
 	s_params.bandwidth	= ConfigRf::BandwidthToMHz(rf.RxBandwidth( ConfigRf::BandwidthFromMHz( s_params.bandwidth)));
 
+	//int rssiIQ[2];
+	//for( int i = 0; i < 10; i++)
+	//{
+	//uint16 rssi = rf.RxRssi();
+	//uint32 bias = rf.RxBias();
+	//rssiIQ[0] = rssi & 0xff;
+	//rssiIQ[1] = (rssi >> 8);
+	//printf("RSSI I/Q: %d, %d \n", rssiIQ[0], rssiIQ[1]);
+	//printf("DC Bias:  %d, %d \n", (int)(bias & 0xffff), (int)(bias>>16));
+	//SLEEP_SEC(1);
+	//}
+
+
 	//4) Open the port, attach callback function to receive data as it comes in.
 	portData.Open();
 	portData.ReadTransfer() = BulkDataPort::TransferEvent
