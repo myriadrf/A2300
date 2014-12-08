@@ -1,5 +1,5 @@
 The following files were generated for 'halfband_decim' in directory
-U:\GitHubA2300_ltxdev\hdl\wca\hal\
+U:\WksAsr2300\pkgs\Asr-2300\hdl\wca\hal\
 
 Opens the IP Customization GUI:
    Allows the user to customize or recustomize the IP instance.
