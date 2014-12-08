@@ -55,6 +55,7 @@
 
 //----------- Begin Cut here for INSTANTIATION Template ---// INST_TAG
 halfband_decim YourInstanceName (
+	.sclr(sclr), // input sclr
 	.clk(clk), // input clk
 	.nd(nd), // input nd
 	.rfd(rfd), // output rfd
