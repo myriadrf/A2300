@@ -118,14 +118,16 @@ double ConfigDduc::HostSamplingRate( double  dRateHz, bool bAutoSetMode )
 		//Configure the mode based on the amount of decimation selected.
 		switch( m_uiSamplingDivisor)
 		{
-		case 1:
+		case 1:  //Bypass everything.
 			flags = BypassCic | DSP_DDUC_CTRL_BYPASSCICSTROBE | BypassHalfband;
 			break;
-		case 2:
-		case 3:
+		case 2:  //CIC nor HB can be used for divisors
+		case 3:  //less than 4.
 			flags = BypassCic | BypassHalfband; 
 			break;
-		case 4:
+		case 4:  //These cases must all bypass the HB since
+		case 5:  //CIC must be divide by 4 before HB can be 
+		case 6:  //used.
 			flags = BypassHalfband;
 			break;
 		default:
